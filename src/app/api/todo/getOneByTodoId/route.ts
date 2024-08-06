@@ -2,9 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { eq } from 'drizzle-orm';
 import { db, schema } from '../../../../db';
 
-export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url);
-  const todoId = searchParams.get('todoId');
+export async function POST(req: NextRequest) {
+  const { todoId } = await req.json();
 
   if (!todoId) {
     return NextResponse.json({ error: 'todoId query parameter is required' }, { status: 400 });

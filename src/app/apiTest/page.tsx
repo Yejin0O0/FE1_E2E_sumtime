@@ -1,6 +1,9 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
+import { FormEvent, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { createUser, emailValidation, getUserIdByEmail, loginValidation } from '@/app/apiTest/calls/userCalls';
+import { createTodo, getAllByUserId, getOneByTodoId, deleteTodo, updateTodo } from '@/app/apiTest/calls/todoCalls';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -13,169 +16,94 @@ export default function Login() {
   const [endTime, setEndTime] = useState('');
   const [color, setColor] = useState('');
   const [todoId, setTodoId] = useState('');
-  // commit위한 주석
-  const createUser = async (event: React.FormEvent) => {
+
+  const { refetch: refetchGetUserId } = useQuery({
+    queryKey: ['userId', email],
+    queryFn: () => getUserIdByEmail(email),
+    enabled: false,
+  });
+  const { refetch: refetchEmailValidation } = useQuery({
+    queryKey: ['emailValidation', email],
+    queryFn: () => emailValidation(email),
+    enabled: false,
+  });
+  const { refetch: refetchLoginValidation } = useQuery({
+    queryKey: ['loginValidation', email, password],
+    queryFn: () => loginValidation(email, password),
+    enabled: false,
+  });
+  const getAllByUserIdQuery = useQuery({ queryKey: ['todos', userId], queryFn: () => getAllByUserId(userId), enabled: true });
+  const getOneByTodoIdQuery = useQuery({ queryKey: ['todo', todoId], queryFn: () => getOneByTodoId(todoId), enabled: true });
+
+  const createUserHandler = async (event: React.FormEvent) => {
     event.preventDefault();
-
-    const response = await fetch('/api/user/create', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, password, nickname }),
-    });
-
-    if (response.ok) {
-      alert('User added successfully');
-    } else {
-      const errorData = await response.json();
-      alert(`Failed to add user: ${errorData.error}`);
-    }
+    alert(await createUser(email, password, nickname));
   };
-  const getUserIdByEmail = async (event: React.FormEvent) => {
+
+  const getUserIdHandler = async (event: React.FormEvent) => {
     event.preventDefault();
-
-    const response = await fetch(`/api/user/getIdByEmail?email=${encodeURIComponent(email)}`, {
-      method: 'GET',
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      alert(`UID: ${data.userId}`);
-    } else {
-      const errorData = await response.json();
-      alert(`Error: ${errorData.error}`);
-    }
+    const { data } = await refetchGetUserId();
+    alert(data);
   };
-  const emailValidation = async (event: React.FormEvent) => {
+
+  const emailValidationHandler = async (event: React.FormEvent) => {
     event.preventDefault();
-
-    const response = await fetch(`/api/user/emailValidation?email=${encodeURIComponent(email)}`, {
-      method: 'GET',
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      alert(`Validation: ${data.isValid}`);
-    } else {
-      const errorData = await response.json();
-      alert(`Error: ${errorData.error}`);
-    }
+    const { data } = await refetchEmailValidation();
+    alert(data);
   };
-  const loginValidation = async (event: React.FormEvent) => {
+  const loginValidationHandler = async (event: React.FormEvent) => {
     event.preventDefault();
-
-    const response = await fetch('/api/user/loginValidation', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, password }),
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      alert(`Validation: ${data.isValid}`);
-    } else {
-      const errorData = await response.json();
-      alert(`Error: ${errorData.error}`);
-    }
+    const { data } = await refetchLoginValidation();
+    alert(data);
   };
   const todoSubmitHandler = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const submitter = (event.nativeEvent as SubmitEvent).submitter as HTMLButtonElement;
     const { name } = submitter;
 
-    let endpoint = '';
-    let method = '';
-    let body: string | undefined;
-
     switch (name) {
       case 'create':
-        endpoint = '/api/todo/create';
-        method = 'POST';
-        body = JSON.stringify({ userId, title, content, startTime, endTime, color });
+        alert(JSON.stringify(await createTodo(userId, title, content, startTime, endTime, color), null, 2));
         break;
       case 'getAllByUserId':
-        endpoint = `/api/todo/getAllByUserId?userId=${userId}`;
-        method = 'GET';
+        alert(JSON.stringify(getAllByUserIdQuery.data, null, 2));
         break;
       case 'getOneByTodoId':
-        endpoint = `/api/todo/getOneByTodoId?todoId=${todoId}`;
-        method = 'GET';
+        alert(JSON.stringify(await getOneByTodoIdQuery.data, null, 2));
         break;
       case 'update':
-        endpoint = '/api/todo/update';
-        method = 'PUT';
-        body = JSON.stringify({ todoId, title, content, startTime, endTime, color });
+        alert(JSON.stringify(await updateTodo(todoId, title, content, startTime, endTime, color), null, 2));
         break;
       case 'delete':
-        endpoint = '/api/todo/delete';
-        method = 'DELETE';
-        body = JSON.stringify({ todoId });
+        alert(await deleteTodo(todoId));
         break;
       default:
         alert('Unknown action');
-        return;
-    }
-    const response = await fetch(endpoint, {
-      method,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body,
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      alert(`${name.charAt(0).toUpperCase() + name.slice(1)} action was successful`);
-      alert(JSON.stringify(data, null, 2));
-      if (name === 'getAllByUserId') {
-        setUserId(data.todos[0].userId);
-        setTodoId(data.todos[0].todoId);
-        setTitle(data.todos[0].title);
-        setContent(data.todos[0].content);
-        setStartTime(data.todos[0].startTime);
-        setEndTime(data.todos[0].endTime);
-        setColor(data.todos[0].color);
-      }
-      if (name === 'getOneByTodoId') {
-        setUserId(data.todo.userId);
-        setTodoId(data.todo.todoId);
-        setTitle(data.todo.title);
-        setContent(data.todo.content);
-        setStartTime(data.todo.startTime);
-        setEndTime(data.todo.endTime);
-        setColor(data.todo.color);
-      }
-    } else {
-      const errorData = await response.json();
-      alert(`Failed to ${name} Todo: ${errorData.error}`);
     }
   };
 
   return (
     <div>
       <h1 style={{ color: 'orange' }}>Create User</h1>
-      <form onSubmit={createUser}>
+      <form onSubmit={createUserHandler}>
         <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" required />
         <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" required />
         <input type="text" value={nickname} onChange={(e) => setNickname(e.target.value)} placeholder="Nickname" required />
         <button type="submit">Add User</button>
       </form>
       <h1>Get UserId</h1>
-      <form onSubmit={getUserIdByEmail}>
+      <form onSubmit={getUserIdHandler}>
         <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" required />
         <button type="submit">Get UID</button>
       </form>
       <h1>Email Validation</h1>
-      <form onSubmit={emailValidation}>
+      <form onSubmit={emailValidationHandler}>
         <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" required />
         <button type="submit">Can I Use This Email?</button>
       </form>
 
       <h1>Login Validation</h1>
-      <form onSubmit={loginValidation}>
+      <form onSubmit={loginValidationHandler}>
         <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" required />
         <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" required />
         <button type="submit">Can I Login?</button>

@@ -1,24 +1,17 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import { getServerSession } from 'next-auth/next';
-import AuthProvider from '@/components/common/AuthProvider';
-import { authOptions } from '@/lib/auth';
+import ReactQueryProviders from '@/utils/ReactQueryProviders';
 
 export const metadata: Metadata = {
-  title: 'SumTime',
+  title: 'sumday',
   description: 'kernel FE E2E project',
 };
 
-export default async function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  const session = await getServerSession(authOptions);
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="kr">
       <body>
-        <AuthProvider session={session}>{children}</AuthProvider>
+        <ReactQueryProviders>{children}</ReactQueryProviders>
       </body>
     </html>
   );

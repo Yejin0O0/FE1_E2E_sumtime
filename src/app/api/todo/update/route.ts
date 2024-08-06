@@ -15,11 +15,18 @@ export async function PUT(req: NextRequest) {
         endTime,
         color,
       })
-      .where(eq(schema.todosTable.todoId, todoId))
-      .execute();
+      .where(eq(schema.todosTable.todoId, parseInt(todoId, 10)))
+      .returning({
+        title: schema.todosTable.title,
+        content: schema.todosTable.content,
+        startTime: schema.todosTable.startTime,
+        endTime: schema.todosTable.endTime,
+        color: schema.todosTable.color,
+      });
 
-    if (result.rowsAffected > 0) {
-      return NextResponse.json({ message: 'todo updated successfully' });
+    if (result.length > 0) {
+      const updatedTodo = result[0];
+      return NextResponse.json({ todo: updatedTodo });
     }
     return NextResponse.json({ error: 'Todo not found or no changes made' }, { status: 404 });
   } catch (error) {

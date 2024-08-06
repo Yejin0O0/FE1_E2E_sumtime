@@ -15,3 +15,5 @@ export const todosTable = sqliteTable('todos', {
 
 export type InsertTodo = typeof todosTable.$inferInsert;
 export type SelectTodo = typeof todosTable.$inferSelect;
+
+// type MySelect = Pick<SelectTodo, 'userId' | 'title'>;

@@ -3,6 +3,9 @@ import { eq } from 'drizzle-orm';
 import { db, schema } from '../../../../db';
 
 export async function DELETE(req: NextRequest) {
+  // const { searchParams } = new URL(req.url);
+  // const todoId = searchParams.get('todoId');
+
   const { todoId } = await req.json();
 
   if (!todoId) {
@@ -10,7 +13,10 @@ export async function DELETE(req: NextRequest) {
   }
 
   try {
-    const result = await db.delete(schema.todosTable).where(eq(schema.todosTable.todoId, todoId)).execute();
+    const result = await db
+      .delete(schema.todosTable)
+      .where(eq(schema.todosTable.todoId, parseInt(todoId, 10)))
+      .execute();
 
     if (result.rowsAffected > 0) {
       return NextResponse.json({ message: 'todo deleted successfully' });

@@ -5,16 +5,27 @@ export async function POST(req: NextRequest) {
   const { userId, title, content, startTime, endTime, color } = await req.json();
 
   try {
-    await db.insert(schema.todosTable).values({
-      title,
-      content,
-      startTime,
-      endTime,
-      color,
-      userId,
-    });
+    const result = await db
+      .insert(schema.todosTable)
+      .values({
+        title,
+        content,
+        startTime,
+        endTime,
+        color,
+        userId,
+      })
+      .returning({
+        title: schema.todosTable.title,
+        content: schema.todosTable.content,
+        startTime: schema.todosTable.startTime,
+        endTime: schema.todosTable.endTime,
+        color: schema.todosTable.color,
+        userId: schema.todosTable.userId,
+      });
+    const insertedTodo = result[0];
 
-    return NextResponse.json({ message: 'todo added successfully' });
+    return NextResponse.json({ todo: insertedTodo });
   } catch (error) {
     if (error instanceof Error) {
       return NextResponse.json({ error: 'Failed to add todo', details: error.message }, { status: 500 });
