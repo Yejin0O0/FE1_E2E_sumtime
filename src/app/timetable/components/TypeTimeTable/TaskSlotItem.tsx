@@ -1,16 +1,16 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { useContext } from 'react';
+import React, { useContext, useRef, useEffect, useState } from 'react';
 import { flip, offset, useClick, useDismiss, useFloating, useInteractions, useMergeRefs } from '@floating-ui/react';
-import { calculateTaskOffsetAndHeightPercent, getColor } from '../../utils';
+import { calculateTaskOffsetAndHeightPercent, getColor, generateClassNameWithType } from '../../utils';
 import { Task } from '../Timetable.type';
-import RowTypeTimeTableStyles from './RowTypeTimeTable.module.scss';
-import SlotStyles from '../Slot.module.scss';
+import TaskSlotContext from '../../TaskSlotContext';
 import TypeContext from '../../TypeContext';
+import styles from './TypeTimeTable.module.scss';
 
 interface TaskSlotItemProps {
   taskItem: Task;
   index: number;
-  shouldDisplayTaskContentList: boolean[];
+  shouldDisplayTaskContent: boolean;
   slotStartTime: Date;
   slotEndTime: Date;
   slotTime: number;
@@ -20,8 +20,7 @@ interface TaskSlotItemProps {
 
 function TaskSlotItem({
   taskItem,
-  index,
-  shouldDisplayTaskContentList,
+  shouldDisplayTaskContent,
   slotStartTime,
   slotEndTime,
   slotTime,
@@ -29,7 +28,11 @@ function TaskSlotItem({
   onOpenChange,
 }: TaskSlotItemProps) {
   const { startTime, endTime, taskColor, title, subTitle, id } = taskItem;
+  const taskSlotRef = useRef<HTMLDivElement>(null);
+  const [isContentVisible, setIsContentVisible] = useState(false);
+
   const type = useContext(TypeContext);
+  const taskOption = useContext(TaskSlotContext);
 
   const {
     refs: menuRefs,
@@ -58,34 +61,54 @@ function TaskSlotItem({
     slotTime,
   );
 
-  const shouldDisplayTaskContent = shouldDisplayTaskContentList[index];
   const taskSlotColor = taskColor ?? getColor(id);
-
-  const styles = type === 'ROW' ? RowTypeTimeTableStyles : SlotStyles;
-
   const positionStyles =
     type === 'ROW'
       ? { top: '0', left: `${offsetPercent}%`, width: `${heightPercent}%` }
       : { top: `${offsetPercent}%`, left: '0', height: `${heightPercent}%` };
-
   const floatingPositionStyles = type === 'ROW' ? { left: `${offsetPercent}%` } : { top: `${offsetPercent}%` };
 
+  useEffect(() => {
+    if (type === 'ROW') {
+      if (taskSlotRef.current) {
+        const width = taskSlotRef.current.offsetWidth;
+        setIsContentVisible(width > 40);
+      }
+    }
+    if (type === 'COLUMN') {
+      if (taskSlotRef.current) {
+        const height = taskSlotRef.current.offsetHeight;
+        setIsContentVisible(height > 40);
+      }
+    }
+  }, [taskSlotRef.current, type]);
+
   return (
-    <div style={{ height: '100%' }}>
-      <button type="button" ref={ref} {...props} className={styles.buttonInherit}>
-        <div
-          className={styles.taskSlotBackground}
-          style={{
-            ...positionStyles,
-            backgroundColor: `${taskSlotColor}`,
-          }}
-        >
-          {shouldDisplayTaskContent && (
-            <div className={styles.taskSlotContent} style={positionStyles}>
-              <p className={styles.title}>{title}</p>
-              <p className={styles.description}>{subTitle}</p>
-            </div>
-          )}
+    <div>
+      <button
+        type="button"
+        ref={ref}
+        {...props}
+        className={generateClassNameWithType(styles, 'buttonInherit', type)}
+        style={{
+          ...positionStyles,
+          backgroundColor: `${taskSlotColor}`,
+        }}
+      >
+        <div ref={taskSlotRef} className={generateClassNameWithType(styles, 'taskSlotBackground', type)}>
+          {shouldDisplayTaskContent &&
+            isContentVisible && ( // taskSlotContent
+              <div className={generateClassNameWithType(styles, 'taskSlotContent', type)}>
+                <p className={generateClassNameWithType(styles, 'title', type)}>{title}</p>
+                <p className={generateClassNameWithType(styles, 'description', type)}>{subTitle}</p>
+              </div>
+            )}
+          {shouldDisplayTaskContent &&
+            !isContentVisible && ( // taskSlotContent
+              <div className={generateClassNameWithType(styles, 'taskSlotContent', type)}>
+                <p className={generateClassNameWithType(styles, 'title', type)}>{taskOption.defaultValue}</p>
+              </div>
+            )}
         </div>
       </button>
       {shouldDisplayTaskContent && isOpen && (

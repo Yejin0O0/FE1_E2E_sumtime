@@ -12,12 +12,13 @@ export default function TimetablePage() {
           endTime={endTime}
           slotTime={slotTime}
           taskList={taskList}
-          height="2000px"
+          timeTableSize="2000px"
           timetableType="ROW"
           displayCurrentTime
           timeTableStyle={{ backgroundColor: 'white' }}
           timeSlotStyle={{ color: 'black' }}
           taskSlotStyle={{ color: 'black' }}
+          defaultValue="..."
         />
       </div>
       <div style={{ height: '500px', width: '800px' }}>
@@ -26,12 +27,13 @@ export default function TimetablePage() {
           endTime={endTime}
           slotTime={slotTime}
           taskList={taskList}
-          height="2000px"
+          timeTableSize="2000px"
           timetableType="COLUMN"
           displayCurrentTime
           timeTableStyle={{ backgroundColor: 'white' }}
           timeSlotStyle={{ color: 'black' }}
           taskSlotStyle={{ color: 'black' }}
+          defaultValue="..."
         />
       </div>
     </>

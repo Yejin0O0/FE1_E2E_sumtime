@@ -3,24 +3,24 @@ import * as S from './Todo.styled';
 import { Text } from '../common';
 
 interface TodoComponentProps {
-  id: number;
-  text: string;
-  handleOpenModal: (id: number) => void; // id를 매개변수로 받도록 수정
-  handleStart: (id: number) => void; // id를 매개변수로 받도록 수정
-  handleEnd: (id: number) => void; // id를 매개변수로 받도록 수정
+  todoId: number;
+  title: string;
+  handleOpenModal: (todoId: number) => void; // id를 매개변수로 받도록 수정
+  handleStart: (todoId: number) => void; // id를 매개변수로 받도록 수정
+  handleEnd: (todoId: number) => void; // id를 매개변수로 받도록 수정
 }
 
-function TodoComponent({ id, text, handleOpenModal, handleStart, handleEnd }: TodoComponentProps) {
+function TodoComponent({ todoId, title, handleOpenModal, handleStart, handleEnd }: TodoComponentProps) {
   return (
     <S.ATodoComponentContainer>
       <S.TodoContainer>
-        <Text $width="90%" $fontSize="small" text-wrap="wrap" onClick={() => handleOpenModal(id)}>
-          {text}
+        <Text $width="90%" $fontSize="small" title-wrap="wrap" onClick={() => handleOpenModal(todoId)}>
+          {title}
         </Text>
-        <button type="button" onClick={() => handleStart(id)}>
+        <button type="button" onClick={() => handleStart(todoId)}>
           ▶
         </button>
-        <button type="button" onClick={() => handleEnd(id)}>
+        <button type="button" onClick={() => handleEnd(todoId)}>
           ❚❚
         </button>
       </S.TodoContainer>

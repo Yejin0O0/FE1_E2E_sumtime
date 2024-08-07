@@ -1,10 +1,10 @@
 import { useContext } from 'react';
 import TimeSlot from './TimeSlot';
 import TaskSlot from './TaskSlot';
+import { generateClassNameWithType } from '../../utils';
 import { Task } from '../Timetable.type';
-import rowStyled from './RowTypeTimeTable.module.scss';
-import styled from '../Slot.module.scss';
 import TypeContext from '../../TypeContext';
+import styles from './TypeTimeTable.module.scss';
 
 interface SlotProps {
   headerDate: Date;
@@ -26,12 +26,10 @@ function Slot({
   taskSlotStyle,
 }: SlotProps) {
   const type = useContext(TypeContext);
-
   const style = type === 'ROW' ? { width: size } : { height: size };
-  const styles = type === 'ROW' ? rowStyled : styled;
 
   return (
-    <div className={styles.slot} style={style}>
+    <div className={generateClassNameWithType(styles, 'slot', type)} style={style}>
       <TimeSlot headerDate={headerDate} timeSlotStyle={timeSlotStyle} />
       <TaskSlot
         headerDate={headerDate}

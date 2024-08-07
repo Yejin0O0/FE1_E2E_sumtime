@@ -1,9 +1,10 @@
 'use client';
 
 import { FormEvent, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { createUser, emailValidation, getUserIdByEmail, loginValidation } from '@/app/apiTest/calls/userCalls';
-import { createTodo, getAllByUserId, getOneByTodoId, deleteTodo, updateTodo } from '@/app/apiTest/calls/todoCalls';
+import { createUser } from '@/app/apiTest/calls/userCalls';
+import { createTodo, deleteTodo, updateTodo } from '@/app/apiTest/calls/todoCalls';
+import { useEmailValidation, useLoginValidation, useGetUserId } from '@/app/apiTest/hooks/userQueries';
+import { useGetAllTodos, useGetOneTodo } from '@/app/apiTest/hooks/todoQueries';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -17,23 +18,11 @@ export default function Login() {
   const [color, setColor] = useState('');
   const [todoId, setTodoId] = useState('');
 
-  const { refetch: refetchGetUserId } = useQuery({
-    queryKey: ['userId', email],
-    queryFn: () => getUserIdByEmail(email),
-    enabled: false,
-  });
-  const { refetch: refetchEmailValidation } = useQuery({
-    queryKey: ['emailValidation', email],
-    queryFn: () => emailValidation(email),
-    enabled: false,
-  });
-  const { refetch: refetchLoginValidation } = useQuery({
-    queryKey: ['loginValidation', email, password],
-    queryFn: () => loginValidation(email, password),
-    enabled: false,
-  });
-  const getAllByUserIdQuery = useQuery({ queryKey: ['todos', userId], queryFn: () => getAllByUserId(userId), enabled: true });
-  const getOneByTodoIdQuery = useQuery({ queryKey: ['todo', todoId], queryFn: () => getOneByTodoId(todoId), enabled: true });
+  const { data: dbUserId } = useGetUserId(email);
+  const { data: isValidEmail } = useEmailValidation(email);
+  const { data: isValidLogin } = useLoginValidation(email, password);
+  const { data: todo } = useGetOneTodo(todoId);
+  const { data: todos } = useGetAllTodos(userId);
 
   const createUserHandler = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -42,19 +31,16 @@ export default function Login() {
 
   const getUserIdHandler = async (event: React.FormEvent) => {
     event.preventDefault();
-    const { data } = await refetchGetUserId();
-    alert(data);
+    alert(dbUserId);
   };
 
   const emailValidationHandler = async (event: React.FormEvent) => {
     event.preventDefault();
-    const { data } = await refetchEmailValidation();
-    alert(data);
+    alert(isValidEmail);
   };
   const loginValidationHandler = async (event: React.FormEvent) => {
     event.preventDefault();
-    const { data } = await refetchLoginValidation();
-    alert(data);
+    alert(isValidLogin);
   };
   const todoSubmitHandler = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -66,10 +52,10 @@ export default function Login() {
         alert(JSON.stringify(await createTodo(userId, title, content, startTime, endTime, color), null, 2));
         break;
       case 'getAllByUserId':
-        alert(JSON.stringify(getAllByUserIdQuery.data, null, 2));
+        alert(JSON.stringify(todos, null, 2));
         break;
       case 'getOneByTodoId':
-        alert(JSON.stringify(await getOneByTodoIdQuery.data, null, 2));
+        alert(JSON.stringify(todo, null, 2));
         break;
       case 'update':
         alert(JSON.stringify(await updateTodo(todoId, title, content, startTime, endTime, color), null, 2));

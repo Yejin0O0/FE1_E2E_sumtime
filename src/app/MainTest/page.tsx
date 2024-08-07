@@ -3,12 +3,12 @@
 import React from 'react';
 import Todo from '@/components/todo';
 import { BasicContainer } from '@/components/common';
-
+import TimeTable from '@/components/TimeTable';
 
 export default function mainTestPage() {
   return (
     <BasicContainer>
-      <div>타임테이블 영역</div>
+      <TimeTable />
       <Todo />
     </BasicContainer>
   );

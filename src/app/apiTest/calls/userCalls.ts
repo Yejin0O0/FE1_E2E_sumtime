@@ -1,6 +1,6 @@
 import axios, { AxiosError } from 'axios';
 
-export const createUser = async (email: string, password: string, nickname: string) => {
+export const createUser = async (email: string, password: string, nickname: string): Promise<string> => {
   try {
     const response = await axios.post('/api/user/create', { email, password, nickname });
     return response.data.userId;
@@ -12,7 +12,7 @@ export const createUser = async (email: string, password: string, nickname: stri
   }
 };
 
-export const getUserIdByEmail = async (email: string) => {
+export const getUserIdByEmail = async (email: string): Promise<string> => {
   try {
     const response = await axios.get(`/api/user/getIdByEmail?email=${encodeURIComponent(email)}`);
     return response.data.userId;
@@ -24,7 +24,7 @@ export const getUserIdByEmail = async (email: string) => {
   }
 };
 
-export const emailValidation = async (email: string) => {
+export const emailValidation = async (email: string): Promise<boolean> => {
   try {
     const response = await axios.get(`/api/user/emailValidation?email=${encodeURIComponent(email)}`);
     return response.data.isValid;
@@ -36,7 +36,7 @@ export const emailValidation = async (email: string) => {
   }
 };
 
-export const loginValidation = async (email: string, password: string) => {
+export const loginValidation = async (email: string, password: string): Promise<boolean> => {
   try {
     const response = await axios.post('/api/user/loginValidation', { email, password });
     return response.data.isValid;

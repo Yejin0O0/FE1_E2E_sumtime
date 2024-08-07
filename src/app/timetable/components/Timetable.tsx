@@ -1,43 +1,46 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { eachMinuteOfInterval } from 'date-fns';
-import { parseHeight, distributeHeight, checkTimeOverlapFromTaskList } from '../utils';
+import { parseSize, distributeSize, checkTimeOverlapFromTaskList } from '../utils';
 import { Task, TimetableType } from './Timetable.type';
 import TypeContext from '../TypeContext';
 import TypeTimeTable from './TypeTimeTable';
+import TaskSlotContext from '../TaskSlotContext';
 
 interface TimetableProps {
   startTime: Date;
   endTime: Date;
   slotTime: number;
-  height: string;
+  timeTableSize: string;
   timetableType: TimetableType;
   displayCurrentTime?: boolean;
   taskList: Task[];
   timeTableStyle?: React.CSSProperties;
   timeSlotStyle?: React.CSSProperties;
   taskSlotStyle?: React.CSSProperties;
+  defaultValue: string;
 }
 
 function Timetable({
   startTime,
   endTime,
   slotTime,
-  height,
+  timeTableSize,
   timetableType,
   displayCurrentTime = false,
   taskList,
   timeTableStyle = { backgroundColor: 'white' },
   timeSlotStyle = { color: 'black' },
   taskSlotStyle = { color: 'black' },
+  defaultValue,
 }: TimetableProps) {
-  const hasOverlapFromTaskList = useCallback(
+  const checkOverlapFromTaskList = useCallback(
     (currentTaskList: Task[]) => checkTimeOverlapFromTaskList(currentTaskList),
     [taskList],
   );
 
-  if (hasOverlapFromTaskList(taskList)) {
+  if (checkOverlapFromTaskList(taskList)) {
     throw new Error('task time is overlap. please check your taskList');
   }
 
@@ -48,22 +51,32 @@ function Timetable({
     },
     { step: slotTime },
   );
-  const { value, format } = parseHeight(height);
-  const slotHeight = distributeHeight(value, timeSlots.length, format);
+  const { value, format } = parseSize(timeTableSize);
+  const slotSize = distributeSize(value, timeSlots.length, format);
 
-  console.log('displayCurrentTime', displayCurrentTime);
-
+  const contextValue = useMemo(
+    () => ({
+      defaultValue,
+    }),
+    [defaultValue],
+  );
   return (
     <TypeContext.Provider value={timetableType}>
-      <TypeTimeTable
-        timeSlots={timeSlots}
-        slotWidth={slotHeight}
-        taskList={taskList}
-        timeSlotStyle={timeSlotStyle}
-        slotTime={slotTime}
-        taskSlotStyle={taskSlotStyle}
-        timeTableStyle={timeTableStyle}
-      />
+      <TaskSlotContext.Provider value={contextValue}>
+        <TypeTimeTable
+          timeSlots={timeSlots}
+          slotSize={slotSize}
+          taskList={taskList}
+          slotTime={slotTime}
+          displayCurrentTime={displayCurrentTime}
+          timeSlotStyle={timeSlotStyle}
+          taskSlotStyle={taskSlotStyle}
+          timeTableStyle={timeTableStyle}
+          size={timeTableSize}
+          startTime={startTime}
+          endTime={endTime}
+        />
+      </TaskSlotContext.Provider>
     </TypeContext.Provider>
   );
 }

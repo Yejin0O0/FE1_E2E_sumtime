@@ -9,6 +9,7 @@ export const TodoSection = styled(Flex)`
   background-color: whitesmoke;
   border-radius: 5px;
   position: relative;
+  padding: 20px;
 `;
 
 export const TodoComponentsSection = styled(Container)`
@@ -22,7 +23,7 @@ export const TodoComponentsSection = styled(Container)`
   overflow-y: auto; /* scrolling */
   border-radius: 5px;
   border: 1px solid red;
-  margin: 10px;
+
   padding: 10px;
   border-style: none;
   position: relative;

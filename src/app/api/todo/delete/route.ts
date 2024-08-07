@@ -3,9 +3,6 @@ import { eq } from 'drizzle-orm';
 import { db, schema } from '../../../../db';
 
 export async function DELETE(req: NextRequest) {
-  // const { searchParams } = new URL(req.url);
-  // const todoId = searchParams.get('todoId');
-
   const { todoId } = await req.json();
 
   if (!todoId) {

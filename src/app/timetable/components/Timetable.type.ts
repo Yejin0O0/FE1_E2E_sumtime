@@ -8,4 +8,8 @@ interface Task {
 }
 type TimetableType = 'CIRCLE' | 'ROW' | 'COLUMN';
 
-export type { Task, TimetableType };
+interface TaskSlotContextProps {
+  defaultValue: string;
+}
+
+export type { Task, TimetableType, TaskSlotContextProps };
