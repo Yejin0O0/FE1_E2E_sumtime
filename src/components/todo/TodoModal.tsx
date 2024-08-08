@@ -6,57 +6,118 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { TextField, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { useQueryClient } from '@tanstack/react-query';
+import { useCreateTodo, useDeleteTodo, useGetOneTodo, useUpdateTodo } from '@/app/apiTest/hooks/todoQueries';
 import { TodoModalStyle } from './Todo.styled';
-// import useBooleanState from '@/hooks/utils/useBooleanState';
 
-interface TodoItem {
-  todoId: number;
-  title: string;
-  startTime: string;
-  endTime: string;
-}
 interface TodoModalProps {
   open: boolean;
-  handleClose: () => void;
-  currentTodo: TodoItem | null;
-  handleSave: (title: string, startTime: string, endTime: string) => void;
-  handleDelete: () => void;
+  todoId: string;
+  isModalOpenedByFAB: boolean;
+  setIsModalOpenFalse: () => void;
 }
 
-export default function TodoModal({ open, handleClose, currentTodo, handleSave, handleDelete }: TodoModalProps) {
-  const [title, setText] = React.useState(currentTodo?.title || '');
-  const [startTime, setStartTime] = React.useState(currentTodo?.startTime || '');
-  const [endTime, setEndTime] = React.useState(currentTodo?.endTime || '');
+export default function TodoModal({ open, todoId, isModalOpenedByFAB, setIsModalOpenFalse }: TodoModalProps) {
+  const { data: todoData } = useGetOneTodo(todoId ?? '');
+  const [title, setTitle] = React.useState('');
+  const [content, setContent] = React.useState('');
+  const [startTime, setStartTime] = React.useState('');
+  const [endTime, setEndTime] = React.useState('');
+  const [color, setColor] = React.useState('');
+
+  const queryClient = useQueryClient();
+  const { mutate: updateTodo } = useUpdateTodo();
+  const { mutate: createTodo } = useCreateTodo();
+  const { mutate: deleteTodo } = useDeleteTodo();
 
   useEffect(() => {
-    setText(currentTodo?.title || '');
-    setStartTime(currentTodo?.startTime || '');
-    setEndTime(currentTodo?.endTime || '');
+    if (open) {
+      if (isModalOpenedByFAB) {
+        setTitle('');
+        setContent('');
+        setStartTime('');
+        setEndTime('');
+        setColor('');
+      } else {
+        setTitle(todoData?.title || '');
+        setContent(todoData?.content || '');
+        setStartTime(todoData?.startTime || '');
+        setEndTime(todoData?.endTime || '');
+        setColor(todoData?.color || '');
+      }
+    }
+  }, [open, isModalOpenedByFAB, todoData]);
 
-    console.log('currentTodo', currentTodo);
-  }, [currentTodo]);
+  const handleCloseModal = () => {
+    setIsModalOpenFalse();
+  };
+
+  const handleUpdateTodo = () => {
+    updateTodo(
+      { todoId, title, content, startTime, endTime, color },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ['todo', todoId] });
+          queryClient.invalidateQueries({ queryKey: ['todos', '1'] });
+          handleCloseModal();
+        },
+        onError: (error) => {
+          alert(`Todo 업데이트에 실패했습니다.${error}`);
+        },
+      },
+    );
+  };
+
+  const handleCreateTodo = () => {
+    createTodo(
+      { userId: '1', title, content, startTime, endTime, color },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ['todos', '1'] });
+          handleCloseModal();
+        },
+        onError: (error) => {
+          alert(`Todo를 생성하는 데 실패했습니다.${error}`);
+        },
+      },
+    );
+  };
+
+  const handleDelete = () => {
+    deleteTodo(todoId.toString(), {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['todos', '1'] });
+        handleCloseModal();
+      },
+      onError: (error) => {
+        queryClient.invalidateQueries({ queryKey: ['todos', '1'] });
+        alert(`Todo를 삭제하는 데 실패했습니다.${error}`);
+      },
+    });
+  };
 
   return (
-    <Modal open={open} onClose={handleClose} aria-labelledby="modal-title" aria-describedby="modal-description">
+    <Modal open={open} onClose={handleCloseModal} aria-labelledby="modal-title" aria-describedby="modal-description">
       <Box sx={TodoModalStyle}>
         <Box display="flex" justifyContent="space-between" alignItems="center">
           <Typography id="modal-title" variant="h6" component="h2">
-            {currentTodo ? 'Todo 수정' : '새로운 Todo 생성'}
+            {isModalOpenedByFAB ? 'Todo 생성' : 'Todo 수정'}
           </Typography>
-          {currentTodo && (
+          {!isModalOpenedByFAB && (
             <IconButton onClick={handleDelete} color="secondary">
               <DeleteIcon />
             </IconButton>
           )}
         </Box>
-        <TextField fullWidth margin="normal" label="내용" value={title} onChange={(e) => setText(e.target.value)} />
+        <TextField fullWidth margin="normal" label="제목" value={title} onChange={(e) => setTitle(e.target.value)} />
+        <TextField fullWidth margin="normal" label="설명" value={content} onChange={(e) => setContent(e.target.value)} />
         <TextField fullWidth margin="normal" label="시작 시간" value={startTime} onChange={(e) => setStartTime(e.target.value)} />
         <TextField fullWidth margin="normal" label="종료 시간" value={endTime} onChange={(e) => setEndTime(e.target.value)} />
-        <Button onClick={() => handleSave(title, startTime, endTime)} variant="contained" color="primary">
+        <TextField fullWidth margin="normal" label="색" value={color} onChange={(e) => setColor(e.target.value)} />
+        <Button onClick={isModalOpenedByFAB ? handleCreateTodo : handleUpdateTodo} variant="contained" color="primary">
           저장
         </Button>
-
-        <Button onClick={handleClose} variant="outlined" color="secondary" sx={{ ml: 2 }}>
+        <Button onClick={handleCloseModal} variant="outlined" color="secondary" sx={{ ml: 2 }}>
           취소
         </Button>
       </Box>

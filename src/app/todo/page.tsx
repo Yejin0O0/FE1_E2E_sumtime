@@ -1,18 +1,19 @@
-import { getServerSession } from 'next-auth';
-import { redirect } from 'next/navigation';
+'use client';
+
 import { SignOutButton } from '@/components/SignIn/SignOutButton';
+import { useSession } from 'next-auth/react';
 
-export default async function Page() {
-  const session = await getServerSession();
-
-  if (!session) {
-    redirect('/');
-  }
-
+export default function Page() {
+  const { data: session, status } = useSession();
   return (
     <>
-      <p>Welcome to the App, {session?.user?.name}!</p>
-      {session?.user?.image && <img src={session?.user?.image} alt="프로필" />}
+      <p>{status}</p>
+      {session && (
+        <>
+          <p>{session.user?.email}</p>
+          <p>{session.user?.name}</p>
+        </>
+      )}
       <SignOutButton />
     </>
   );

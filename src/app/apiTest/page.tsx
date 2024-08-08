@@ -3,7 +3,7 @@
 import { FormEvent, useState } from 'react';
 import { createUser } from '@/app/apiTest/calls/userCalls';
 import { createTodo, deleteTodo, updateTodo } from '@/app/apiTest/calls/todoCalls';
-import { useEmailValidation, useLoginValidation, useGetUserId } from '@/app/apiTest/hooks/userQueries';
+import { useEmailValidation, useLogin, useGetUserId } from '@/app/apiTest/hooks/userQueries';
 import { useGetAllTodos, useGetOneTodo } from '@/app/apiTest/hooks/todoQueries';
 
 export default function Login() {
@@ -20,7 +20,7 @@ export default function Login() {
 
   const { data: dbUserId } = useGetUserId(email);
   const { data: isValidEmail } = useEmailValidation(email);
-  const { data: isValidLogin } = useLoginValidation(email, password);
+  const { data: isValidLogin } = useLogin(email, password);
   const { data: todo } = useGetOneTodo(todoId);
   const { data: todos } = useGetAllTodos(userId);
 

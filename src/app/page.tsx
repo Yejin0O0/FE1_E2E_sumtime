@@ -4,7 +4,6 @@ import Link from 'next/link';
 import Button from '@mui/material/Button';
 import logo from '@/assets/images/sumtimeLogo.png';
 import { Flex } from '@/components/common';
-import SignInButton from '@/components/SignIn/SignInButton';
 import * as S from './HomePage.styled';
 
 export default function Home() {
@@ -16,7 +15,9 @@ export default function Home() {
           <p>당신의 하루를 더하세요</p>
         </div>
         <Flex>
-          <SignInButton />
+          <Link href="/login">
+            <Button variant="text">로그인</Button>
+          </Link>
           <Link href="/signup">
             <Button variant="text">회원가입하기</Button>
           </Link>
@@ -25,22 +26,3 @@ export default function Home() {
     </S.HomePage>
   );
 }
-
-// 'use client';
-
-// import Timetable from '@/timetable/components/Timetable';
-// import { startTime, endTime, slotTime, taskList, height } from '@/timetable/mocks/timetableMockData';
-
-// export default function Home() {
-//   return (
-//     <Timetable
-//       startTime={startTime}
-//       endTime={endTime}
-//       slotTime={slotTime}
-//       taskList={taskList}
-//       height={height}
-//       displayCurrentTime={false}
-//       timetableType="COLUMN"
-//     />
-//   );
-// }

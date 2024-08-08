@@ -16,6 +16,7 @@ export async function POST(req: NextRequest) {
         userId,
       })
       .returning({
+        todoId: schema.todosTable.todoId,
         title: schema.todosTable.title,
         content: schema.todosTable.content,
         startTime: schema.todosTable.startTime,

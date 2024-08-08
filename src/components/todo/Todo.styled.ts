@@ -54,13 +54,14 @@ export const TodoContainer = styled(Flex)`
   min-height: 30px;
   max-height: fit-content input {
     flex-grow: 1;
-    background-color: none;
+    background-color: transparent;
   }
 
   button {
-    width: 20px;
+    width: 25px;
     height: 100%;
     font-size: small;
+    z-index: 2;
   }
 
   button + button {

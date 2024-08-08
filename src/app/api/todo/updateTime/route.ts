@@ -3,18 +3,21 @@ import { eq } from 'drizzle-orm';
 import { db, schema } from '../../../../db';
 
 export async function PUT(req: NextRequest) {
-  const { todoId, title, content, startTime, endTime, color } = await req.json();
+  const { todoId, startTime, endTime } = await req.json();
 
   try {
+    // 업데이트할 필드 동적 설정
+    const updateFields: Partial<{ startTime: string | null; endTime: string | null }> = {};
+    if (startTime !== undefined && startTime !== null) {
+      updateFields.startTime = startTime;
+    }
+    if (endTime !== undefined && endTime !== null) {
+      updateFields.endTime = endTime;
+    }
+
     const result = await db
       .update(schema.todosTable)
-      .set({
-        title,
-        content,
-        startTime,
-        endTime,
-        color,
-      })
+      .set(updateFields)
       .where(eq(schema.todosTable.todoId, parseInt(todoId, 10)))
       .returning({
         todoId: schema.todosTable.todoId,
