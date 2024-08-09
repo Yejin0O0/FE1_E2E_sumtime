@@ -4,29 +4,29 @@ import React, { useState } from 'react';
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 import useBooleanState from '@/hooks/utils/useBooleanState';
-import { useGetAllTodos } from '@/app/apiTest/hooks/todoQueries';
+import { useGetAllTodos } from '@/api/hooks/todoHooks';
 import TodoComponent from './TodoComponent';
 import TodoModal from './TodoModal';
 import * as S from './Todo.styled';
 import { Text } from '../common';
 
 export default function Todo() {
-  const [todoId, setTodoId] = useState<string>('');
+  const [todoId, setTodoId] = useState<number>(0);
   const { value: isModalOpen, setTrue: setIsModalOpenTrue, setFalse: setIsModalOpenFalse } = useBooleanState();
   const {
     value: isModalOpenedByFAB,
     setTrue: setIsModalOpenedByFABTrue,
     setFalse: setIsModalOpenedByFABFalse,
   } = useBooleanState();
-  const { data: todoListData } = useGetAllTodos('1');
+  const { data: todoListData } = useGetAllTodos(1);
 
   const handleOpenFAB = () => {
     setIsModalOpenedByFABTrue();
-    setTodoId(''); // 새로 추가하는 경우 todoId를 빈 문자열로 설정
+    setTodoId(0); // 새로 추가하는 경우 todoId를 0으로 설정
     setIsModalOpenTrue();
   };
 
-  const handleOpenTodo = (id: string) => {
+  const handleOpenTodo = (id: number) => {
     setIsModalOpenedByFABFalse();
     setTodoId(id);
     setIsModalOpenTrue();

@@ -1,5 +1,5 @@
 import { useMutation, UseMutationResult, useQuery, UseQueryResult } from '@tanstack/react-query';
-import { createUser, deleteUser, emailValidation, getUserIdByEmail, login } from '@/app/apiTest/calls/userCalls';
+import { createUser, deleteUser, emailValidation, getUserIdByEmail, login } from '@/api/queryFn/userQueryFn';
 
 interface User {
   userId: number;
@@ -33,7 +33,7 @@ export const useLogin = (email: string, password: string): UseQueryResult<User, 
     enabled: !!email && !!password,
   });
 
-export const useDeleteUser = (): UseMutationResult<string, Error, string> =>
+export const useDeleteUser = (): UseMutationResult<string, Error, number> =>
   useMutation({
-    mutationFn: (userId: string) => deleteUser(userId),
+    mutationFn: (userId: number) => deleteUser(userId),
   });

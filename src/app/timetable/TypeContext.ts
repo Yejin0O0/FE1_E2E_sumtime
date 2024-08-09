@@ -1,6 +1,11 @@
 import { createContext } from 'react';
-import { TimetableType } from './components/Timetable.type';
+import { TimetableType, PopoverType, TaskSlotContextProps } from './components/Timetable.type';
 
 const TypeContext = createContext<TimetableType>('COLUMN');
+const PopoverTypeContext = createContext<PopoverType>('CLICK');
+const defaultContext: TaskSlotContextProps = {
+  defaultValue: '',
+};
+const TaskSlotContext = createContext<TaskSlotContextProps>(defaultContext);
 
-export default TypeContext;
+export { TypeContext, PopoverTypeContext, TaskSlotContext };

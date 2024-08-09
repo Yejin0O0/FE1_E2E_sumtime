@@ -54,7 +54,7 @@ export const login = async (email: string, password: string): Promise<User> => {
   }
 };
 
-export const deleteUser = async (userId: string): Promise<string> => {
+export const deleteUser = async (userId: number): Promise<string> => {
   try {
     const { data } = await axios.delete('/api/user/delete/', { data: { userId } });
     return data.message;

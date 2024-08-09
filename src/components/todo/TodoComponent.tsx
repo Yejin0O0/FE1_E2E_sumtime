@@ -1,13 +1,13 @@
 import React from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { useUpdateTodoTime } from '@/app/apiTest/hooks/todoQueries';
+import { useUpdateTodoTime } from '@/api/hooks/todoHooks';
 import * as S from './Todo.styled';
 import { Text } from '../common';
 
 interface TodoComponentProps {
   todoId: number;
   title: string;
-  setTodoId: (s: string) => void;
+  setTodoId: (todoId: number) => void;
 
   setIsModalOpenTrue: () => void;
   setIsModalOpenedByFABFalse: () => void;
@@ -19,7 +19,7 @@ function TodoComponent({ todoId, title, setTodoId, setIsModalOpenTrue, setIsModa
 
   const handleOpenModal = () => {
     // TodoList를 클릭한 경우
-    setTodoId(todoId.toString());
+    setTodoId(todoId);
     setIsModalOpenedByFABFalse();
     setIsModalOpenTrue();
   };
@@ -29,10 +29,10 @@ function TodoComponent({ todoId, title, setTodoId, setIsModalOpenTrue, setIsModa
     const endTime = null;
 
     await updateTodoTime(
-      { todoId: id.toString(), startTime, endTime },
+      { todoId: id, startTime, endTime },
       {
         onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ['todo', todoId.toString()] });
+          queryClient.invalidateQueries({ queryKey: ['todo', todoId] });
         },
         onError: (error) => {
           alert(`Todo 업데이트에 실패했습니다.${error}`);
@@ -46,10 +46,10 @@ function TodoComponent({ todoId, title, setTodoId, setIsModalOpenTrue, setIsModa
     const endTime = new Date().toLocaleTimeString();
 
     await updateTodoTime(
-      { todoId: id.toString(), startTime, endTime },
+      { todoId: id, startTime, endTime },
       {
         onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ['todo', todoId.toString()] });
+          queryClient.invalidateQueries({ queryKey: ['todo', todoId] });
         },
         onError: (error) => {
           alert(`Todo 업데이트에 실패했습니다.${error}`);

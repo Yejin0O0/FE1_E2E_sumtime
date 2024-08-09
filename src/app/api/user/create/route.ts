@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db, schema } from '../../../../db';
+import { db, schema } from '@/db';
 
 export async function POST(req: NextRequest) {
   const { email, password, nickname } = await req.json();

@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { getHourAndMinutesFormat, generateClassNameWithType } from '../../utils';
-import TypeContext from '../../TypeContext';
+import { TypeContext } from '../../TypeContext';
 import styles from './TypeTimeTable.module.scss';
 
 interface TimeSlotProps {

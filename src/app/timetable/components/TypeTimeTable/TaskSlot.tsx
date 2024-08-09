@@ -1,8 +1,8 @@
 import { add } from 'date-fns';
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import TaskSlotItem from './TaskSlotItem';
 import { Task } from '../Timetable.type';
-import TypeContext from '../../TypeContext';
+import { TypeContext } from '../../TypeContext';
 import styles from './TypeTimeTable.module.scss';
 import { generateClassNameWithType } from '../../utils';
 
@@ -13,13 +13,9 @@ interface TaskSlotProps {
   shouldDisplayTaskContentList: boolean[];
   taskSlotStyle: React.CSSProperties;
 }
-function TaskSlot({ headerDate, slotTime, taskItemList, shouldDisplayTaskContentList, taskSlotStyle = {} }: TaskSlotProps) {
-  const [openTaskIndex, setOpenTaskIndex] = useState<number | null>(null);
-  const type = useContext(TypeContext);
 
-  const handleOpenChange = (index: number, isOpen: boolean) => {
-    setOpenTaskIndex(isOpen ? index : null);
-  };
+function TaskSlot({ headerDate, slotTime, taskItemList, shouldDisplayTaskContentList, taskSlotStyle = {} }: TaskSlotProps) {
+  const type = useContext(TypeContext);
 
   if (taskItemList.length === 0) {
     return <div className={generateClassNameWithType(styles, 'taskSlotLayout', type)} />;
@@ -42,8 +38,6 @@ function TaskSlot({ headerDate, slotTime, taskItemList, shouldDisplayTaskContent
             slotEndTime={slotEndTime}
             slotTime={slotTime}
             shouldDisplayTaskContent={shouldDisplayTaskContent}
-            isOpen={openTaskIndex === index}
-            onOpenChange={(isOpen) => handleOpenChange(index, isOpen)}
           />
         );
       })}

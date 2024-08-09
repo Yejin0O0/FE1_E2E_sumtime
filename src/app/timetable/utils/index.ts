@@ -88,8 +88,13 @@ const checkTimeOverlapFromTaskList = (taskList: Task[]) => {
   return false;
 };
 
-const calculateCurrentTimeOffset = (currentTime: Date, startTime: Date, endTime: Date) => {
+const calculateCurrentTimeOffset = (currentTime: Date | null, startTime: Date, endTime: Date) => {
   let offsetPercent = 0;
+
+  if (!currentTime) {
+    return { offsetPercent };
+  }
+
   const currentMinutes = TimeToMilliseconds(currentTime); // 현재 시간
   const startMinutes = TimeToMilliseconds(startTime); // 슬롯의 시작 시간
   const endMinutes = TimeToMilliseconds(endTime); // 슬롯의 종료 시간
@@ -139,3 +144,4 @@ export { hasKey, insertKey } from './map';
 export { distributeSize, isFormatString, parseSize, parseSizeFormat, parseSizeValue } from './height';
 export { getColor } from './color';
 export { generateClassNameWithType } from './css';
+export { getPopoverEvent } from './popover';

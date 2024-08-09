@@ -5,7 +5,7 @@ import TextField from '@mui/material/TextField';
 import logo from '@/assets/images/sumtimeLogo.png';
 import { useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { createUser } from '@/app/apiTest/calls/userCalls';
+import { createUser } from '@/api/queryFn/userQueryFn';
 import * as S from './Signup.styled';
 
 function SignupSection() {

@@ -1,22 +1,22 @@
 'use client';
 
 import { FormEvent, useState } from 'react';
-import { createUser } from '@/app/apiTest/calls/userCalls';
-import { createTodo, deleteTodo, updateTodo } from '@/app/apiTest/calls/todoCalls';
-import { useEmailValidation, useLogin, useGetUserId } from '@/app/apiTest/hooks/userQueries';
-import { useGetAllTodos, useGetOneTodo } from '@/app/apiTest/hooks/todoQueries';
+import { createUser } from '@/api/queryFn/userQueryFn';
+import { createTodo, deleteTodo, updateTodo } from '@/api/queryFn/todoQueryFn';
+import { useEmailValidation, useLogin, useGetUserId } from '@/api/hooks/userHooks';
+import { useGetAllTodos, useGetOneTodo } from '@/api/hooks/todoHooks';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [nickname, setNickname] = useState('');
-  const [userId, setUserId] = useState('');
+  const [userId, setUserId] = useState(0);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
   const [color, setColor] = useState('');
-  const [todoId, setTodoId] = useState('');
+  const [todoId, setTodoId] = useState(0);
 
   const { data: dbUserId } = useGetUserId(email);
   const { data: isValidEmail } = useEmailValidation(email);
@@ -97,8 +97,8 @@ export default function Login() {
       <h1 style={{ color: 'orange' }}>Todo Control</h1>
       <form onSubmit={todoSubmitHandler} style={{ display: 'flex', flexDirection: 'column', width: '335px' }}>
         <div style={{ display: 'flex' }}>
-          <input type="text" value={userId} onChange={(e) => setUserId(e.target.value)} placeholder="UserId" />
-          <input type="text" value={todoId} onChange={(e) => setTodoId(e.target.value)} placeholder="todoId" />
+          <input type="text" value={userId} onChange={(e) => setUserId(Number(e.target.value))} placeholder="UserId" />
+          <input type="text" value={todoId} onChange={(e) => setTodoId(Number(e.target.value))} placeholder="todoId" />
         </div>
         <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Title" />
         <input type="text" value={content} onChange={(e) => setContent(e.target.value)} placeholder="Content(optional)" />

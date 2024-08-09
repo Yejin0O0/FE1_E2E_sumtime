@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { eq } from 'drizzle-orm';
-import { db, schema } from '../../../../db';
+import { db, schema } from '@/db';
 
 export async function PUT(req: NextRequest) {
   const { todoId, title, content, startTime, endTime, color } = await req.json();

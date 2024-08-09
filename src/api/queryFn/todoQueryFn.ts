@@ -2,7 +2,7 @@ import axios, { AxiosError } from 'axios';
 import { SelectTodo } from '@/db/schema/todos';
 
 export const createTodo = async (
-  userId: string,
+  userId: number,
   title: string,
   content: string | null,
   startTime: string | null,
@@ -20,7 +20,7 @@ export const createTodo = async (
   }
 };
 
-export const getAllTodosByUserId = async (userId: string): Promise<SelectTodo[]> => {
+export const getAllTodosByUserId = async (userId: number): Promise<SelectTodo[]> => {
   try {
     const { data } = await axios.post('/api/todo/getAllByUserId', { userId });
     return data.todos;
@@ -32,7 +32,7 @@ export const getAllTodosByUserId = async (userId: string): Promise<SelectTodo[]>
   }
 };
 
-export const getOneTodoByTodoId = async (todoId: string): Promise<SelectTodo> => {
+export const getOneTodoByTodoId = async (todoId: number): Promise<SelectTodo> => {
   try {
     const { data } = await axios.post('/api/todo/getOneByTodoId', { todoId });
     return data.todo;
@@ -45,7 +45,7 @@ export const getOneTodoByTodoId = async (todoId: string): Promise<SelectTodo> =>
 };
 
 export const updateTodo = async (
-  todoId: string,
+  todoId: number,
   title: string,
   content: string | null,
   startTime: string | null,
@@ -63,7 +63,7 @@ export const updateTodo = async (
   }
 };
 
-export const updateTodoTime = async (todoId: string, startTime: string | null, endTime: string | null): Promise<SelectTodo> => {
+export const updateTodoTime = async (todoId: number, startTime: string | null, endTime: string | null): Promise<SelectTodo> => {
   try {
     const { data } = await axios.put('/api/todo/updateTime', { todoId, startTime, endTime });
     return data.todo;
@@ -75,7 +75,7 @@ export const updateTodoTime = async (todoId: string, startTime: string | null, e
   }
 };
 
-export const deleteTodo = async (todoId: string): Promise<string> => {
+export const deleteTodo = async (todoId: number): Promise<string> => {
   try {
     const { data } = await axios.delete('/api/todo/delete/', { data: { todoId } });
     return data.message;

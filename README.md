@@ -83,24 +83,24 @@ Drizzle
 
 ### 랜딩페이지
 
-![Landing Page](image-2.png)
+<img width="708" alt="landing page" src="https://github.com/user-attachments/assets/ffffb2fd-18f9-4205-94d6-140f911dc02c">
 
 ### 투두 페이지
 
-![Todo Page](image-3.png)
+<img width="708" alt="todo page" src="https://github.com/user-attachments/assets/2d7c6a63-209d-4678-ad92-386af7396df2">
 
 ### 투두 페이지 - 모달
 
-![Todo Page - modal](image-4.png)
+<img width="708" alt="todo page - modal" src="https://github.com/user-attachments/assets/895aaeb2-f5db-4af6-993e-1d0ef294178f">
 
 ### 회원가입 페이지
 
-![SignUp Page](image-5.png)
+<img width="708" alt="signup page" src="https://github.com/user-attachments/assets/dda03ffc-1853-4c04-8ca7-584c2ae27fc7">
 
 ### 로그인 페이지
 
-![Login Page](image-6.png)
+<img width="708" alt="login page" src="https://github.com/user-attachments/assets/b1767b1e-ec34-4b9b-a0ad-60cdfdd25786">
 
 ## 🧩 ERD, DB 스키마
 
-![ERD](image-7.png)
+![erd](https://github.com/user-attachments/assets/6e5fa043-2edf-4586-90d0-27c20308e483)

@@ -2,21 +2,24 @@ import { useContext, useEffect, useState } from 'react';
 
 import styled from './CurrentTimeLine.module.scss';
 import { calculateCurrentTimeOffset, parseSize, generateClassNameWithType } from '../../utils';
-import TypeContext from '../../TypeContext';
+import { TypeContext } from '../../TypeContext';
 
 interface CurrentTimeLineProps {
   startTime: Date;
   endTime: Date;
   size: string;
+  currentTimeLineStyle?: string;
 }
 
-function CurrentTimeLine({ startTime, endTime, size }: CurrentTimeLineProps) {
+function CurrentTimeLine({ startTime, endTime, size, currentTimeLineStyle }: CurrentTimeLineProps) {
   const type = useContext(TypeContext);
-  const [currentTime, setCurrentTime] = useState(new Date());
+  const [currentTime, setCurrentTime] = useState<Date | null>(null);
   const { value, format } = parseSize(size);
 
   // 여기서 전체 offset을 정리해서 두자.
   useEffect(() => {
+    setCurrentTime(new Date());
+
     const intervalId = setInterval(() => {
       setCurrentTime(new Date());
     }, 60000); // 매 1분마다 현재 시간 업데이트
@@ -28,11 +31,9 @@ function CurrentTimeLine({ startTime, endTime, size }: CurrentTimeLineProps) {
   const currentTimeLinePosition = `${(offsetPercent * value) / 100}${format}`;
   const dynamicStyle: React.CSSProperties = type === 'ROW' ? { left: currentTimeLinePosition } : { top: currentTimeLinePosition };
 
-  return (
-    <div className={generateClassNameWithType(styled, 'currentTimeLine', type)} style={dynamicStyle}>
-      <div className={generateClassNameWithType(styled, 'line', type)} />
-    </div>
-  );
+  const mergedStyle: React.CSSProperties = { ...dynamicStyle, ...{ border: currentTimeLineStyle } };
+
+  return <hr className={generateClassNameWithType(styled, 'line', type)} style={mergedStyle} />;
 }
 
 export default CurrentTimeLine;
