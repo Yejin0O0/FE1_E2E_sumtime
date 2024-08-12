@@ -1,15 +1,16 @@
-interface Task {
+interface BaseTask {
   id: number;
   title: string;
-  subTitle: string;
-  taskColor?: string;
-  startTime: Date;
-  endTime: Date;
+  content: string | null;
+  taskColor: string | null;
+  startTime: Date | null;
+  endTime: Date | null;
 }
+
 interface TaskSlotContextProps {
   defaultValue: string;
 }
 type TimetableType = 'CIRCLE' | 'ROW' | 'COLUMN';
 type PopoverType = 'CLICK' | 'HOVER';
 
-export type { Task, TimetableType, PopoverType, TaskSlotContextProps };
+export type { BaseTask, TimetableType, PopoverType, TaskSlotContextProps };

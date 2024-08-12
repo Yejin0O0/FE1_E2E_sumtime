@@ -20,10 +20,10 @@ interface TodoModalProps {
 export default function TodoModal({ open, todoId, isModalOpenedByFAB, setIsModalOpenFalse }: TodoModalProps) {
   const { data: todoData, isSuccess: isSuccessGetOneTodo } = useGetOneTodo(todoId);
   const [title, setTitle] = React.useState('');
-  const [content, setContent] = React.useState('');
-  const [startTime, setStartTime] = React.useState('');
-  const [endTime, setEndTime] = React.useState('');
-  const [color, setColor] = React.useState('');
+  const [content, setContent] = React.useState<string | null>('');
+  const [startTime, setStartTime] = React.useState<string | null>('');
+  const [endTime, setEndTime] = React.useState<string | null>('');
+  const [color, setColor] = React.useState<string | null>('');
 
   const queryClient = useQueryClient();
   const { mutate: updateTodo } = useUpdateTodo();

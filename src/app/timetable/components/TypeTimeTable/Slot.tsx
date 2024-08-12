@@ -2,21 +2,21 @@ import { useContext } from 'react';
 import TimeSlot from './TimeSlot';
 import TaskSlot from './TaskSlot';
 import { generateClassNameWithType } from '../../utils';
-import { Task } from '../Timetable.type';
+import { BaseTask } from '../Timetable.type';
 import { TypeContext } from '../../TypeContext';
 import styles from './TypeTimeTable.module.scss';
 
-interface SlotProps {
+interface SlotProps<T extends BaseTask> {
   headerDate: Date;
   size: string;
   slotTime: number;
-  taskItemList: Task[];
+  taskItemList: T[];
   shouldDisplayTaskContentList: boolean[];
   timeSlotStyle: React.CSSProperties;
   taskSlotStyle: React.CSSProperties;
 }
 
-function Slot({
+function Slot<T extends BaseTask>({
   headerDate,
   slotTime,
   taskItemList,
@@ -24,7 +24,7 @@ function Slot({
   shouldDisplayTaskContentList = [],
   timeSlotStyle,
   taskSlotStyle,
-}: SlotProps) {
+}: SlotProps<T>) {
   const type = useContext(TypeContext);
   const style = type === 'ROW' ? { width: size } : { height: size };
 

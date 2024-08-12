@@ -1,15 +1,15 @@
 import { useContext } from 'react';
 import Slot from './Slot';
-import { Task } from '../Timetable.type';
+import { BaseTask } from '../Timetable.type';
 import { generateClassNameWithType, filterTaskListByTimeSlot, isDateInRange, getShouldDisplayTaskContentList } from '../../utils';
 import { TypeContext } from '../../TypeContext';
 import styles from './TypeTimeTable.module.scss';
 import CurrentTimeLine from '../CurrentTimeLine';
 
-interface TypeTimeTableProps {
+interface TypeTimeTableProps<T extends BaseTask> {
   timeSlots: Date[];
   slotSize: string;
-  taskList: Task[];
+  taskList: T[];
   slotTime: number;
   size: string;
   startTime: Date;
@@ -21,7 +21,7 @@ interface TypeTimeTableProps {
   currentTimeLineStyle?: string;
 }
 
-function TypeTimeTable({
+function TypeTimeTable<T extends BaseTask>({
   timeSlots,
   slotSize,
   timeSlotStyle,
@@ -34,7 +34,7 @@ function TypeTimeTable({
   startTime,
   endTime,
   currentTimeLineStyle,
-}: TypeTimeTableProps) {
+}: TypeTimeTableProps<T>) {
   const type = useContext(TypeContext);
   const uniqueTaskIdMap = new Map();
 

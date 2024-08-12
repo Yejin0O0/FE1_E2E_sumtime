@@ -1,20 +1,26 @@
 import { add } from 'date-fns';
 import { useContext } from 'react';
 import TaskSlotItem from './TaskSlotItem';
-import { Task } from '../Timetable.type';
+import { BaseTask } from '../Timetable.type';
 import { TypeContext } from '../../TypeContext';
 import styles from './TypeTimeTable.module.scss';
 import { generateClassNameWithType } from '../../utils';
 
-interface TaskSlotProps {
+interface TaskSlotProps<T extends BaseTask> {
   headerDate: Date;
   slotTime: number;
-  taskItemList: Task[];
+  taskItemList: T[];
   shouldDisplayTaskContentList: boolean[];
   taskSlotStyle: React.CSSProperties;
 }
 
-function TaskSlot({ headerDate, slotTime, taskItemList, shouldDisplayTaskContentList, taskSlotStyle = {} }: TaskSlotProps) {
+function TaskSlot<T extends BaseTask>({
+  headerDate,
+  slotTime,
+  taskItemList,
+  shouldDisplayTaskContentList,
+  taskSlotStyle = {},
+}: TaskSlotProps<T>) {
   const type = useContext(TypeContext);
 
   if (taskItemList.length === 0) {
@@ -28,7 +34,9 @@ function TaskSlot({ headerDate, slotTime, taskItemList, shouldDisplayTaskContent
     <div className={generateClassNameWithType(styles, 'taskSlotLayout', type)} style={taskSlotStyle}>
       {taskItemList.map((taskItem, index) => {
         const shouldDisplayTaskContent = shouldDisplayTaskContentList[index];
-
+        if (!taskItem.startTime || !taskItem.endTime) {
+          return null;
+        }
         return (
           <TaskSlotItem
             key={taskItem.id}

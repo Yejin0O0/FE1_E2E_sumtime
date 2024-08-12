@@ -3,28 +3,27 @@
 import { useCallback, useMemo } from 'react';
 import { eachMinuteOfInterval } from 'date-fns';
 import { parseSize, distributeSize, checkTimeOverlapFromTaskList } from '../utils';
-import { PopoverType, Task, TimetableType } from './Timetable.type';
+import { PopoverType, BaseTask, TimetableType } from './Timetable.type';
 import { TypeContext, PopoverTypeContext, TaskSlotContext } from '../TypeContext';
 import TypeTimeTable from './TypeTimeTable';
 
-interface TimetableProps {
+interface TimetableProps<T extends BaseTask> {
   startTime: Date;
   endTime: Date;
   slotTime: number;
   timeTableSize: string;
   timetableType: TimetableType;
+  taskList: T[];
   displayCurrentTime?: boolean;
-  taskList: Task[];
   popoverType?: PopoverType;
   timeTableStyle?: React.CSSProperties;
   timeSlotStyle?: React.CSSProperties;
   taskSlotStyle?: React.CSSProperties;
-
   defaultValue: string;
   currentTimeLineStyle?: string;
 }
 
-function Timetable({
+function Timetable<T extends BaseTask>({
   startTime,
   endTime,
   slotTime,
@@ -39,9 +38,9 @@ function Timetable({
 
   defaultValue,
   currentTimeLineStyle,
-}: TimetableProps) {
+}: TimetableProps<T>) {
   const checkOverlapFromTaskList = useCallback(
-    (currentTaskList: Task[]) => checkTimeOverlapFromTaskList(currentTaskList),
+    (currentTaskList: T[]) => checkTimeOverlapFromTaskList(currentTaskList),
     [taskList],
   );
 

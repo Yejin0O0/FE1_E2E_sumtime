@@ -32,12 +32,17 @@ export default function Todo() {
     setIsModalOpenTrue();
   };
 
+  const todayDate = new Date();
+  // 해당 부분은 현재 date객체를 가져와 사용하고 있습니다. 이후 라이브러리에서 제공하는 함수로 변경될 가능성이 있습니다.
+  // 또한, 달력 파트의 날짜를 가져오는 부분과 중복되는 부분이 있어, 추후 중복을 제거할 수 있도록 리팩토링이 필요합니다.
+
   return (
     todoListData && (
       <S.TodoSection>
         <S.TodoComponentsSection>
           <Text $fontSize="xl" $fontWeight="bold" $color="black">
-            2024년 8월 1일 목요일
+            {todayDate.getFullYear()}년 {todayDate.getMonth() + 1}월 {todayDate.getDate()}일{' '}
+            {todayDate.toLocaleDateString('ko-KR', { weekday: 'long' })}
           </Text>
           {todoListData.map((todo) => (
             <TodoComponent
