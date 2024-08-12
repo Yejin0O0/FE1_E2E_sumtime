@@ -1,19 +1,23 @@
 'use client';
 
-import { COLOR_LIST, COLOR_LIST_LENGTH } from '../constants';
+import randomColors from 'randomcolor';
+import { BaseTask, TaskThemeType } from '../components/Timetable.type';
 
-let currentColorIndex = 0;
-const colorMatchMap = new Map<unknown, unknown>();
+const getRandomColor = (task: BaseTask, theme?: TaskThemeType) => {
+  const { id, seed: taskSeed } = task;
+  const seed = taskSeed ?? id;
 
-const getColor = (id: unknown) => {
-  if (colorMatchMap.has(id)) {
-    return colorMatchMap.get(id);
-  }
-
-  const color = COLOR_LIST[currentColorIndex];
-  currentColorIndex = (currentColorIndex + 1) % COLOR_LIST_LENGTH;
-  colorMatchMap.set(id, color);
-  return color;
+  return randomColors({ seed, hue: theme });
 };
 
-export { getColor };
+const getTaskColor = (task: BaseTask) => {
+  const { taskColor } = task;
+
+  if (!taskColor || taskColor === '') {
+    return null;
+  }
+
+  return taskColor;
+};
+
+export { getRandomColor, getTaskColor };

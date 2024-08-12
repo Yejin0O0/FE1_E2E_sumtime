@@ -157,6 +157,6 @@ export {
 
 export { hasKey, insertKey } from './map';
 export { distributeSize, isFormatString, parseSize, parseSizeFormat, parseSizeValue } from './height';
-export { getColor } from './color';
+export { getRandomColor, getTaskColor } from './color';
 export { generateClassNameWithType } from './css';
 export { getPopoverEvent } from './popover';

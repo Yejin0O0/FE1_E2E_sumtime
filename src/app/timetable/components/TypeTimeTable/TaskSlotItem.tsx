@@ -1,9 +1,15 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useContext, useRef, useEffect, useState } from 'react';
-import { calculateTaskOffsetAndHeightPercent, getColor, generateClassNameWithType, getPopoverEvent } from '../../utils';
+import {
+  calculateTaskOffsetAndHeightPercent,
+  generateClassNameWithType,
+  getPopoverEvent,
+  getRandomColor,
+  getTaskColor,
+} from '../../utils';
 import { useHoverFloatingInReference, useClickFloatingInReference } from '../../hooks';
 import { BaseTask } from '../Timetable.type';
-import { TypeContext, PopoverTypeContext, TaskSlotContext } from '../../TypeContext';
+import { TypeContext, PopoverTypeContext, TaskSlotContext, TaskThemeContext } from '../../contexts';
 import styles from './TypeTimeTable.module.scss';
 
 interface TaskSlotItemProps<T extends BaseTask> {
@@ -22,12 +28,13 @@ function TaskSlotItem<T extends BaseTask>({
   slotEndTime,
   slotTime,
 }: TaskSlotItemProps<T>) {
-  const { startTime, endTime, taskColor, title, content, id } = taskItem;
+  const { startTime, endTime, title, content } = taskItem;
   const taskSlotRef = useRef<HTMLDivElement>(null);
   const [isContentVisible, setIsContentVisible] = useState(false);
   const type = useContext(TypeContext);
   const taskOption = useContext(TaskSlotContext);
   const popoverType = useContext(PopoverTypeContext);
+  const taskColorTheme = useContext(TaskThemeContext);
   const hoverObject = useHoverFloatingInReference();
   const clickObject = useClickFloatingInReference();
   const { refs, fixFloatingTargetPosition, floatingStyles, getFloatingProps, getReferenceProps, isFloatingTargetVisible } =
@@ -36,6 +43,7 @@ function TaskSlotItem<T extends BaseTask>({
   if (!startTime || !endTime) {
     return null;
   }
+
   const { offsetPercent, heightPercent } = calculateTaskOffsetAndHeightPercent(
     slotStartTime,
     slotEndTime,
@@ -44,12 +52,7 @@ function TaskSlotItem<T extends BaseTask>({
     slotTime,
   );
 
-  const taskSlotColor = () => {
-    if (taskColor === '' || taskColor === null) {
-      return getColor(id);
-    }
-    return taskColor;
-  };
+  const taskSlotColor = getTaskColor(taskItem) ?? getRandomColor(taskItem, taskColorTheme);
 
   const positionStyles =
     type === 'ROW'
@@ -80,7 +83,7 @@ function TaskSlotItem<T extends BaseTask>({
         className={generateClassNameWithType(styles, 'buttonInherit', type)}
         style={{
           ...positionStyles,
-          backgroundColor: `${taskSlotColor()}`,
+          backgroundColor: `${taskSlotColor}`,
         }}
         onClick={fixFloatingTargetPosition}
       >

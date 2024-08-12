@@ -3,7 +3,7 @@ import TimeSlot from './TimeSlot';
 import TaskSlot from './TaskSlot';
 import { generateClassNameWithType } from '../../utils';
 import { BaseTask } from '../Timetable.type';
-import { TypeContext } from '../../TypeContext';
+import { TypeContext } from '../../contexts';
 import styles from './TypeTimeTable.module.scss';
 
 interface SlotProps<T extends BaseTask> {
