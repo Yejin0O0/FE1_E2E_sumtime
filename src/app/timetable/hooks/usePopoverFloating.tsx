@@ -1,11 +1,11 @@
-/* eslint-disable consistent-return */
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useFloating, offset, useDismiss, useInteractions, useHover } from '@floating-ui/react';
 import { useRequestAnimationFrame } from './useRequestAnimationFrame';
+import { PopoverType } from '../components/Timetable.type';
 
-function useHoverFloatingInReference() {
+function usePopoverFloating(popoverType: PopoverType) {
   const [isFloatingTargetVisible, setIsFloatingTargetVisible] = useState(false);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [position, setPosition] = useState({ x: 0, y: 0 });
 
   const { refs, floatingStyles, context } = useFloating({
     placement: 'bottom-start',
@@ -13,7 +13,7 @@ function useHoverFloatingInReference() {
     middleware: [
       offset(
         ({ rects }) => {
-          const { x, y } = mousePosition;
+          const { x, y } = position;
           const { height } = rects.reference;
           const referenceClientRect = refs.reference.current?.getBoundingClientRect();
           const refY: number = referenceClientRect?.y ?? 0;
@@ -24,7 +24,7 @@ function useHoverFloatingInReference() {
             crossAxis: x - refX,
           };
         },
-        [mousePosition.x, mousePosition.y],
+        [position.x, position.y],
       ),
     ],
     open: isFloatingTargetVisible,
@@ -32,29 +32,34 @@ function useHoverFloatingInReference() {
   });
 
   const dismiss = useDismiss(context, { outsidePress: true });
-  const hover = useHover(context);
-  const { getReferenceProps, getFloatingProps } = useInteractions([dismiss, hover]);
+  const interactions = popoverType === 'HOVER' ? [dismiss, useHover(context)] : [dismiss];
+  const { getReferenceProps, getFloatingProps } = useInteractions(interactions);
 
   const handleMouseMove = useRequestAnimationFrame((event: MouseEvent) => {
     const { clientX, clientY } = event;
-    setMousePosition({ x: clientX + 5, y: clientY + 5 });
+    setPosition({ x: clientX + 5, y: clientY + 5 });
   });
 
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const { clientX, clientY } = event;
+    setPosition({ x: clientX, y: clientY });
+    setIsFloatingTargetVisible(true);
+  };
+
   useEffect(() => {
-    const refElement = refs.reference?.current as HTMLElement | null;
+    if (popoverType === 'HOVER') {
+      const refElement = refs.reference?.current as HTMLElement | null;
 
-    if (!refElement) {
-      return;
-    }
+      if (!refElement) return undefined;
 
-    if (refElement) {
-      refElement.addEventListener('mousemove', handleMouseMove)!;
+      refElement.addEventListener('mousemove', handleMouseMove);
 
       return () => {
         refElement.removeEventListener('mousemove', handleMouseMove);
       };
     }
-  }, []);
+    return undefined;
+  }, [popoverType]);
 
   return {
     refs,
@@ -62,7 +67,8 @@ function useHoverFloatingInReference() {
     getReferenceProps,
     getFloatingProps,
     isFloatingTargetVisible,
+    fixFloatingTargetPosition: popoverType === 'CLICK' ? handleClick : undefined,
   };
 }
 
-export { useHoverFloatingInReference };
+export default usePopoverFloating;

@@ -1,16 +1,10 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useContext, useRef, useEffect, useState } from 'react';
-import {
-  calculateTaskOffsetAndHeightPercent,
-  generateClassNameWithType,
-  getPopoverEvent,
-  getRandomColor,
-  getTaskColor,
-} from '../../utils';
-import { useHoverFloatingInReference, useClickFloatingInReference } from '../../hooks';
+import { calculateTaskOffsetAndHeightPercent, generateClassNameWithType, getRandomColor, getTaskColor } from '../../utils';
 import { BaseTask } from '../Timetable.type';
 import { TypeContext, PopoverTypeContext, TaskSlotContext, TaskThemeContext } from '../../contexts';
 import styles from './TypeTimeTable.module.scss';
+import usePopoverFloating from '../../hooks/usePopoverFloating';
 
 interface TaskSlotItemProps<T extends BaseTask> {
   taskItem: T;
@@ -35,10 +29,9 @@ function TaskSlotItem<T extends BaseTask>({
   const taskOption = useContext(TaskSlotContext);
   const popoverType = useContext(PopoverTypeContext);
   const taskColorTheme = useContext(TaskThemeContext);
-  const hoverObject = useHoverFloatingInReference();
-  const clickObject = useClickFloatingInReference();
+
   const { refs, fixFloatingTargetPosition, floatingStyles, getFloatingProps, getReferenceProps, isFloatingTargetVisible } =
-    getPopoverEvent(hoverObject, clickObject, popoverType);
+    usePopoverFloating(popoverType);
 
   if (!startTime || !endTime) {
     return null;
