@@ -21,6 +21,7 @@ interface TimetableProps<T extends BaseTask> {
   timeTableStyle?: React.CSSProperties;
   timeSlotStyle?: React.CSSProperties;
   taskSlotStyle?: React.CSSProperties;
+  slotStyle?: React.CSSProperties;
   taskTheme?: TaskThemeType;
 }
 
@@ -39,6 +40,7 @@ function Timetable<T extends BaseTask>({
   defaultValue,
   currentTimeLineStyle,
   taskTheme,
+  slotStyle = {},
 }: TimetableProps<T>) {
   const checkOverlapFromTaskList = useCallback(
     (currentTaskList: T[]) => checkTimeOverlapFromTaskList(currentTaskList),
@@ -82,6 +84,7 @@ function Timetable<T extends BaseTask>({
         startTime={startTime}
         endTime={endTime}
         currentTimeLineStyle={currentTimeLineStyle}
+        slotStyle={slotStyle}
       />
     </ContextProvider>
   );

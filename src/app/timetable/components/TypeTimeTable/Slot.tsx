@@ -14,6 +14,7 @@ interface SlotProps<T extends BaseTask> {
   shouldDisplayTaskContentList: boolean[];
   timeSlotStyle: React.CSSProperties;
   taskSlotStyle: React.CSSProperties;
+  slotStyle: React.CSSProperties;
 }
 
 function Slot<T extends BaseTask>({
@@ -24,12 +25,13 @@ function Slot<T extends BaseTask>({
   shouldDisplayTaskContentList = [],
   timeSlotStyle,
   taskSlotStyle,
+  slotStyle,
 }: SlotProps<T>) {
   const type = useContext(TypeContext);
   const style = type === 'ROW' ? { width: size } : { height: size };
 
   return (
-    <div className={generateClassNameWithType(styles, 'slot', type)} style={style}>
+    <div className={generateClassNameWithType(styles, 'slot', type)} style={{ ...slotStyle, ...style }}>
       <TimeSlot headerDate={headerDate} timeSlotStyle={timeSlotStyle} />
       <TaskSlot
         headerDate={headerDate}
@@ -41,5 +43,7 @@ function Slot<T extends BaseTask>({
     </div>
   );
 }
+
+//
 
 export default Slot;

@@ -18,6 +18,7 @@ interface TypeTimeTableProps<T extends BaseTask> {
   timeSlotStyle: React.CSSProperties;
   taskSlotStyle?: React.CSSProperties;
   timeTableStyle?: React.CSSProperties;
+  slotStyle: React.CSSProperties;
   currentTimeLineStyle?: string;
 }
 
@@ -30,6 +31,7 @@ function TypeTimeTable<T extends BaseTask>({
   displayCurrentTime,
   taskSlotStyle = {},
   timeTableStyle = {},
+  slotStyle = {},
   size,
   startTime,
   endTime,
@@ -60,6 +62,7 @@ function TypeTimeTable<T extends BaseTask>({
             slotTime={slotTime}
             taskItemList={taskItemList}
             taskSlotStyle={taskSlotStyle}
+            slotStyle={slotStyle}
           />
         );
       })}
