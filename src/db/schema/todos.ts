@@ -5,6 +5,7 @@ export const todosTable = sqliteTable('todos', {
   todoId: integer('todo_id').primaryKey({ autoIncrement: true }),
   title: text('title').notNull(),
   content: text('content'),
+  createdAt: text('created_at').notNull(),
   startTime: text('start_time'),
   endTime: text('end_time'),
   color: text('color'),

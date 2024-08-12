@@ -4,6 +4,7 @@ import {
   deleteTodo,
   getAllTodosByUserId,
   getOneTodoByTodoId,
+  getTodosByDate,
   updateTodo,
   updateTodoTime,
 } from '@/api/queryFn/todoQueryFn';
@@ -15,6 +16,7 @@ export const useCreateTodo = (): UseMutationResult<
   {
     userId: number;
     title: string;
+    createdAt: Date;
     content: string | null;
     startTime: string | null;
     endTime: string | null;
@@ -22,17 +24,19 @@ export const useCreateTodo = (): UseMutationResult<
   }
 > =>
   useMutation({
-    mutationFn: ({ userId, title, content, startTime, endTime, color }) =>
-      createTodo(userId, title, content, startTime, endTime, color),
+    mutationFn: ({ userId, title, createdAt, content, startTime, endTime, color }) =>
+      createTodo(userId, title, createdAt, content, startTime, endTime, color),
   });
 
 export const useGetAllTodos = (userId: number): UseQueryResult<SelectTodo[], Error> =>
   useQuery({ queryKey: ['todos', userId], queryFn: () => getAllTodosByUserId(userId), enabled: !!userId });
+export const useGetTodosMatchingDate = (userId: number, createdAt: Date): UseQueryResult<SelectTodo[], Error> =>
+  useQuery({ queryKey: ['todos', userId], queryFn: () => getTodosByDate(userId, createdAt), enabled: !!userId });
 
 export const useGetAllTodosForTimetable = (userId: number): UseQueryResult<TodoForTimetable[], Error> =>
   useQuery({
     queryKey: ['todos', userId],
-    queryFn: () => getAllTodosByUserId(userId),
+    queryFn: () => getTodosByDate(userId, new Date()),
     enabled: !!userId,
     select: (data) =>
       data.map((todo) => ({

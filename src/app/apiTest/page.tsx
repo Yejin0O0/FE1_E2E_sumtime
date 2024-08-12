@@ -49,7 +49,7 @@ export default function Login() {
 
     switch (name) {
       case 'create':
-        alert(JSON.stringify(await createTodo(userId, title, content, startTime, endTime, color), null, 2));
+        alert(JSON.stringify(await createTodo(userId, title, new Date(), content, startTime, endTime, color), null, 2));
         break;
       case 'getAllByUserId':
         alert(JSON.stringify(todos, null, 2));
