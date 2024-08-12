@@ -1,7 +1,7 @@
 import { NextAuthOptions, User } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, sql } from 'drizzle-orm';
 import { db, schema } from '@/db';
 
 export const authOptions: NextAuthOptions = {
@@ -29,20 +29,30 @@ export const authOptions: NextAuthOptions = {
           throw new Error('please enter the email and password');
         }
 
-        const user = await db
+        const user = db
           .select({
             id: schema.usersTable.userId,
             email: schema.usersTable.email,
             name: schema.usersTable.nickname,
           })
           .from(schema.usersTable)
-          .where(and(eq(schema.usersTable.email, credentials.email), eq(schema.usersTable.password, credentials.password)))
-          .get();
+          .where(
+            and(
+              eq(schema.usersTable.email, sql.placeholder('email')),
+              eq(schema.usersTable.password, sql.placeholder('password')),
+            ),
+          )
+          .prepare();
 
-        if (!user) {
+        try {
+          const userData = await user.execute({ email: credentials.email, password: credentials.password });
+          if (userData.length > 0) {
+            return userData[0];
+          }
           throw new Error('no user info');
+        } catch (error) {
+          return null;
         }
-        return user;
       },
     }),
   ],

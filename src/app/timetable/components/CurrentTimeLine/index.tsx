@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 
 import styled from './CurrentTimeLine.module.scss';
 import { calculateCurrentTimeOffset, parseSize, generateClassNameWithType } from '../../utils';
-import { TypeContext } from '../../TypeContext';
+import { TypeContext } from '../../contexts/TypeContext';
 
 interface CurrentTimeLineProps {
   startTime: Date;

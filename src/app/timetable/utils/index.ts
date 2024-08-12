@@ -1,4 +1,4 @@
-import { Task } from '../components/Timetable.type';
+import { BaseTask } from '../components/Timetable.type';
 
 const getHourAndMinutesFormat = (data: Date) => {
   const hours = data.getHours();
@@ -50,7 +50,15 @@ const calculateTaskOffsetAndHeightPercent = (
   return { offsetPercent, heightPercent };
 };
 
-const isTimeOverlap = (startTime1: Date, endTime1: Date, startTime2: Date, endTime2: Date): boolean => {
+const isTimeOverlap = (
+  startTime1: Date | null,
+  endTime1: Date | null,
+  startTime2: Date | null,
+  endTime2: Date | null,
+): boolean => {
+  if (!startTime1 || !endTime1 || !startTime2 || !endTime2) {
+    return false;
+  }
   const startTime1Minutes = sumHoursAndMinutes(startTime1);
   const endTime1Minutes = sumHoursAndMinutes(endTime1);
   const startTime2Minutes = sumHoursAndMinutes(startTime2);
@@ -73,7 +81,7 @@ const getDateFromTime = (hours: number, minutes: number, second: number) => {
   return new Date(`${yearMonthDay}T${hourFormat}:${minutesFormat}:${secondeFormat}`);
 };
 
-const checkTimeOverlapFromTaskList = (taskList: Task[]) => {
+const checkTimeOverlapFromTaskList = <T extends BaseTask>(taskList: T[]) => {
   let isOverlap = false;
 
   for (let i = 0; i < taskList.length; i += 1) {
@@ -103,8 +111,12 @@ const calculateCurrentTimeOffset = (currentTime: Date | null, startTime: Date, e
   return { offsetPercent };
 };
 
-const filterTaskListByTimeSlot = (taskListInput: Task[], slotStartHour: number, slotMinutes: number) =>
-  taskListInput.filter((task: Task) => {
+const filterTaskListByTimeSlot = <T extends BaseTask>(taskListInput: T[], slotStartHour: number, slotMinutes: number): T[] =>
+  taskListInput.filter((task: T) => {
+    if (!task.startTime || !task.endTime) {
+      return false;
+    }
+
     const taskStartHour = task.startTime.getHours();
     const taskEndHour = task.endTime.getHours();
     const taskEndMinute = task.endTime.getMinutes();
@@ -118,7 +130,10 @@ const filterTaskListByTimeSlot = (taskListInput: Task[], slotStartHour: number, 
 
 const isDateInRange = (startDate: Date, date: Date, endDate: Date) => startDate <= date && date <= endDate;
 
-const getShouldDisplayTaskContentList = (taskItemList: Task[], uniqueTaskIdMap: Map<unknown, unknown>): boolean[] =>
+const getShouldDisplayTaskContentList = <T extends BaseTask>(
+  taskItemList: T[],
+  uniqueTaskIdMap: Map<unknown, unknown>,
+): boolean[] =>
   taskItemList.map((taskItem) => {
     const shouldDisplayTaskContent = !!(taskItem?.id && !uniqueTaskIdMap.has(taskItem.id));
     if (taskItem?.id) {
@@ -142,6 +157,5 @@ export {
 
 export { hasKey, insertKey } from './map';
 export { distributeSize, isFormatString, parseSize, parseSizeFormat, parseSizeValue } from './height';
-export { getColor } from './color';
+export { getRandomColor, getTaskColor } from './color';
 export { generateClassNameWithType } from './css';
-export { getPopoverEvent } from './popover';

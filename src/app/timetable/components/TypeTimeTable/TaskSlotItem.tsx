@@ -1,13 +1,13 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useContext, useRef, useEffect, useState } from 'react';
-import { calculateTaskOffsetAndHeightPercent, getColor, generateClassNameWithType, getPopoverEvent } from '../../utils';
-import { useHoverFloatingInReference, useClickFloatingInReference } from '../../hooks';
-import { Task } from '../Timetable.type';
-import { TypeContext, PopoverTypeContext, TaskSlotContext } from '../../TypeContext';
+import { calculateTaskOffsetAndHeightPercent, generateClassNameWithType, getRandomColor, getTaskColor } from '../../utils';
+import { BaseTask } from '../Timetable.type';
+import { TypeContext, PopoverTypeContext, TaskSlotContext, TaskThemeContext } from '../../contexts';
 import styles from './TypeTimeTable.module.scss';
+import usePopoverFloating from '../../hooks/usePopoverFloating';
 
-interface TaskSlotItemProps {
-  taskItem: Task;
+interface TaskSlotItemProps<T extends BaseTask> {
+  taskItem: T;
   index: number;
   shouldDisplayTaskContent: boolean;
   slotStartTime: Date;
@@ -15,17 +15,27 @@ interface TaskSlotItemProps {
   slotTime: number;
 }
 
-function TaskSlotItem({ taskItem, shouldDisplayTaskContent, slotStartTime, slotEndTime, slotTime }: TaskSlotItemProps) {
-  const { startTime, endTime, taskColor, title, subTitle, id } = taskItem;
+function TaskSlotItem<T extends BaseTask>({
+  taskItem,
+  shouldDisplayTaskContent,
+  slotStartTime,
+  slotEndTime,
+  slotTime,
+}: TaskSlotItemProps<T>) {
+  const { startTime, endTime, title, content } = taskItem;
   const taskSlotRef = useRef<HTMLDivElement>(null);
   const [isContentVisible, setIsContentVisible] = useState(false);
   const type = useContext(TypeContext);
   const taskOption = useContext(TaskSlotContext);
   const popoverType = useContext(PopoverTypeContext);
-  const hoverObject = useHoverFloatingInReference();
-  const clickObject = useClickFloatingInReference();
+  const taskColorTheme = useContext(TaskThemeContext);
+
   const { refs, fixFloatingTargetPosition, floatingStyles, getFloatingProps, getReferenceProps, isFloatingTargetVisible } =
-    getPopoverEvent(hoverObject, clickObject, popoverType);
+    usePopoverFloating(popoverType);
+
+  if (!startTime || !endTime) {
+    return null;
+  }
 
   const { offsetPercent, heightPercent } = calculateTaskOffsetAndHeightPercent(
     slotStartTime,
@@ -34,7 +44,9 @@ function TaskSlotItem({ taskItem, shouldDisplayTaskContent, slotStartTime, slotE
     endTime,
     slotTime,
   );
-  const taskSlotColor = taskColor ?? getColor(id);
+
+  const taskSlotColor = getTaskColor(taskItem) ?? getRandomColor(taskItem, taskColorTheme);
+
   const positionStyles =
     type === 'ROW'
       ? { top: '0', left: `${offsetPercent}%`, width: `${heightPercent}%` }
@@ -69,18 +81,16 @@ function TaskSlotItem({ taskItem, shouldDisplayTaskContent, slotStartTime, slotE
         onClick={fixFloatingTargetPosition}
       >
         <div ref={taskSlotRef} className={generateClassNameWithType(styles, 'taskSlotBackground', type)}>
-          {shouldDisplayTaskContent &&
-            isContentVisible && ( // taskSlotContent
-              <div className={generateClassNameWithType(styles, 'taskSlotContent', type)}>
-                <p className={generateClassNameWithType(styles, 'title', type)}>{title}</p>
-              </div>
-            )}
-          {shouldDisplayTaskContent &&
-            !isContentVisible && ( // taskSlotContent
-              <div className={generateClassNameWithType(styles, 'taskSlotContent', type)}>
-                <p className={generateClassNameWithType(styles, 'title', type)}>{taskOption.defaultValue}</p>
-              </div>
-            )}
+          {shouldDisplayTaskContent && isContentVisible && (
+            <div className={generateClassNameWithType(styles, 'taskSlotContent', type)}>
+              <p className={generateClassNameWithType(styles, 'title', type)}>{title}</p>
+            </div>
+          )}
+          {shouldDisplayTaskContent && !isContentVisible && (
+            <div className={generateClassNameWithType(styles, 'taskSlotContent', type)}>
+              <p className={generateClassNameWithType(styles, 'title', type)}>{taskOption.defaultValue}</p>
+            </div>
+          )}
         </div>
       </button>
       {isFloatingTargetVisible && (
@@ -95,8 +105,8 @@ function TaskSlotItem({ taskItem, shouldDisplayTaskContent, slotStartTime, slotE
             zIndex: 100,
           }}
         >
-          {title}
-          {subTitle}
+          <div>{title}</div>
+          {content && <div>{content}</div>}
         </div>
       )}
     </div>

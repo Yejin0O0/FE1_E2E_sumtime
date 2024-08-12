@@ -4,7 +4,8 @@ import React, { useState } from 'react';
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 import useBooleanState from '@/hooks/utils/useBooleanState';
-import { useGetAllTodos } from '@/api/hooks/todoHooks';
+import { useGetTodosMatchingDate } from '@/api/hooks/todoHooks';
+import { getTodayDateKr } from '@/utils/timeUtils';
 import TodoComponent from './TodoComponent';
 import TodoModal from './TodoModal';
 import * as S from './Todo.styled';
@@ -18,7 +19,7 @@ export default function Todo() {
     setTrue: setIsModalOpenedByFABTrue,
     setFalse: setIsModalOpenedByFABFalse,
   } = useBooleanState();
-  const { data: todoListData } = useGetAllTodos(1);
+  const { data: todoListData } = useGetTodosMatchingDate(1, new Date());
 
   const handleOpenFAB = () => {
     setIsModalOpenedByFABTrue();
@@ -33,13 +34,13 @@ export default function Todo() {
   };
 
   return (
-    todoListData && (
-      <S.TodoSection>
-        <S.TodoComponentsSection>
-          <Text $fontSize="xl" $fontWeight="bold" $color="black">
-            2024년 8월 1일 목요일
-          </Text>
-          {todoListData.map((todo) => (
+    <S.TodoSection>
+      <S.TodoComponentsSection>
+        <Text $fontSize="xl" $fontWeight="bold" $color="black">
+          {getTodayDateKr()}
+        </Text>
+        {todoListData &&
+          todoListData.map((todo) => (
             <TodoComponent
               key={todo.todoId}
               todoId={todo.todoId}
@@ -49,19 +50,18 @@ export default function Todo() {
               setIsModalOpenedByFABFalse={setIsModalOpenedByFABFalse}
             />
           ))}
-        </S.TodoComponentsSection>
-        <S.FloatingButton>
-          <Fab color="primary" size="small" aria-label="add" onClick={handleOpenFAB}>
-            <AddIcon />
-          </Fab>
-        </S.FloatingButton>
-        <TodoModal
-          open={isModalOpen}
-          setIsModalOpenFalse={setIsModalOpenFalse}
-          todoId={todoId}
-          isModalOpenedByFAB={isModalOpenedByFAB}
-        />
-      </S.TodoSection>
-    )
+      </S.TodoComponentsSection>
+      <S.FloatingButton>
+        <Fab color="primary" size="small" aria-label="add" onClick={handleOpenFAB}>
+          <AddIcon />
+        </Fab>
+      </S.FloatingButton>
+      <TodoModal
+        open={isModalOpen}
+        setIsModalOpenFalse={setIsModalOpenFalse}
+        todoId={todoId}
+        isModalOpenedByFAB={isModalOpenedByFAB}
+      />
+    </S.TodoSection>
   );
 }

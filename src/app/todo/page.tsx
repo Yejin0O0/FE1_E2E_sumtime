@@ -1,12 +1,13 @@
 'use client';
 
-import { SignOutButton } from '@/components/SignIn/SignOutButton';
+import Header from '@/components/Header';
 import { useSession } from 'next-auth/react';
 
 export default function Page() {
   const { data: session, status } = useSession();
   return (
     <>
+      <Header />
       <p>{status}</p>
       {session && (
         <>
@@ -14,7 +15,6 @@ export default function Page() {
           <p>{session.user?.name}</p>
         </>
       )}
-      <SignOutButton />
     </>
   );
 }

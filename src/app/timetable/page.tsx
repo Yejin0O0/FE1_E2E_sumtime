@@ -1,7 +1,7 @@
 'use client';
 
 import Timetable from './components/Timetable';
-import { taskList, startTime, endTime, slotTime } from './mocks/timetableMockData';
+import { startTime, endTime, slotTime, taskListWithouttaskColor } from './mocks/timetableMockData';
 
 export default function TimetablePage() {
   return (
@@ -11,7 +11,7 @@ export default function TimetablePage() {
           startTime={startTime}
           endTime={endTime}
           slotTime={slotTime}
-          taskList={taskList}
+          taskList={taskListWithouttaskColor}
           timeTableSize="2000px"
           timetableType="ROW"
           displayCurrentTime
@@ -20,6 +20,7 @@ export default function TimetablePage() {
           taskSlotStyle={{ color: 'black' }}
           popoverType="HOVER"
           defaultValue="..."
+          taskTheme="random"
         />
       </div>
       <div style={{ height: '500px', width: '800px' }}>
@@ -27,7 +28,7 @@ export default function TimetablePage() {
           startTime={startTime}
           endTime={endTime}
           slotTime={slotTime}
-          taskList={taskList}
+          taskList={taskListWithouttaskColor}
           timeTableSize="2000px"
           timetableType="COLUMN"
           displayCurrentTime
