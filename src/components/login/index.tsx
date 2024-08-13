@@ -1,12 +1,13 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import logo from '@/assets/images/sumtimeLogo.png';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { EMAIL_REG_EXP } from '@/constants/regExp';
+import { useEmailValidation } from '@/hooks/auth/useEmailValidation';
+import { usePasswordValidation } from '@/hooks/auth/usePasswordValidation';
 import * as S from './Login.styled';
 
 function LoginSection() {
@@ -15,30 +16,23 @@ function LoginSection() {
   const emailInputRef = useRef<HTMLInputElement>(null);
   const passwordInputRef = useRef<HTMLInputElement>(null);
 
-  const [emailError, setEmailError] = useState<string | null>(null);
-  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const { emailErrorMessage, validateEmail } = useEmailValidation();
+  const { passwordErrorMessage, validatePassword } = usePasswordValidation();
 
   const handleEmailValidation = () => {
-    if (!emailInputRef.current?.value || !EMAIL_REG_EXP.test(emailInputRef.current.value)) {
-      setEmailError('유효한 이메일 주소를 입력해주세요');
-    } else {
-      setEmailError(null);
-    }
+    const email = emailInputRef.current?.value || '';
+    return validateEmail(email);
   };
 
   const handlePasswordValidation = () => {
-    if (!passwordInputRef.current?.value) {
-      setPasswordError('비밀번호를 입력해주세요');
-    } else {
-      setPasswordError(null);
-    }
+    const password = passwordInputRef.current?.value || '';
+    return validatePassword(password);
   };
 
   const handleSignIn = async () => {
-    handleEmailValidation();
-    handlePasswordValidation();
-
-    if (!emailError && !passwordError) {
+    const isEmailValid = handleEmailValidation();
+    const isPasswordValid = handlePasswordValidation();
+    if (isEmailValid && isPasswordValid) {
       try {
         const signInData = await signIn('credentials', {
           email: emailInputRef.current?.value,
@@ -51,8 +45,6 @@ function LoginSection() {
       } catch (error) {
         console.log(error);
       }
-    } else {
-      alert('유효한 이메일 주소와 비밀번호를 입력해주세요');
     }
   };
 
@@ -69,8 +61,8 @@ function LoginSection() {
           type="email"
           inputRef={emailInputRef}
           onBlur={handleEmailValidation}
-          error={!!emailError}
-          helperText={emailError}
+          error={!!emailErrorMessage}
+          helperText={emailErrorMessage}
         />
       </S.LoginInputDiv>
       <S.LoginInputDiv>
@@ -82,8 +74,8 @@ function LoginSection() {
           type="password"
           inputRef={passwordInputRef}
           onBlur={handlePasswordValidation}
-          error={!!passwordError}
-          helperText={passwordError}
+          error={!!passwordErrorMessage}
+          helperText={passwordErrorMessage}
         />
       </S.LoginInputDiv>
 

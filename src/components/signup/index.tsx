@@ -6,24 +6,25 @@ import TextField from '@mui/material/TextField';
 import logo from '@/assets/images/sumtimeLogo.png';
 import { useRouter } from 'next/navigation';
 import { emailValidation } from '@/api/queryFn/userQueryFn';
-import { EMAIL_REG_EXP, NICKNAME_REG_EXP } from '@/constants/regExp'; // 이메일 정규식 상수
+import { NICKNAME_REG_EXP } from '@/constants/regExp';
 import { useCreateUser } from '@/api/hooks/userHooks';
+import { useEmailValidation } from '@/hooks/auth/useEmailValidation';
+import { usePasswordValidation } from '@/hooks/auth/usePasswordValidation';
 import * as S from './Signup.styled';
 
 type FieldErrorsType = {
-  email: string | null;
-  password: string | null;
   confirmPassword: string | null;
   nickname: string | null;
 };
 
 function SignupSection() {
   const [fieldErrors, setFieldErrors] = useState<FieldErrorsType>({
-    email: null,
-    password: null,
     confirmPassword: null,
     nickname: null,
   });
+
+  const { emailErrorMessage, validateEmail } = useEmailValidation();
+  const { passwordErrorMessage, validatePassword } = usePasswordValidation();
 
   const [isEmailChecked, setIsEmailChecked] = useState<boolean | null>(null);
 
@@ -38,16 +39,7 @@ function SignupSection() {
 
   const handleEmailValidation = () => {
     const email = emailInputRef.current?.value || '';
-    if (!email) {
-      setFieldErrors((prev) => ({ ...prev, email: '이메일을 입력해주세요' }));
-      return false;
-    }
-    if (!EMAIL_REG_EXP.test(email)) {
-      setFieldErrors((prev) => ({ ...prev, email: '유효한 이메일 주소를 입력해주세요' }));
-      return false;
-    }
-    setFieldErrors((prev) => ({ ...prev, email: null }));
-    return true;
+    return validateEmail(email);
   };
 
   const handleConfirmPasswordValidation = () => {
@@ -63,14 +55,7 @@ function SignupSection() {
 
   const handlePasswordValidation = () => {
     const password = passwordInputRef.current?.value || '';
-    if (password.length < 8 || password.length > 15) {
-      setFieldErrors((prev) => ({ ...prev, password: '비밀번호는 8자 이상 15자 이하여야 합니다' }));
-      return false;
-    }
-    setFieldErrors((prev) => ({ ...prev, password: null }));
-    handleConfirmPasswordValidation();
-
-    return true;
+    return validatePassword(password);
   };
 
   const handleNicknameValidation = () => {
@@ -175,8 +160,8 @@ function SignupSection() {
           variant="standard"
           type="email"
           inputRef={emailInputRef}
-          error={!!fieldErrors.email}
-          helperText={fieldErrors.email}
+          error={!!emailErrorMessage}
+          helperText={emailErrorMessage}
           onBlur={handleEmailValidation}
           onChange={handleEmailChange}
         />
@@ -197,8 +182,8 @@ function SignupSection() {
           variant="standard"
           type="password"
           inputRef={passwordInputRef}
-          error={!!fieldErrors.password}
-          helperText={fieldErrors.password}
+          error={!!passwordErrorMessage}
+          helperText={passwordErrorMessage}
           onBlur={handlePasswordValidation}
         />
       </S.SignupInputDiv>
