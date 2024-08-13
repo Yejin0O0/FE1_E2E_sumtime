@@ -12,14 +12,14 @@ function TimeTable() {
     <S.TimeTableSection>
       {allTodosForTimetable && (
         <Timetable
-          startTime={startTime}
-          endTime={endTime}
-          slotTime={60}
+          totalStartTime={startTime}
+          totalEndTime={endTime}
+          slotRange={60}
           taskList={allTodosForTimetable}
           timeTableSize="2000px"
-          timetableType="COLUMN"
+          timetableDirection="COLUMN"
           displayCurrentTime
-          defaultValue="+"
+          ellipsisText="+"
           currentTimeLineStyle="dashed 1px red"
         />
       )}

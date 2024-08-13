@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useContext, useRef, useEffect, useState } from 'react';
-import { calculateTaskOffsetAndHeightPercent, generateClassNameWithType, getRandomColor, getTaskColor } from '../utils';
+import { calculateTargetPosition, getClassNameByType, getRandomColor, getTaskColor } from '../utils';
 import { BaseTask } from './Timetable.type';
 import { TypeContext, PopoverTypeContext, TaskSlotContext, TaskThemeContext } from '../contexts';
 import styles from './Timetable.module.scss';
@@ -9,20 +9,12 @@ import PopoverContent from './PopoverContent';
 
 interface TaskSlotItemProps<T extends BaseTask> {
   taskItem: T;
-  index: number;
-  shouldDisplayTaskContent: boolean;
+  isFirstTaskUnit: boolean;
   slotStartTime: Date;
   slotEndTime: Date;
-  slotTime: number;
 }
 
-function TaskSlotItem<T extends BaseTask>({
-  taskItem,
-  shouldDisplayTaskContent,
-  slotStartTime,
-  slotEndTime,
-  slotTime,
-}: TaskSlotItemProps<T>) {
+function TaskSlotItem<T extends BaseTask>({ taskItem, isFirstTaskUnit, slotStartTime, slotEndTime }: TaskSlotItemProps<T>) {
   const { startTime, endTime, title } = taskItem;
   const taskSlotRef = useRef<HTMLDivElement>(null);
   const [isContentVisible, setIsContentVisible] = useState(false);
@@ -45,20 +37,12 @@ function TaskSlotItem<T extends BaseTask>({
     return null;
   }
 
-  const { offsetPercent, heightPercent } = calculateTaskOffsetAndHeightPercent(
-    slotStartTime,
-    slotEndTime,
-    startTime,
-    endTime,
-    slotTime,
-  );
-
+  const { startPercent, endPercent } = calculateTargetPosition(slotStartTime, slotEndTime, startTime, endTime);
   const taskSlotColor = getTaskColor(taskItem) ?? getRandomColor(taskItem, taskColorTheme);
-
   const positionStyles =
     type === 'ROW'
-      ? { top: '0', left: `${offsetPercent}%`, width: `${heightPercent}%` }
-      : { top: `${offsetPercent}%`, left: '0', height: `${heightPercent}%` };
+      ? { top: '0', left: `${startPercent}%`, width: `${endPercent}%` }
+      : { top: `${startPercent}%`, left: '0', height: `${endPercent}%` };
 
   useEffect(() => {
     if (type === 'ROW') {
@@ -81,22 +65,17 @@ function TaskSlotItem<T extends BaseTask>({
         type="button"
         ref={refs.setReference}
         {...getReferenceProps}
-        className={generateClassNameWithType(styles, 'buttonInherit', type)}
+        className={getClassNameByType(styles, 'buttonInherit', type)}
         style={{
           ...positionStyles,
           backgroundColor: `${taskSlotColor}`,
         }}
         onClick={fixFloatingTargetPosition}
       >
-        <div ref={taskSlotRef} className={generateClassNameWithType(styles, 'taskSlotBackground', type)}>
-          {shouldDisplayTaskContent && isContentVisible && (
-            <div className={generateClassNameWithType(styles, 'taskSlotContent', type)}>
-              <p className={generateClassNameWithType(styles, 'title', type)}>{title}</p>
-            </div>
-          )}
-          {shouldDisplayTaskContent && !isContentVisible && (
-            <div className={generateClassNameWithType(styles, 'taskSlotContent', type)}>
-              <p className={generateClassNameWithType(styles, 'title', type)}>{taskOption.defaultValue}</p>
+        <div ref={taskSlotRef} className={getClassNameByType(styles, 'taskSlotBackground', type)}>
+          {isFirstTaskUnit && (
+            <div className={getClassNameByType(styles, 'taskSlotContent', type)}>
+              <p className={getClassNameByType(styles, 'title', type)}>{isContentVisible ? title : taskOption.ellipsisText}</p>
             </div>
           )}
         </div>

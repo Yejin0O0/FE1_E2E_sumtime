@@ -2,38 +2,37 @@ import { add } from 'date-fns';
 import { useContext } from 'react';
 import { BaseTask } from './Timetable.type';
 import { TypeContext } from '../contexts';
-import { generateClassNameWithType } from '../utils';
+import { getClassNameByType } from '../utils';
 import styles from './Timetable.module.scss';
 import TaskSlotItem from './TaskSlotItem';
 
 interface TaskSlotProps<T extends BaseTask> {
-  headerDate: Date;
-  slotTime: number;
+  slotStartTime: Date;
+  slotRange: number;
   taskItemList: T[];
-  shouldDisplayTaskContentList: boolean[];
+  isFirstTaskUnitList: boolean[];
   taskSlotStyle: React.CSSProperties;
 }
 
 function TaskSlot<T extends BaseTask>({
-  headerDate,
-  slotTime,
+  slotStartTime,
+  slotRange,
   taskItemList,
-  shouldDisplayTaskContentList,
+  isFirstTaskUnitList,
   taskSlotStyle = {},
 }: TaskSlotProps<T>) {
   const type = useContext(TypeContext);
 
   if (taskItemList.length === 0) {
-    return <div className={generateClassNameWithType(styles, 'taskSlotLayout', type)} />;
+    return <div className={getClassNameByType(styles, 'taskSlotLayout', type)} />;
   }
 
-  const slotStartTime = headerDate;
-  const slotEndTime = add(headerDate, { minutes: slotTime });
+  const slotEndTime = add(slotStartTime, { minutes: slotRange });
 
   return (
-    <div className={generateClassNameWithType(styles, 'taskSlotLayout', type)} style={taskSlotStyle}>
+    <div className={getClassNameByType(styles, 'taskSlotLayout', type)} style={taskSlotStyle}>
       {taskItemList.map((taskItem, index) => {
-        const shouldDisplayTaskContent = shouldDisplayTaskContentList[index];
+        const isFirstTaskUnit = isFirstTaskUnitList[index];
         if (!taskItem.startTime || !taskItem.endTime) {
           return null;
         }
@@ -41,11 +40,9 @@ function TaskSlot<T extends BaseTask>({
           <TaskSlotItem
             key={taskItem.id}
             taskItem={taskItem}
-            index={index}
             slotStartTime={slotStartTime}
             slotEndTime={slotEndTime}
-            slotTime={slotTime}
-            shouldDisplayTaskContent={shouldDisplayTaskContent}
+            isFirstTaskUnit={isFirstTaskUnit}
           />
         );
       })}

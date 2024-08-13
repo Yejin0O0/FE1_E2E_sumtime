@@ -8,34 +8,34 @@ export default function TimetablePage() {
     <>
       <div style={{ width: '800px', height: '500px' }}>
         <Timetable // ROW
-          startTime={startTime}
-          endTime={endTime}
-          slotTime={slotTime}
+          totalStartTime={startTime}
+          totalEndTime={endTime}
+          slotRange={slotTime}
           taskList={taskListWithouttaskColor}
           timeTableSize="2000px"
-          timetableType="ROW"
+          timetableDirection="ROW"
           displayCurrentTime
           timeTableStyle={{ backgroundColor: 'white' }}
           timeSlotStyle={{ color: 'black' }}
           taskSlotStyle={{ color: 'black' }}
           popoverType="HOVER"
-          defaultValue="..."
+          ellipsisText="..."
           taskTheme="random"
         />
       </div>
       <div style={{ height: '500px', width: '800px' }}>
         <Timetable // COLUMN
-          startTime={startTime}
-          endTime={endTime}
-          slotTime={slotTime}
+          totalStartTime={startTime}
+          totalEndTime={endTime}
+          slotRange={slotTime}
           taskList={taskListWithouttaskColor}
           timeTableSize="2000px"
-          timetableType="COLUMN"
+          timetableDirection="COLUMN"
           displayCurrentTime
           timeTableStyle={{ backgroundColor: 'white' }}
           timeSlotStyle={{ color: 'black' }}
           taskSlotStyle={{ color: 'black' }}
-          defaultValue="..."
+          ellipsisText="..."
         />
       </div>
     </>
