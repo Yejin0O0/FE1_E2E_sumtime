@@ -8,20 +8,15 @@ interface TodoComponentProps {
   todoId: number;
   title: string;
   setTodoId: (todoId: number) => void;
-
-  setIsModalOpenTrue: () => void;
-  setIsModalOpenedByFABFalse: () => void;
 }
 
-function TodoComponent({ todoId, title, setTodoId, setIsModalOpenTrue, setIsModalOpenedByFABFalse }: TodoComponentProps) {
+function TodoComponent({ todoId, title, setTodoId }: TodoComponentProps) {
   const queryClient = useQueryClient();
   const { mutate: updateTodoTime } = useUpdateTodoTime();
 
   const handleOpenModal = () => {
     // TodoList를 클릭한 경우
-    setTodoId(todoId);
-    setIsModalOpenedByFABFalse();
-    setIsModalOpenTrue();
+    setTodoId(todoId); // props로 받아온 handleOpenModalByTodo함수가 setTodoId함수로 동작하게 만듦
   };
 
   const handleStart = async (id: number) => {
