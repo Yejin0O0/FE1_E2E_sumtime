@@ -40,7 +40,7 @@ function LoginSection() {
           redirect: false,
         });
         if (signInData?.status === 200) {
-          router.push('/todo');
+          router.push('/');
         } else alert('일치하는 이메일, 비밀번호가 없습니다');
       } catch (error) {
         console.log(error);
