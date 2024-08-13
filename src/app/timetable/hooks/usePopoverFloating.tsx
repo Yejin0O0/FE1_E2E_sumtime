@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useFloating, offset, useDismiss, useInteractions, useHover } from '@floating-ui/react';
+import { useFloating, offset, useDismiss, useInteractions, useHover, shift, safePolygon } from '@floating-ui/react';
 import { useRequestAnimationFrame } from './useRequestAnimationFrame';
 import { PopoverType } from '../components/Timetable.type';
 
@@ -26,13 +26,19 @@ function usePopoverFloating(popoverType: PopoverType) {
         },
         [position.x, position.y],
       ),
+      shift({ crossAxis: true }),
     ],
     open: isFloatingTargetVisible,
     onOpenChange: setIsFloatingTargetVisible,
   });
 
   const dismiss = useDismiss(context, { outsidePress: true });
-  const interactions = popoverType === 'HOVER' ? [dismiss, useHover(context)] : [dismiss];
+  const hover = useHover(context, {
+    enabled: popoverType === 'HOVER',
+    handleClose: safePolygon(),
+  });
+
+  const interactions = [dismiss, hover];
   const { getReferenceProps, getFloatingProps } = useInteractions(interactions);
 
   const handleMouseMove = useRequestAnimationFrame((event: MouseEvent) => {
@@ -61,6 +67,10 @@ function usePopoverFloating(popoverType: PopoverType) {
     return undefined;
   }, [popoverType]);
 
+  const hidePopover = () => {
+    setIsFloatingTargetVisible(false);
+  };
+
   return {
     refs,
     floatingStyles,
@@ -68,6 +78,7 @@ function usePopoverFloating(popoverType: PopoverType) {
     getFloatingProps,
     isFloatingTargetVisible,
     fixFloatingTargetPosition: popoverType === 'CLICK' ? handleClick : undefined,
+    hidePopover,
   };
 }
 

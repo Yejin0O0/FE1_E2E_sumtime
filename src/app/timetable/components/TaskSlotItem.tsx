@@ -5,6 +5,7 @@ import { BaseTask } from './Timetable.type';
 import { TypeContext, PopoverTypeContext, TaskSlotContext, TaskThemeContext } from '../contexts';
 import styles from './Timetable.module.scss';
 import usePopoverFloating from '../hooks/usePopoverFloating';
+import PopoverContent from './PopoverContent';
 
 interface TaskSlotItemProps<T extends BaseTask> {
   taskItem: T;
@@ -22,7 +23,7 @@ function TaskSlotItem<T extends BaseTask>({
   slotEndTime,
   slotTime,
 }: TaskSlotItemProps<T>) {
-  const { startTime, endTime, title, content } = taskItem;
+  const { startTime, endTime, title } = taskItem;
   const taskSlotRef = useRef<HTMLDivElement>(null);
   const [isContentVisible, setIsContentVisible] = useState(false);
   const type = useContext(TypeContext);
@@ -30,8 +31,15 @@ function TaskSlotItem<T extends BaseTask>({
   const popoverType = useContext(PopoverTypeContext);
   const taskColorTheme = useContext(TaskThemeContext);
 
-  const { refs, fixFloatingTargetPosition, floatingStyles, getFloatingProps, getReferenceProps, isFloatingTargetVisible } =
-    usePopoverFloating(popoverType);
+  const {
+    refs,
+    fixFloatingTargetPosition,
+    floatingStyles,
+    getFloatingProps,
+    getReferenceProps,
+    isFloatingTargetVisible,
+    hidePopover,
+  } = usePopoverFloating(popoverType);
 
   if (!startTime || !endTime) {
     return null;
@@ -94,20 +102,13 @@ function TaskSlotItem<T extends BaseTask>({
         </div>
       </button>
       {isFloatingTargetVisible && (
-        <div
-          {...getFloatingProps()}
-          ref={refs.setFloating}
-          style={{
-            ...floatingStyles,
-            background: 'white',
-            border: '1px solid black',
-            padding: 30,
-            zIndex: 100,
-          }}
-        >
-          <div>{title}</div>
-          {content && <div>{content}</div>}
-        </div>
+        <PopoverContent
+          taskItem={taskItem}
+          hidePopover={hidePopover}
+          floatingStyles={floatingStyles}
+          getFloatingProps={getFloatingProps}
+          refs={refs}
+        />
       )}
     </div>
   );
