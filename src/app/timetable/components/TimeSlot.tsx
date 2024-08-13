@@ -1,7 +1,7 @@
 import { useContext } from 'react';
-import { getHourAndMinutesFormat, generateClassNameWithType } from '../../utils';
-import { TypeContext } from '../../contexts/TypeContext';
-import styles from './TypeTimeTable.module.scss';
+import styles from './Timetable.module.scss';
+import { generateClassNameWithType, getHourAndMinutesFormat } from '../utils';
+import { TypeContext } from '../contexts';
 
 interface TimeSlotProps {
   headerDate: Date;

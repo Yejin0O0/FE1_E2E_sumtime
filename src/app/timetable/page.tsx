@@ -1,6 +1,6 @@
 'use client';
 
-import Timetable from './components/Timetable';
+import Timetable from './components';
 import { startTime, endTime, slotTime, taskListWithouttaskColor } from './mocks/timetableMockData';
 
 export default function TimetablePage() {

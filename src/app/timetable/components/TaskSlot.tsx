@@ -1,10 +1,10 @@
 import { add } from 'date-fns';
 import { useContext } from 'react';
+import { BaseTask } from './Timetable.type';
+import { TypeContext } from '../contexts';
+import { generateClassNameWithType } from '../utils';
+import styles from './Timetable.module.scss';
 import TaskSlotItem from './TaskSlotItem';
-import { BaseTask } from '../Timetable.type';
-import { TypeContext } from '../../contexts';
-import styles from './TypeTimeTable.module.scss';
-import { generateClassNameWithType } from '../../utils';
 
 interface TaskSlotProps<T extends BaseTask> {
   headerDate: Date;

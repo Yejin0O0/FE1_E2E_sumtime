@@ -1,14 +1,14 @@
 import { useContext } from 'react';
-import TimeSlot from './TimeSlot';
+import { generateClassNameWithType } from '../utils';
+import { BaseTask } from './Timetable.type';
+import { TypeContext } from '../contexts';
+import styles from './Timetable.module.scss';
 import TaskSlot from './TaskSlot';
-import { generateClassNameWithType } from '../../utils';
-import { BaseTask } from '../Timetable.type';
-import { TypeContext } from '../../contexts';
-import styles from './TypeTimeTable.module.scss';
+import TimeSlot from './TimeSlot';
 
 interface SlotProps<T extends BaseTask> {
   headerDate: Date;
-  size: string;
+  slotSize: string;
   slotTime: number;
   taskItemList: T[];
   shouldDisplayTaskContentList: boolean[];
@@ -21,14 +21,14 @@ function Slot<T extends BaseTask>({
   headerDate,
   slotTime,
   taskItemList,
-  size,
+  slotSize,
   shouldDisplayTaskContentList = [],
   timeSlotStyle,
   taskSlotStyle,
   slotStyle,
 }: SlotProps<T>) {
   const type = useContext(TypeContext);
-  const style = type === 'ROW' ? { width: size } : { height: size };
+  const style = type === 'ROW' ? { width: slotSize } : { height: slotSize };
 
   return (
     <div className={generateClassNameWithType(styles, 'slot', type)} style={{ ...slotStyle, ...style }}>
@@ -43,7 +43,5 @@ function Slot<T extends BaseTask>({
     </div>
   );
 }
-
-//
 
 export default Slot;

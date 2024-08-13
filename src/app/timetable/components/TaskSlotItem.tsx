@@ -1,10 +1,10 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useContext, useRef, useEffect, useState } from 'react';
-import { calculateTaskOffsetAndHeightPercent, generateClassNameWithType, getRandomColor, getTaskColor } from '../../utils';
-import { BaseTask } from '../Timetable.type';
-import { TypeContext, PopoverTypeContext, TaskSlotContext, TaskThemeContext } from '../../contexts';
-import styles from './TypeTimeTable.module.scss';
-import usePopoverFloating from '../../hooks/usePopoverFloating';
+import { calculateTaskOffsetAndHeightPercent, generateClassNameWithType, getRandomColor, getTaskColor } from '../utils';
+import { BaseTask } from './Timetable.type';
+import { TypeContext, PopoverTypeContext, TaskSlotContext, TaskThemeContext } from '../contexts';
+import styles from './Timetable.module.scss';
+import usePopoverFloating from '../hooks/usePopoverFloating';
 
 interface TaskSlotItemProps<T extends BaseTask> {
   taskItem: T;

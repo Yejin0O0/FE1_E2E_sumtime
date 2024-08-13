@@ -1,7 +1,7 @@
 'use client';
 
-import Timetable from '@/app/timetable/components/Timetable';
 import { useGetAllTodosForTimetable } from '@/api/hooks/todoHooks';
+import Timetable from '@/app/timetable/components';
 import * as S from './TimeTable.styled';
 import { startTime, endTime } from '../../app/timetable/mocks/timetableMockData';
 
