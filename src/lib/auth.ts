@@ -6,7 +6,7 @@ import { db, schema } from '@/db';
 export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
-    signIn: '/login',
+    signIn: '/landing',
   },
   session: {
     strategy: 'jwt',
