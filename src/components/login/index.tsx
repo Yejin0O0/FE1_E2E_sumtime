@@ -82,10 +82,6 @@ function LoginSection() {
       <Button variant="outlined" onClick={() => handleSignIn()}>
         로그인
       </Button>
-
-      <Button variant="outlined" onClick={() => signIn('google', { redirect: true, callbackUrl: '/todo' })} type="button">
-        구글 로그인
-      </Button>
     </S.LoginSection>
   );
 }
