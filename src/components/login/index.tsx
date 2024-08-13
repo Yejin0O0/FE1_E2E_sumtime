@@ -6,7 +6,7 @@ import TextField from '@mui/material/TextField';
 import logo from '@/assets/images/sumtimeLogo.png';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { EMAIL_REG_EXP } from '@/constants';
+import { EMAIL_REG_EXP } from '@/constants/regExp';
 import * as S from './Login.styled';
 
 function LoginSection() {
