@@ -8,6 +8,7 @@ import { TextField, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCreateTodo, useDeleteTodo, useGetOneTodo, useUpdateTodo } from '@/api/hooks/todoHooks';
+import { useSession } from 'next-auth/react';
 import { TodoModalStyle } from './Todo.styled';
 import { TodoModalMode } from '../../types/todo';
 
@@ -20,6 +21,8 @@ interface TodoModalProps {
 }
 
 export default function TodoModal({ open, todoId, isModalOpenedByFAB, setIsModalOpenFalse, mode }: TodoModalProps) {
+  const { data: session } = useSession();
+  const sessionId = session?.user?.id; // session에서 받아온 id
   const { data: todoData, isSuccess: isSuccessGetOneTodo } = useGetOneTodo(todoId);
   const [title, setTitle] = React.useState('');
   const [content, setContent] = React.useState<string | null>('');
@@ -53,48 +56,67 @@ export default function TodoModal({ open, todoId, isModalOpenedByFAB, setIsModal
   };
 
   const handleUpdateTodo = async () => {
-    await updateTodo(
-      { todoId, title, content, startTime, endTime, color },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ['todo', todoId] });
-          queryClient.invalidateQueries({ queryKey: ['todos', 1] });
-          handleCloseModal();
+    if (!sessionId) {
+      alert('로그인이 필요합니다');
+    } else if (typeof sessionId === 'number') {
+      // session 존재할 때만 실행
+      await updateTodo(
+        { todoId, title, content, startTime, endTime, color },
+        {
+          onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['todo', todoId] });
+            queryClient.invalidateQueries({ queryKey: ['todos', sessionId] });
+            handleCloseModal();
+          },
+          onError: (error) => {
+            alert(`Todo 업데이트에 실패했습니다.${error}`);
+          },
         },
-        onError: (error) => {
-          alert(`Todo 업데이트에 실패했습니다.${error}`);
-        },
-      },
-    );
+      );
+    }
   };
 
   const handleCreateTodo = async () => {
-    const createdAt = new Date();
-    await createTodo(
-      { userId: 1, title, createdAt, content, startTime, endTime, color },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ['todos', 1] });
-          handleCloseModal();
+    if (!sessionId) {
+      alert('로그인이 필요합니다');
+    } else if (typeof sessionId === 'number') {
+      // session 존재할 때만 실행
+      const createdAt = new Date();
+      await createTodo(
+        { userId: sessionId, title, createdAt, content, startTime, endTime, color },
+        {
+          onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['todos', sessionId] });
+            handleCloseModal();
+          },
+          onError: (error) => {
+            alert(`Todo를 생성하는 데 실패했습니다.${error}`);
+          },
         },
-        onError: (error) => {
-          alert(`Todo를 생성하는 데 실패했습니다.${error}`);
-        },
-      },
-    );
+      );
+    } else {
+      alert('로그인이 필요합니다');
+    }
   };
 
   const handleDelete = async () => {
-    await deleteTodo(todoId, {
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['todo', todoId] });
-        queryClient.invalidateQueries({ queryKey: ['todos', 1] });
-        handleCloseModal();
-      },
-      onError: (error) => {
-        alert(`Todo를 삭제하는 데 실패했습니다.${error}`);
-      },
-    });
+    if (!sessionId) {
+      alert('로그인이 필요합니다');
+    } else if (typeof sessionId === 'number') {
+      // session 존재할 때만 실행
+      await deleteTodo(todoId, {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ['todo', todoId] });
+          queryClient.invalidateQueries({ queryKey: ['todos', sessionId] });
+          handleCloseModal();
+        },
+        onError: (error) => {
+          alert(`Todo를 삭제하는 데 실패했습니다.${error}`);
+        },
+      });
+    } else {
+      alert('로그인이 필요합니다');
+    }
   };
 
   return (

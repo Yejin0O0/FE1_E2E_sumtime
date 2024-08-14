@@ -6,6 +6,7 @@ import AddIcon from '@mui/icons-material/Add';
 import useBooleanState from '@/hooks/utils/useBooleanState';
 import { useGetTodosMatchingDate } from '@/api/hooks/todoHooks';
 import { getTodayDateKr } from '@/utils/timeUtils';
+import { useSession } from 'next-auth/react';
 import TodoComponent from './TodoComponent';
 import TodoModal from './TodoModal';
 import * as S from './Todo.styled';
@@ -13,6 +14,8 @@ import { Text } from '../common';
 import { TodoModalMode } from '../../types/todo';
 
 export default function Todo() {
+  const { data: session } = useSession();
+  const sessionId = session?.user?.id; // session에서 받아온 id // modal에 각각 선언하는 건 코드 가독성에서..
   const [todoId, setTodoId] = useState<number>(0);
   const { value: isModalOpen, setTrue: setIsModalOpenTrue, setFalse: setIsModalOpenFalse } = useBooleanState();
   const {
@@ -20,9 +23,10 @@ export default function Todo() {
     setTrue: setIsModalOpenedByFABTrue,
     setFalse: setIsModalOpenedByFABFalse,
   } = useBooleanState();
-
   const [mode, setTodoModalMode] = useState<TodoModalMode>(''); // modal이 열리는 경우 mode로 관리
-  const { data: todoListData } = useGetTodosMatchingDate(1, new Date());
+
+  // sessionId 있을 때만 useGetTodosMatchingDate 호출
+  const { data: todoListData } = sessionId ? useGetTodosMatchingDate(sessionId, new Date()) : { data: [] };
 
   const handleOpenModalByFAB = () => {
     setIsModalOpenedByFABTrue();
