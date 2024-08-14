@@ -97,8 +97,6 @@ export default function TodoModal({ open, todoId, isModalOpenedByFAB, setIsModal
           },
         },
       );
-    } else {
-      alert('로그인이 필요합니다');
     }
   };
 
@@ -117,8 +115,6 @@ export default function TodoModal({ open, todoId, isModalOpenedByFAB, setIsModal
           alert(`Todo를 삭제하는 데 실패했습니다.${error}`);
         },
       });
-    } else {
-      alert('로그인이 필요합니다');
     }
   };
 
