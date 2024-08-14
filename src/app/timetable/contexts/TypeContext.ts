@@ -1,6 +1,6 @@
 import { createContext } from 'react';
-import { TimetableType } from '../components/Timetable.type';
+import { TimetableDirectionType } from '../components/Timetable.type';
 
-const TypeContext = createContext<TimetableType>('COLUMN');
+const TypeContext = createContext<TimetableDirectionType>('COLUMN');
 
 export { TypeContext };

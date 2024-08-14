@@ -1,5 +1,5 @@
 import { describe, expect, test } from '@jest/globals';
-import { getDateFromTime, isTimeOverlap } from '..';
+import { getDateFromTime, checkTimeOverlap } from '..';
 
 describe('taskList를 받았을 떄, 겹치는 시간이 있는지 확인하기', () => {
   describe('시간이 겹치는 taskList를 받을 떄', () => {
@@ -22,7 +22,7 @@ describe('taskList를 받았을 떄, 겹치는 시간이 있는지 확인하기'
       };
 
       // when
-      const result = isTimeOverlap(task1.startTime, task1.endTime, task2.startTime, task2.endTime);
+      const result = checkTimeOverlap(task1.startTime, task1.endTime, task2.startTime, task2.endTime);
 
       expect(result).toEqual(true);
     });
@@ -46,7 +46,7 @@ describe('taskList를 받았을 떄, 겹치는 시간이 있는지 확인하기'
       };
 
       // when
-      const result = isTimeOverlap(task1.startTime, task1.endTime, task2.startTime, task2.endTime);
+      const result = checkTimeOverlap(task1.startTime, task1.endTime, task2.startTime, task2.endTime);
 
       expect(result).toEqual(true);
     });
@@ -70,7 +70,7 @@ describe('taskList를 받았을 떄, 겹치는 시간이 있는지 확인하기'
       };
 
       // when
-      const result = isTimeOverlap(task1.startTime, task1.endTime, task2.startTime, task2.endTime);
+      const result = checkTimeOverlap(task1.startTime, task1.endTime, task2.startTime, task2.endTime);
 
       expect(result).toEqual(true);
     });
@@ -95,7 +95,7 @@ describe('taskList를 받았을 떄, 겹치는 시간이 있는지 확인하기'
         endTime: getDateFromTime(13, 50, 0),
       };
 
-      const result = isTimeOverlap(task1.startTime, task1.endTime, task2.startTime, task2.endTime);
+      const result = checkTimeOverlap(task1.startTime, task1.endTime, task2.startTime, task2.endTime);
 
       expect(result).toBeFalsy();
     });
@@ -118,7 +118,7 @@ describe('taskList를 받았을 떄, 겹치는 시간이 있는지 확인하기'
         endTime: getDateFromTime(13, 50, 0),
       };
 
-      const result = isTimeOverlap(task1.startTime, task1.endTime, task2.startTime, task2.endTime);
+      const result = checkTimeOverlap(task1.startTime, task1.endTime, task2.startTime, task2.endTime);
 
       expect(result).toBeFalsy();
     });

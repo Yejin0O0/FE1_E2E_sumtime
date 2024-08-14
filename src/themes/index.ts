@@ -19,6 +19,7 @@ const fontWeight = Object.freeze({
 const color = Object.freeze({
   backgroundColor: '#FFFFFF',
   fontColor: '#000000',
+  red: '#D32F2F',
 });
 
 const spacing = Object.freeze({

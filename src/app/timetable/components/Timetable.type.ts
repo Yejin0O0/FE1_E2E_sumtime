@@ -12,9 +12,9 @@ type TaskThemeType = 'red' | 'orange' | 'yellow' | 'green' | 'blue' | 'purple' |
 type Seed = string | number;
 
 interface TaskSlotContextProps {
-  defaultValue: string;
+  ellipsisText: string;
 }
-type TimetableType = 'CIRCLE' | 'ROW' | 'COLUMN';
+type TimetableDirectionType = 'ROW' | 'COLUMN';
 type PopoverType = 'CLICK' | 'HOVER';
 
-export type { BaseTask, TimetableType, PopoverType, TaskSlotContextProps, TaskThemeType };
+export type { BaseTask, TimetableDirectionType, PopoverType, TaskSlotContextProps, TaskThemeType };

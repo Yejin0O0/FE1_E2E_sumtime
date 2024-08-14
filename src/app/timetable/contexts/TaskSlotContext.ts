@@ -2,7 +2,7 @@ import { createContext } from 'react';
 import { TaskSlotContextProps } from '../components/Timetable.type';
 
 const defaultContext: TaskSlotContextProps = {
-  defaultValue: '',
+  ellipsisText: '',
 };
 const TaskSlotContext = createContext<TaskSlotContextProps>(defaultContext);
 

@@ -1,7 +1,7 @@
 'use client';
 
-import Timetable from '@/app/timetable/components/Timetable';
 import { useGetAllTodosForTimetable } from '@/api/hooks/todoHooks';
+import Timetable from '@/app/timetable/components';
 import * as S from './TimeTable.styled';
 import { startTime, endTime } from '../../app/timetable/mocks/timetableMockData';
 
@@ -12,14 +12,14 @@ function TimeTable() {
     <S.TimeTableSection>
       {allTodosForTimetable && (
         <Timetable
-          startTime={startTime}
-          endTime={endTime}
-          slotTime={60}
+          totalStartTime={startTime}
+          totalEndTime={endTime}
+          slotRange={60}
           taskList={allTodosForTimetable}
           timeTableSize="2000px"
-          timetableType="COLUMN"
+          timetableDirection="COLUMN"
           displayCurrentTime
-          defaultValue="+"
+          ellipsisText="+"
           currentTimeLineStyle="dashed 1px red"
         />
       )}

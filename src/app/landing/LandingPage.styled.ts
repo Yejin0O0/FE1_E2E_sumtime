@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-export const HomePage = styled.div`
+export const LandingPage = styled.div`
   width: 100vw;
   height: 100vh;
   display: flex;
@@ -9,7 +9,7 @@ export const HomePage = styled.div`
   align-items: center;
 `;
 
-export const HomeLogo = styled.img`
+export const LandingLogo = styled.img`
   width: 200px;
   cursor: pointer;
 `;

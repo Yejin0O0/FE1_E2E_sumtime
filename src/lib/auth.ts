@@ -1,5 +1,4 @@
 import { NextAuthOptions, User } from 'next-auth';
-import GoogleProvider from 'next-auth/providers/google';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { and, eq, sql } from 'drizzle-orm';
 import { db, schema } from '@/db';
@@ -7,17 +6,13 @@ import { db, schema } from '@/db';
 export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
-    signIn: '/login',
+    signIn: '/landing',
   },
   session: {
     strategy: 'jwt',
     maxAge: 30 * 24 * 60 * 60, // 30일
   },
   providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID ?? '',
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? '',
-    }),
     CredentialsProvider({
       credentials: {
         email: { label: 'email', type: 'email', placeholder: 'please enter email' },
