@@ -3,43 +3,33 @@ import { Flex, Container } from '../common';
 
 export const TodoSection = styled(Flex)`
   flex-direction: column;
-  justify-content: start;
   width: 50%;
   height: 100%;
-  background-color: whitesmoke;
-  border-radius: 5px;
   position: relative;
   padding: 20px;
+  border-left: 2px solid whitesmoke;
 `;
 
 export const TodoComponentsSection = styled(Container)`
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: stretch;
-  background-color: #e5e5e5;
-  width: 100%;
-  min-height: 50%;
-  max-height: 50%;
+  height: 100%;
   overflow-y: auto; /* scrolling */
-  border-radius: 5px;
-  border: 1px solid red;
-
+  border-radius: 8px;
   padding: 10px;
-  border-style: none;
-  position: relative;
   box-sizing: border-box;
+  box-shadow: 1px 1px 10px lightgrey;
 `;
 
 export const ATodoComponentContainer = styled(Container)`
   margin: 10px;
   height: auto;
-  background-color: whitesmoke;
-  border-radius: 5px;
+  background-color: #ffffff;
+  border-radius: 8px;
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  padding: 10px;
+  padding: 5px;
   box-sizing: border-box;
+  box-shadow: 1px 1px 5px lightgrey;
 `;
 
 export const TodoContainer = styled(Flex)`
@@ -47,7 +37,6 @@ export const TodoContainer = styled(Flex)`
   flex-direction: row;
   align-items: center;
   width: 100%;
-  border: 1px solid #ccc;
   border-radius: 5px;
   padding: 10px;
   box-sizing: border-box;
@@ -71,19 +60,20 @@ export const TodoContainer = styled(Flex)`
 
 export const FloatingButton = styled.div`
   position: absolute;
-  top: 400px;
-  right: 50px;
-  z-index: 1500;
+  bottom: 5%;
+  right: 5%;
 `;
 
 // mui TodoModal에만 쓰이는 Style
 export const TodoModalStyle = {
+  outline: 'none',
   position: 'absolute' as const,
-  top: '50%',
+  // top: 'calc(50% - 300px)',
+  top: '300px',
   left: '50%',
   width: 400,
   bgcolor: 'background.paper',
-  border: '2px solid #000',
   boxShadow: 24,
-  p: 4,
+  borderRadius: 2,
+  p: 3.7,
 };

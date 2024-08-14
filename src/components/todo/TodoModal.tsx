@@ -8,6 +8,9 @@ import { TextField, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCreateTodo, useDeleteTodo, useGetOneTodo, useUpdateTodo } from '@/api/hooks/todoHooks';
+import { red } from '@mui/material/colors';
+import { TimePicker } from '@mui/x-date-pickers';
+import { parseISO } from 'date-fns';
 import { useSession } from 'next-auth/react';
 import { TodoModalStyle } from './Todo.styled';
 import { TodoModalMode } from '../../types/todo';
@@ -26,8 +29,8 @@ export default function TodoModal({ open, todoId, isModalOpenedByFAB, setIsModal
   const { data: todoData, isSuccess: isSuccessGetOneTodo } = useGetOneTodo(todoId);
   const [title, setTitle] = React.useState('');
   const [content, setContent] = React.useState<string | null>('');
-  const [startTime, setStartTime] = React.useState<string | null>('');
-  const [endTime, setEndTime] = React.useState<string | null>('');
+  const [startTime, setStartTime] = React.useState<string | null>(null);
+  const [endTime, setEndTime] = React.useState<string | null>(null);
   const [color, setColor] = React.useState<string | null>('');
 
   const queryClient = useQueryClient();
@@ -39,14 +42,14 @@ export default function TodoModal({ open, todoId, isModalOpenedByFAB, setIsModal
     if (open && mode === 'create') {
       setTitle('');
       setContent('');
-      setStartTime('');
-      setEndTime('');
+      setStartTime(null);
+      setEndTime(null);
       setColor('');
     } else if (open && mode === 'update') {
       setTitle(todoData?.title || '');
       setContent(todoData?.content || '');
-      setStartTime(todoData?.startTime || '');
-      setEndTime(todoData?.endTime || '');
+      setStartTime(todoData?.startTime || null);
+      setEndTime(todoData?.endTime || null);
       setColor(todoData?.color || '');
     }
   }, [open, mode, todoData]);
@@ -129,27 +132,53 @@ export default function TodoModal({ open, todoId, isModalOpenedByFAB, setIsModal
             </Typography>
             {mode === 'update' && (
               <IconButton onClick={handleDelete} color="secondary">
-                <DeleteIcon />
+                <DeleteIcon sx={{ color: red[400], fontSize: 25 }} />
               </IconButton>
             )}
           </Box>
-          <TextField fullWidth margin="normal" label="제목" value={title} onChange={(e) => setTitle(e.target.value)} />
-          <TextField fullWidth margin="normal" label="설명" value={content} onChange={(e) => setContent(e.target.value)} />
-          <TextField
-            fullWidth
-            margin="normal"
-            label="시작 시간"
-            value={startTime}
-            onChange={(e) => setStartTime(e.target.value)}
-          />
-          <TextField fullWidth margin="normal" label="종료 시간" value={endTime} onChange={(e) => setEndTime(e.target.value)} />
-          <TextField fullWidth margin="normal" label="색" value={color} onChange={(e) => setColor(e.target.value)} />
-          <Button onClick={mode === 'create' ? handleCreateTodo : handleUpdateTodo} variant="contained" color="primary">
-            저장
-          </Button>
-          <Button onClick={handleCloseModal} variant="outlined" color="secondary" sx={{ ml: 2 }}>
-            취소
-          </Button>
+          <Box m={1}>
+            <TextField
+              sx={{ width: '100%', margin: '10px 0' }}
+              label="제목"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
+            <TextField
+              sx={{ width: '100%', margin: '10px 0' }}
+              label="설명"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+            />
+            <TimePicker
+              sx={{ width: '100%', margin: '10px 0' }}
+              views={['hours', 'minutes', 'seconds']}
+              label="시작 시간"
+              defaultValue={startTime ? parseISO(startTime) : null}
+              onChange={(value) => setStartTime(value ? value.toISOString() : null)}
+            />
+            <TimePicker
+              sx={{ width: '100%', margin: '10px 0' }}
+              views={['hours', 'minutes', 'seconds']}
+              label="종료 시간"
+              defaultValue={endTime ? parseISO(endTime) : null}
+              onChange={(value) => setEndTime(value ? value.toISOString() : null)}
+            />
+
+            <TextField
+              sx={{ width: '100%', margin: '10px 0' }}
+              label="색"
+              value={color}
+              onChange={(e) => setColor(e.target.value)}
+            />
+          </Box>
+          <Box display="flex" gap={1} m={1} justifyContent="flex-end">
+            <Button onClick={handleCloseModal} variant="text" size="medium" color="error" sx={{ border: '1px solid pink' }}>
+              취소
+            </Button>
+            <Button onClick={mode === 'create' ? handleCreateTodo : handleUpdateTodo} variant="contained" color="primary">
+              저장
+            </Button>
+          </Box>
         </Box>
       </Modal>
     )

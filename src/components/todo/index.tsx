@@ -5,7 +5,11 @@ import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 import useBooleanState from '@/hooks/utils/useBooleanState';
 import { useGetTodosMatchingDate } from '@/api/hooks/todoHooks';
-import { getTodayDateKr } from '@/utils/timeUtils';
+import Box from '@mui/material/Box';
+import { IconButton, Pagination } from '@mui/material';
+import { getCurrentDate, getFormattedDateKr } from '@/utils/timeUtils';
+import { theme } from '@/themes';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { useSession } from 'next-auth/react';
 import TodoComponent from './TodoComponent';
 import TodoModal from './TodoModal';
@@ -44,20 +48,56 @@ export default function Todo() {
 
   return (
     <S.TodoSection>
-      <S.TodoComponentsSection>
-        <Text $fontSize="xl" $fontWeight="bold" $color="black">
-          {getTodayDateKr()}
+      <Box width="100%" height={56} borderRadius={2} display="flex" alignItems="center" boxShadow="1px 1px 10px lightgray">
+        <Text $fontSize={`${theme.fontSize.lg}px`} $fontWeight="700" $marginLeft="16px">
+          {getFormattedDateKr()}
         </Text>
-        {todoListData &&
-          todoListData.map((todo) => (
-            <TodoComponent key={todo.todoId} todoId={todo.todoId} title={todo.title} setTodoId={handleOpenModalByTodo} />
-          ))}
-      </S.TodoComponentsSection>
-      <S.FloatingButton>
-        <Fab color="primary" size="small" aria-label="add" onClick={handleOpenModalByFAB}>
-          <AddIcon />
-        </Fab>
-      </S.FloatingButton>
+        <Box marginTop={0.2}>
+          <IconButton size="small">
+            <ArrowDropDownIcon fontSize="large" color="action" />
+          </IconButton>
+        </Box>
+      </Box>
+      <Box
+        marginTop={1}
+        marginBottom={1}
+        padding={1}
+        borderRadius={2}
+        width="100%"
+        display="flex"
+        justifyContent="center"
+        boxShadow="1px 1px 10px lightgray"
+      >
+        <Pagination
+          defaultPage={getCurrentDate()}
+          count={31}
+          siblingCount={5}
+          boundaryCount={0}
+          color="primary"
+          size="medium"
+          showFirstButton
+          showLastButton
+          hideNextButton
+          hidePrevButton
+        />
+      </Box>
+      <Box position="relative" width="100%" height="50%">
+        <S.TodoComponentsSection>
+          <Box>
+            {todoListData &&
+              todoListData.map((todo) => (
+                <TodoComponent key={todo.todoId} todoId={todo.todoId} title={todo.title} setTodoId={handleOpenModalByTodo} />
+              ))}
+          </Box>
+        </S.TodoComponentsSection>
+        <S.FloatingButton>
+          <Fab color="primary" size="small" aria-label="add" onClick={handleOpenModalByFAB}>
+            <AddIcon />
+          </Fab>
+        </S.FloatingButton>
+      </Box>
+      <Box width="100%" height="300px" marginTop={2} borderRadius={2} boxShadow="1px 1px 10px lightgray" />
+
       <TodoModal
         open={isModalOpen}
         setIsModalOpenFalse={setIsModalOpenFalse}
