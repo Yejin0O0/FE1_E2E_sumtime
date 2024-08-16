@@ -1,20 +1,18 @@
 'use client';
 
 import Header from '@/components/Header';
-import { useSession } from 'next-auth/react';
+import Todo from '@/components/todo';
+import { BasicContainer } from '@/components/common';
+import TimeTable from '@/components/TimeTable';
 
 export default function Home() {
-  const { data: session, status } = useSession();
   return (
     <>
       <Header />
-      <p>{status}</p>
-      {session && (
-        <>
-          <p>{session.user?.email}</p>
-          <p>{session.user?.name}</p>
-        </>
-      )}
+      <BasicContainer>
+        <TimeTable />
+        <Todo />
+      </BasicContainer>
     </>
   );
 }

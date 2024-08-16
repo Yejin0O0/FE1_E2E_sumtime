@@ -5,12 +5,14 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import logo from '@/assets/images/sumtimeLogo.png';
 import { useRouter } from 'next/navigation';
-import { emailValidation } from '@/api/queryFn/userQueryFn';
+import { checkEmailDuplicated } from '@/api/queryFn/userQueryFn';
 import { NICKNAME_REG_EXP } from '@/constants/regExp';
 import { useCreateUser } from '@/api/hooks/userHooks';
 import { useEmailValidation } from '@/hooks/auth/useEmailValidation';
 import { usePasswordValidation } from '@/hooks/auth/usePasswordValidation';
 import * as S from './Signup.styled';
+
+type EmailCheckStatus = 'inProgress' | 'success' | 'fail';
 
 type FieldErrorsType = {
   confirmPassword: string | null;
@@ -26,7 +28,7 @@ function SignupSection() {
   const { emailErrorMessage, validateEmail } = useEmailValidation();
   const { passwordErrorMessage, validatePassword } = usePasswordValidation();
 
-  const [isEmailChecked, setIsEmailChecked] = useState<boolean | null>(null);
+  const [isEmailChecked, setIsEmailChecked] = useState<EmailCheckStatus>('inProgress');
 
   const emailInputRef = useRef<HTMLInputElement>(null);
   const passwordInputRef = useRef<HTMLInputElement>(null);
@@ -75,16 +77,18 @@ function SignupSection() {
   const checkEmailDuplication = async () => {
     const email = emailInputRef.current?.value || '';
     if (handleEmailValidation()) {
+      setIsEmailChecked('inProgress');
       try {
-        const isEmailAvailable = await emailValidation(email);
+        const isEmailAvailable = await checkEmailDuplicated(email);
         if (isEmailAvailable) {
-          setIsEmailChecked(true);
+          setIsEmailChecked('success');
           return true;
         }
-        setIsEmailChecked(false);
+        setIsEmailChecked('fail');
         return false;
       } catch (error) {
         console.error(error);
+        setIsEmailChecked('fail');
         return false;
       }
     }
@@ -92,20 +96,17 @@ function SignupSection() {
   };
 
   const getEmailValidationMessage = () => {
-    if (isEmailChecked === null) {
+    if (isEmailChecked === 'inProgress') {
       return <S.SignupValidationSpan>이메일 중복 여부를 확인해주세요</S.SignupValidationSpan>;
     }
-    if (isEmailChecked) {
+    if (isEmailChecked === 'success') {
       return <S.SignupValidationSpan>사용 가능한 이메일입니다.</S.SignupValidationSpan>;
     }
     return <S.SignupValidationSpan $color="red">이미 가입된 이메일입니다.</S.SignupValidationSpan>;
   };
 
   const handleDuplicateValidation = () => {
-    if (isEmailChecked) {
-      return true;
-    }
-    return false;
+    return isEmailChecked === 'success';
   };
 
   const registerUserHandler = () => {
@@ -145,7 +146,7 @@ function SignupSection() {
   };
 
   const handleEmailChange = () => {
-    setIsEmailChecked(null); // 이메일이 변경되면 중복 확인 상태를 초기화
+    setIsEmailChecked('inProgress'); // 이메일이 변경되면 중복 확인 상태를 초기화
   };
 
   return (

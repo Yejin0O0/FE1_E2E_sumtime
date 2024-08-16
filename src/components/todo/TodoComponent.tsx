@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useUpdateTodoTime } from '@/api/hooks/todoHooks';
 import CheckCircleOutlinedIcon from '@mui/icons-material/CheckCircleOutlined';
 import PlayCircleFilledWhiteOutlinedIcon from '@mui/icons-material/PlayCircleFilledWhiteOutlined';
 import { IconButton } from '@mui/material';
 import Box from '@mui/material/Box';
+import { TodoDataContext } from '@/context/TodoDataContext';
 import * as S from './Todo.styled';
 import { Text } from '../common';
 
@@ -17,6 +18,7 @@ interface TodoComponentProps {
 function TodoComponent({ todoId, title, setTodoId }: TodoComponentProps) {
   const queryClient = useQueryClient();
   const { mutate: updateTodoTime } = useUpdateTodoTime();
+  const { sessionId } = useContext(TodoDataContext);
 
   const handleOpenModal = () => {
     // TodoList를 클릭한 경우
@@ -32,6 +34,7 @@ function TodoComponent({ todoId, title, setTodoId }: TodoComponentProps) {
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ['todo', todoId] });
+          queryClient.invalidateQueries({ queryKey: ['todos', sessionId] });
         },
         onError: (error) => {
           alert(`Todo 업데이트에 실패했습니다.${error}`);
@@ -49,6 +52,7 @@ function TodoComponent({ todoId, title, setTodoId }: TodoComponentProps) {
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ['todo', todoId] });
+          queryClient.invalidateQueries({ queryKey: ['todos', sessionId] });
         },
         onError: (error) => {
           alert(`Todo 업데이트에 실패했습니다.${error}`);

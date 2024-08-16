@@ -1,13 +1,15 @@
 'use client';
 
-import { useGetAllTodosForTimetable } from '@/api/hooks/todoHooks';
 import Timetable from '@/app/timetable/components';
+import { startTime, endTime } from '@/app/timetable/mocks/timetableMockData';
+import { useContext } from 'react';
+import { TodoDataContext } from '@/context/TodoDataContext';
+import { convertTodosForTimetable } from '@/utils/convertTodosForTimetable';
 import * as S from './TimeTable.styled';
-import { startTime, endTime } from '../../app/timetable/mocks/timetableMockData';
 
 function TimeTable() {
-  const { data: allTodosForTimetable } = useGetAllTodosForTimetable(1);
-
+  const { todoListData } = useContext(TodoDataContext);
+  const allTodosForTimetable = convertTodosForTimetable(todoListData);
   return (
     <S.TimeTableSection>
       {allTodosForTimetable && (

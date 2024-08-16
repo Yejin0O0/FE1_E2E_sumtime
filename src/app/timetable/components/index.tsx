@@ -114,3 +114,4 @@ function Timetable<T extends BaseTask>({
 }
 
 export default Timetable;
+export * from '../utils';
