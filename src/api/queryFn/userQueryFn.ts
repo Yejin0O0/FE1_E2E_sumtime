@@ -30,7 +30,7 @@ export const getUserIdByEmail = async (email: string): Promise<string> => {
   }
 };
 
-export const emailValidation = async (email: string): Promise<boolean> => {
+export const checkEmailDuplicated = async (email: string): Promise<boolean> => {
   try {
     const response = await axios.get(`/api/user/emailValidation?email=${encodeURIComponent(email)}`);
     return response.data.isValid;

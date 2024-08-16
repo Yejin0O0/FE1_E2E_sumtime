@@ -1,5 +1,5 @@
 import { useMutation, UseMutationResult, useQuery, UseQueryResult } from '@tanstack/react-query';
-import { createUser, deleteUser, emailValidation, getUserIdByEmail, login } from '@/api/queryFn/userQueryFn';
+import { createUser, deleteUser, checkEmailDuplicated, getUserIdByEmail, login } from '@/api/queryFn/userQueryFn';
 
 interface User {
   userId: number;
@@ -19,10 +19,10 @@ export const useGetUserId = (email: string): UseQueryResult<string, Error> =>
     enabled: !!email,
   });
 
-export const useEmailValidation = (email: string): UseQueryResult<boolean, Error> =>
+export const useCheckEmailDuplicated = (email: string): UseQueryResult<boolean, Error> =>
   useQuery({
-    queryKey: ['emailValidation', email],
-    queryFn: () => emailValidation(email),
+    queryKey: ['checkEmailDuplicated', email],
+    queryFn: () => checkEmailDuplicated(email),
     enabled: !!email,
   });
 
