@@ -41,7 +41,8 @@ export const TodoContainer = styled(Flex)`
   padding: 10px;
   box-sizing: border-box;
   min-height: 30px;
-  max-height: fit-content input {
+  max-height: fit-content;
+  input {
     flex-grow: 1;
     background-color: transparent;
   }
@@ -68,10 +69,10 @@ export const FloatingButton = styled.div`
 export const TodoModalStyle = {
   outline: 'none',
   position: 'absolute' as const,
-  // top: 'calc(50% - 300px)',
-  top: '300px',
-  left: '50%',
   width: 400,
+  height: 530,
+  top: 'calc(50% - (530px/2))',
+  left: 'calc(50% - (400px/2))',
   bgcolor: 'background.paper',
   boxShadow: 24,
   borderRadius: 2,

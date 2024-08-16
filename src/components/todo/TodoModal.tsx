@@ -13,17 +13,25 @@ import { TimePicker } from '@mui/x-date-pickers';
 import { parseISO } from 'date-fns';
 import { useSession } from 'next-auth/react';
 import { TodoModalStyle } from './Todo.styled';
-import { TodoModalMode } from '../../types/todo';
+// import { checkTaskListOverlap } from '../../app/timetable/components';
 
 interface TodoModalProps {
   open: boolean;
   todoId: number;
   isModalOpenedByFAB: boolean;
   setIsModalOpenFalse: () => void;
-  mode: TodoModalMode;
+  mode: string;
+  displayingDate: Date;
 }
 
-export default function TodoModal({ open, todoId, isModalOpenedByFAB, setIsModalOpenFalse, mode }: TodoModalProps) {
+export default function TodoModal({
+  open,
+  todoId,
+  isModalOpenedByFAB,
+  setIsModalOpenFalse,
+  mode,
+  displayingDate,
+}: TodoModalProps) {
   const { data: session } = useSession();
   const sessionId = session?.user?.id; // session에서 받아온 id
   const { data: todoData, isSuccess: isSuccessGetOneTodo } = useGetOneTodo(todoId);
@@ -61,10 +69,17 @@ export default function TodoModal({ open, todoId, isModalOpenedByFAB, setIsModal
   const handleUpdateTodo = async () => {
     if (!sessionId) {
       alert('로그인이 필요합니다');
-    } else if (typeof sessionId === 'number') {
+    } else {
       // session 존재할 때만 실행
       await updateTodo(
-        { todoId, title, content, startTime, endTime, color },
+        {
+          todoId,
+          title,
+          content,
+          startTime,
+          endTime,
+          color,
+        },
         {
           onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['todo', todoId] });
@@ -82,11 +97,18 @@ export default function TodoModal({ open, todoId, isModalOpenedByFAB, setIsModal
   const handleCreateTodo = async () => {
     if (!sessionId) {
       alert('로그인이 필요합니다');
-    } else if (typeof sessionId === 'number') {
+    } else {
       // session 존재할 때만 실행
-      const createdAt = new Date();
       await createTodo(
-        { userId: sessionId, title, createdAt, content, startTime, endTime, color },
+        {
+          userId: sessionId,
+          title,
+          createdAt: displayingDate,
+          content,
+          startTime,
+          endTime,
+          color,
+        },
         {
           onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['todos', sessionId] });
@@ -103,7 +125,7 @@ export default function TodoModal({ open, todoId, isModalOpenedByFAB, setIsModal
   const handleDelete = async () => {
     if (!sessionId) {
       alert('로그인이 필요합니다');
-    } else if (typeof sessionId === 'number') {
+    } else {
       // session 존재할 때만 실행
       await deleteTodo(todoId, {
         onSuccess: () => {
@@ -147,14 +169,14 @@ export default function TodoModal({ open, todoId, isModalOpenedByFAB, setIsModal
             />
             <TimePicker
               sx={{ width: '100%', margin: '10px 0' }}
-              views={['hours', 'minutes', 'seconds']}
+              views={['hours', 'minutes']}
               label="시작 시간"
               defaultValue={startTime ? parseISO(startTime) : null}
               onChange={(value) => setStartTime(value ? value.toISOString() : null)}
             />
             <TimePicker
               sx={{ width: '100%', margin: '10px 0' }}
-              views={['hours', 'minutes', 'seconds']}
+              views={['hours', 'minutes']}
               label="종료 시간"
               defaultValue={endTime ? parseISO(endTime) : null}
               onChange={(value) => setEndTime(value ? value.toISOString() : null)}
