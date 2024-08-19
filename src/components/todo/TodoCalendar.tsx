@@ -6,11 +6,10 @@ import { useRouter } from 'next/navigation';
 interface PropsType {
   isOpened: boolean;
   date: Date;
-  setDate: (date: Date) => void;
   toggleOpen: () => void;
 }
 
-function TodoCalendar({ isOpened, date, setDate, toggleOpen }: PropsType) {
+function TodoCalendar({ isOpened, date, toggleOpen }: PropsType) {
   const router = useRouter();
 
   return (
@@ -27,11 +26,10 @@ function TodoCalendar({ isOpened, date, setDate, toggleOpen }: PropsType) {
         defaultValue={new Date()}
         value={date}
         onChange={(value) => {
-          setDate(value);
           const newYear = value.getFullYear();
           const newMonth = value.getMonth() + 1;
           const newDay = value.getDate();
-          router.push(`/mainpagetest/day/${newYear}/${newMonth}/${newDay}`);
+          router.push(`/day/${newYear}/${newMonth}/${newDay}`);
           toggleOpen();
         }}
       />

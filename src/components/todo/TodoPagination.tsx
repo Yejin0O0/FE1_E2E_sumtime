@@ -6,10 +6,9 @@ import { useRouter } from 'next/navigation';
 
 interface PropsType {
   date: Date;
-  setDate: (date: Date) => void;
 }
 
-function TodoPagination({ date, setDate }: PropsType) {
+function TodoPagination({ date }: PropsType) {
   const router = useRouter();
   return (
     <Box
@@ -28,11 +27,10 @@ function TodoPagination({ date, setDate }: PropsType) {
         onChange={(e, value) => {
           const newDate = new Date(date);
           newDate.setDate(value);
-          setDate(newDate);
           const newYear = newDate.getFullYear();
           const newMonth = newDate.getMonth() + 1;
           const newDay = newDate.getDate();
-          router.push(`/mainpagetest/day/${newYear}/${newMonth}/${newDay}`);
+          router.push(`/day/${newYear}/${newMonth}/${newDay}`);
         }}
         count={getDaysInMonth(date)}
         siblingCount={5}

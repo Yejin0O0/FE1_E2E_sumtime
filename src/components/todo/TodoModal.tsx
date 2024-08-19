@@ -12,6 +12,7 @@ import { red } from '@mui/material/colors';
 import { TimePicker } from '@mui/x-date-pickers';
 import { parseISO } from 'date-fns';
 import { useSession } from 'next-auth/react';
+import CategoryField from '@/components/todo/CategoryField';
 import { TodoModalStyle } from './Todo.styled';
 // import { checkTaskListOverlap } from '../../app/timetable/components';
 
@@ -168,21 +169,23 @@ export default function TodoModal({
               value={content}
               onChange={(e) => setContent(e.target.value)}
             />
-            <TimePicker
-              sx={{ width: '100%', margin: '10px 0' }}
-              views={['hours', 'minutes']}
-              label="시작 시간"
-              defaultValue={startTime ? parseISO(startTime) : null}
-              onChange={(value) => setStartTime(value ? value.toISOString() : null)}
-            />
-            <TimePicker
-              sx={{ width: '100%', margin: '10px 0' }}
-              views={['hours', 'minutes']}
-              label="종료 시간"
-              defaultValue={endTime ? parseISO(endTime) : null}
-              onChange={(value) => setEndTime(value ? value.toISOString() : null)}
-            />
-
+            <Box display="flex" gap={1}>
+              <TimePicker
+                sx={{ width: '100%', margin: '10px 0' }}
+                views={['hours', 'minutes']}
+                label="시작 시간"
+                defaultValue={startTime ? parseISO(startTime) : null}
+                onChange={(value) => setStartTime(value ? value.toISOString() : null)}
+              />
+              <TimePicker
+                sx={{ width: '100%', margin: '10px 0' }}
+                views={['hours', 'minutes']}
+                label="종료 시간"
+                defaultValue={endTime ? parseISO(endTime) : null}
+                onChange={(value) => setEndTime(value ? value.toISOString() : null)}
+              />
+            </Box>
+            <CategoryField />
             <TextField
               sx={{ width: '100%', margin: '10px 0' }}
               label="색"

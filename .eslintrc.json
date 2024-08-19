@@ -29,7 +29,8 @@
     "react/react-in-jsx-scope": "off",
     "import/prefer-default-export": "off", //파일에서 export를 하나만 할때 default export를 쓰라고 하는 eslint off
     "no-confusing-arrow": ["error", { "allowParens": true, "onlyOneSimpleParam": true }],
-    "react/require-default-props": "off"
+    "react/require-default-props": "off",
+    "react/jsx-props-no-spreading": "off"  // props 전달시 ...props 사용을 허용 (material-ui 사용시 필요)
   },
   "settings": {
     "react": {
