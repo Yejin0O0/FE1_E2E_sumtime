@@ -9,9 +9,19 @@ export const createTodo = async (
   startTime: string | null,
   endTime: string | null,
   color: string | null,
+  categoryId: number,
 ): Promise<SelectTodo> => {
   try {
-    const { data } = await axios.post('/api/todo/create', { userId, title, createdAt, content, startTime, endTime, color });
+    const { data } = await axios.post('/api/todo/create', {
+      userId,
+      title,
+      createdAt,
+      content,
+      startTime,
+      endTime,
+      color,
+      categoryId,
+    });
     return data.todo;
   } catch (error) {
     if (error instanceof AxiosError) {

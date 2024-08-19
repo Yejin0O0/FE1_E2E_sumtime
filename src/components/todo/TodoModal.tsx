@@ -108,6 +108,7 @@ export default function TodoModal({
           startTime,
           endTime,
           color,
+          categoryId: 1,
         },
         {
           onSuccess: () => {

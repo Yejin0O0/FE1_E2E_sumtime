@@ -21,11 +21,12 @@ export const useCreateTodo = (): UseMutationResult<
     startTime: string | null;
     endTime: string | null;
     color: string | null;
+    categoryId: number;
   }
 > =>
   useMutation({
-    mutationFn: ({ userId, title, createdAt, content, startTime, endTime, color }) =>
-      createTodo(userId, title, createdAt, content, startTime, endTime, color),
+    mutationFn: ({ userId, title, createdAt, content, startTime, endTime, color, categoryId }) =>
+      createTodo(userId, title, createdAt, content, startTime, endTime, color, categoryId),
   });
 
 export const useGetAllTodos = (userId: number): UseQueryResult<SelectTodo[], Error> =>
