@@ -42,7 +42,6 @@ export async function PUT(request: Request, { params }: { params: { id: string }
     const body = await request.json();
     const { title, color, isReported } = body;
 
-    // 업데이트할 필드만 선택합니다.
     const updatedCategory: Partial<typeof categoriesTable.$inferInsert> = {};
 
     if (title) updatedCategory.title = title;
@@ -73,5 +72,28 @@ export async function PUT(request: Request, { params }: { params: { id: string }
   } catch (error) {
     console.error('Error updating category:', error);
     return NextResponse.json({ error: '카테고리 수정에 실패했습니다.' }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+  try {
+    const id = Number(params.id);
+
+    if (Number.isNaN(id)) {
+      return NextResponse.json({ error: '유효한 id를 제공해주세요.' }, { status: 400 });
+    }
+
+    const existingCategory = await db.select().from(categoriesTable).where(eq(categoriesTable.id, id)).get();
+
+    if (!existingCategory) {
+      return NextResponse.json({ error: '삭제할 카테고리를 찾을 수 없습니다.' }, { status: 404 });
+    }
+
+    await db.delete(categoriesTable).where(eq(categoriesTable.id, id)).run();
+
+    return NextResponse.json({ message: '카테고리가 성공적으로 삭제되었습니다.' }, { status: 200 });
+  } catch (error) {
+    console.error('Error deleting category:', error);
+    return NextResponse.json({ error: '카테고리 삭제에 실패했습니다.' }, { status: 500 });
   }
 }
