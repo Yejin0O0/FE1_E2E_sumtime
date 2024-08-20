@@ -20,3 +20,4 @@ const Flex = styled.div<FlexProps>`
 `;
 
 export { Flex };
+export type { FlexProps };
