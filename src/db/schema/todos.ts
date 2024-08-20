@@ -4,7 +4,7 @@ import { usersTable } from './users';
 import { categoriesTable } from './categories';
 
 export const todosTable = sqliteTable('todos', {
-  todoId: integer('todo_id').primaryKey({ autoIncrement: true }),
+  id: integer('id').primaryKey({ autoIncrement: true }),
   title: text('title').notNull(),
   content: text('content'),
   createdAt: text('created_at')
@@ -13,15 +13,16 @@ export const todosTable = sqliteTable('todos', {
   updatedAt: text('updated_at')
     .notNull()
     .$onUpdate(() => sql`CURRENT_TIMESTAMP`),
+  date: text('date').notNull(),
   startTime: text('start_time'),
   endTime: text('end_time'),
   color: text('color'),
   userId: integer('user_id')
     .notNull()
-    .references(() => usersTable.userId, { onDelete: 'cascade' }),
+    .references(() => usersTable.id, { onDelete: 'cascade' }),
   categoryId: integer('category_id')
     .notNull()
-    .default(0)
+    .default(1)
     .references(() => categoriesTable.id, { onDelete: 'cascade' }),
 });
 
@@ -34,8 +35,11 @@ export interface TodoForTimetable {
   title: string;
   content: string | null;
   color: string | null;
-  todoId: number;
+  categoryId: number;
   userId: number;
   id: number;
   taskColor: string | null;
+  date: string;
+  updatedAt: string;
+  createdAt: string;
 }

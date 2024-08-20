@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
         password,
         nickname,
       })
-      .returning({ userId: schema.usersTable.userId });
+      .returning({ userId: schema.usersTable.id });
     const userId = result[0]?.userId;
     console.error(userId);
     return NextResponse.json({ message: 'User added successfully', userId });

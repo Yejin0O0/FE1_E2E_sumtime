@@ -3,8 +3,8 @@ import { and, eq } from 'drizzle-orm';
 import { db, schema } from '@/db';
 
 export async function POST(req: NextRequest) {
-  const { userId, createdAt } = await req.json();
-  const formattedCreatedAt = new Date(createdAt).toDateString();
+  const { userId, date } = await req.json();
+  const formattedCreatedAt = new Date(date).toDateString();
   if (!userId) {
     return NextResponse.json({ error: 'UserID query parameter is required' }, { status: 400 });
   }
@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
     const todos = await db
       .select()
       .from(schema.todosTable)
-      .where(and(eq(schema.todosTable.userId, userId), eq(schema.todosTable.createdAt, formattedCreatedAt)))
+      .where(and(eq(schema.todosTable.userId, userId), eq(schema.todosTable.date, formattedCreatedAt)))
       .all();
 
     if (todos.length > 0) {

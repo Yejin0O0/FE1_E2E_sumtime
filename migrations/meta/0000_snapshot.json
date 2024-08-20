@@ -1,14 +1,14 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "eaa7b4cb-30b1-4532-807e-839d8bad03ff",
+  "id": "f831e602-d97d-490a-a07f-66b6f2060830",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "users": {
       "name": "users",
       "columns": {
-        "user_id": {
-          "name": "user_id",
+        "id": {
+          "name": "id",
           "type": "integer",
           "primaryKey": true,
           "notNull": true,
@@ -66,8 +66,8 @@
     "todos": {
       "name": "todos",
       "columns": {
-        "todo_id": {
-          "name": "todo_id",
+        "id": {
+          "name": "id",
           "type": "integer",
           "primaryKey": true,
           "notNull": true,
@@ -96,6 +96,13 @@
         },
         "updated_at": {
           "name": "updated_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "date": {
+          "name": "date",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
@@ -135,20 +142,20 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": 0
+          "default": 1
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "todos_user_id_users_user_id_fk": {
-          "name": "todos_user_id_users_user_id_fk",
+        "todos_user_id_users_id_fk": {
+          "name": "todos_user_id_users_id_fk",
           "tableFrom": "todos",
           "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
           "columnsTo": [
-            "user_id"
+            "id"
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
@@ -193,6 +200,14 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
+        },
+        "is_reported": {
+          "name": "is_reported",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 1
         },
         "created_at": {
           "name": "created_at",

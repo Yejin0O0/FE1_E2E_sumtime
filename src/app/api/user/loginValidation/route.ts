@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
   try {
     const user = await db
       .select({
-        userId: schema.usersTable.userId,
+        userId: schema.usersTable.id,
         email: schema.usersTable.email,
         nickname: schema.usersTable.nickname,
       })

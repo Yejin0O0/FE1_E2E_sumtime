@@ -12,7 +12,7 @@ export async function DELETE(req: NextRequest) {
   try {
     const result = await db
       .delete(schema.todosTable)
-      .where(eq(schema.todosTable.todoId, parseInt(todoId, 10)))
+      .where(eq(schema.todosTable.id, parseInt(todoId, 10)))
       .execute();
 
     if (result.rowsAffected > 0) {

@@ -98,30 +98,31 @@ export default function TodoModal({
   const handleCreateTodo = async () => {
     if (!sessionId) {
       alert('로그인이 필요합니다');
-    } else {
-      // session 존재할 때만 실행
-      await createTodo(
-        {
-          userId: sessionId,
-          title,
-          createdAt: displayingDate,
-          content,
-          startTime,
-          endTime,
-          color,
-          categoryId: 1,
-        },
-        {
-          onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['todos', sessionId] });
-            handleCloseModal();
-          },
-          onError: (error) => {
-            alert(`Todo를 생성하는 데 실패했습니다.${error}`);
-          },
-        },
-      );
+      return;
     }
+
+    // session 존재할 때만 실행
+    await createTodo(
+      {
+        userId: sessionId,
+        title,
+        date: displayingDate,
+        content,
+        startTime,
+        endTime,
+        color,
+        categoryId: 1,
+      },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ['todos', sessionId] });
+          handleCloseModal();
+        },
+        onError: (error) => {
+          alert(`Todo를 생성하는 데 실패했습니다.${error}`);
+        },
+      },
+    );
   };
 
   const handleDelete = async () => {

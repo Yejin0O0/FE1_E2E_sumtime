@@ -52,7 +52,7 @@ function TodoList({
           <Box>
             {todoListData &&
               todoListData.map((todo) => (
-                <TodoComponent key={todo.todoId} todoId={todo.todoId} title={todo.title} setTodoId={handleOpenModalByTodo} />
+                <TodoComponent key={todo.id} todoId={todo.id} title={todo.title} setTodoId={handleOpenModalByTodo} />
               ))}
           </Box>
         )}

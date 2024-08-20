@@ -26,7 +26,7 @@ export const authOptions: NextAuthOptions = {
 
         const user = db
           .select({
-            id: schema.usersTable.userId,
+            id: schema.usersTable.id,
             email: schema.usersTable.email,
             name: schema.usersTable.nickname,
           })

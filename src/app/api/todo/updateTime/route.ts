@@ -18,9 +18,9 @@ export async function PUT(req: NextRequest) {
     const result = await db
       .update(schema.todosTable)
       .set(updateFields)
-      .where(eq(schema.todosTable.todoId, parseInt(todoId, 10)))
+      .where(eq(schema.todosTable.id, parseInt(todoId, 10)))
       .returning({
-        todoId: schema.todosTable.todoId,
+        todoId: schema.todosTable.id,
         title: schema.todosTable.title,
         content: schema.todosTable.content,
         startTime: schema.todosTable.startTime,

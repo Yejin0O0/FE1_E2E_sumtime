@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
     const todo = await db
       .select()
       .from(schema.todosTable)
-      .where(eq(schema.todosTable.todoId, parseInt(todoId, 10)))
+      .where(eq(schema.todosTable.id, parseInt(todoId, 10)))
       .get();
 
     console.log('Query result:', todo);
