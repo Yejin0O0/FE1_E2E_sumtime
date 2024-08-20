@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
   try {
     const user = await db
       .select({
-        userId: schema.usersTable.userId,
+        userId: schema.usersTable.id,
       })
       .from(schema.usersTable)
       .where(eq(schema.usersTable.email, email))

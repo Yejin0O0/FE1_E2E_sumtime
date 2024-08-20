@@ -1,14 +1,14 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Box from '@mui/material/Box';
 import * as S from '@/components/todo/Todo.styled';
 import TodoComponent from '@/components/todo/TodoComponent';
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
-import { SelectTodo } from '@/db/schema/todos';
 import { TodoModalMode } from '@/types/todo';
+import { TodoDataContext } from '@/context/TodoDataContext';
+import { SkeletonRectangle } from '../common/SkeletonRectangle';
 
 interface PropsType {
-  dataList: SelectTodo[];
   setTodoId: (id: number) => void;
   setIsModalOpenTrue: () => void;
   setTodoModalMode: (mode: TodoModalMode) => void;
@@ -17,13 +17,14 @@ interface PropsType {
 }
 
 function TodoList({
-  dataList,
   setTodoId,
   setIsModalOpenTrue,
   setTodoModalMode,
   setIsModalOpenedByFABTrue,
   setIsModalOpenedByFABFalse,
 }: PropsType) {
+  const { todoListData, isLoading } = useContext(TodoDataContext);
+
   const handleOpenModalByFAB = () => {
     setTodoId(0);
     setIsModalOpenTrue();
@@ -41,12 +42,20 @@ function TodoList({
   return (
     <Box position="relative" width="100%" height="50%">
       <S.TodoComponentsSection>
-        <Box>
-          {dataList &&
-            dataList.map((todo) => (
-              <TodoComponent key={todo.todoId} todoId={todo.todoId} title={todo.title} setTodoId={handleOpenModalByTodo} />
-            ))}
-        </Box>
+        {isLoading ? (
+          <>
+            <SkeletonRectangle />
+            <SkeletonRectangle />
+            <SkeletonRectangle />
+          </>
+        ) : (
+          <Box>
+            {todoListData &&
+              todoListData.map((todo) => (
+                <TodoComponent key={todo.id} todoId={todo.id} title={todo.title} setTodoId={handleOpenModalByTodo} />
+              ))}
+          </Box>
+        )}
       </S.TodoComponentsSection>
       <S.FloatingButton>
         <Fab color="primary" size="small" aria-label="add" onClick={handleOpenModalByFAB}>

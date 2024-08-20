@@ -13,6 +13,7 @@ interface ContextType {
   todoId: number;
   setTodoId: (id: number) => void;
   todoListData: SelectTodo[];
+  isLoading: boolean; // 로딩 상태 추가
 }
 const initialValue = {
   // 세션
@@ -23,6 +24,7 @@ const initialValue = {
   todoId: 0,
   setTodoId: () => {},
   todoListData: [],
+  isLoading: false,
 };
 
 export const TodoDataContext = createContext<ContextType>(initialValue);
@@ -37,7 +39,9 @@ export function TodoDataProvider({ children }: React.PropsWithChildren) {
   const [displayingDate, setDisplayingDate] = useState<Date>(new Date(Number(year), Number(month) - 1, Number(day)));
   // 데이터
   const [todoId, setTodoId] = useState<number>(0);
-  const { data: todoListData = [] } = sessionId ? useGetTodosMatchingDate(sessionId, displayingDate) : { data: [] };
+  const { data: todoListData = [], isLoading = false } = sessionId
+    ? useGetTodosMatchingDate(sessionId, displayingDate)
+    : { data: [] };
 
   const value = useMemo(
     () => ({
@@ -49,8 +53,9 @@ export function TodoDataProvider({ children }: React.PropsWithChildren) {
       todoId,
       setTodoId,
       todoListData,
+      isLoading,
     }),
-    [sessionId, displayingDate, todoId, todoListData],
+    [sessionId, displayingDate, todoId, todoListData, isLoading],
   );
 
   return <TodoDataContext.Provider value={value}>{children}</TodoDataContext.Provider>;

@@ -15,8 +15,8 @@ export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       credentials: {
-        email: { label: 'email', type: 'email', placeholder: 'please enter email' },
-        password: { label: 'password', type: 'password' },
+        email: { title: 'email', type: 'email', placeholder: 'please enter email' },
+        password: { title: 'password', type: 'password' },
       },
       // @ts-expect-error -> authorize ts error 해결을 위한 코드. 참고: https://github.com/nextauthjs/next-auth/issues/2701
       async authorize(credentials) {
@@ -26,7 +26,7 @@ export const authOptions: NextAuthOptions = {
 
         const user = db
           .select({
-            id: schema.usersTable.userId,
+            id: schema.usersTable.id,
             email: schema.usersTable.email,
             name: schema.usersTable.nickname,
           })

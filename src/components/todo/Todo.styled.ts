@@ -70,7 +70,6 @@ export const TodoModalStyle = {
   outline: 'none',
   position: 'absolute' as const,
   width: 400,
-  height: 530,
   top: 'calc(50% - (530px/2))',
   left: 'calc(50% - (400px/2))',
   bgcolor: 'background.paper',

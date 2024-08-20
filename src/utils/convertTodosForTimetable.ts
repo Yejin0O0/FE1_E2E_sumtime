@@ -7,7 +7,7 @@ export function convertTodosForTimetable(todoList: SelectTodo[]) {
     ...todo,
     startTime: todo.startTime ? new Date(todo.startTime) : null,
     endTime: todo.endTime ? new Date(todo.endTime) : null,
-    id: todo.todoId,
+    id: todo.id,
     taskColor: todo.color,
   }));
 }

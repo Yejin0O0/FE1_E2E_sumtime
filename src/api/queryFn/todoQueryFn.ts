@@ -4,14 +4,24 @@ import { SelectTodo } from '@/db/schema/todos';
 export const createTodo = async (
   userId: number,
   title: string,
-  createdAt: Date,
+  date: Date,
   content: string | null,
   startTime: string | null,
   endTime: string | null,
   color: string | null,
+  categoryId: number,
 ): Promise<SelectTodo> => {
   try {
-    const { data } = await axios.post('/api/todo/create', { userId, title, createdAt, content, startTime, endTime, color });
+    const { data } = await axios.post('/api/todo/create', {
+      userId,
+      title,
+      date,
+      content,
+      startTime,
+      endTime,
+      color,
+      categoryId,
+    });
     return data.todo;
   } catch (error) {
     if (error instanceof AxiosError) {
@@ -33,9 +43,9 @@ export const getAllTodosByUserId = async (userId: number): Promise<SelectTodo[]>
   }
 };
 
-export const getTodosByDate = async (userId: number, createdAt: Date): Promise<SelectTodo[]> => {
+export const getTodosByDate = async (userId: number, date: Date): Promise<SelectTodo[]> => {
   try {
-    const { data } = await axios.post('/api/todo/getByDate', { userId, createdAt });
+    const { data } = await axios.post('/api/todo/getByDate', { userId, date });
     return data.todos;
   } catch (error) {
     if (error instanceof AxiosError) {

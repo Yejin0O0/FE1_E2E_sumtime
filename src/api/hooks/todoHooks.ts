@@ -16,23 +16,24 @@ export const useCreateTodo = (): UseMutationResult<
   {
     userId: number;
     title: string;
-    createdAt: Date;
+    date: Date;
     content: string | null;
     startTime: string | null;
     endTime: string | null;
     color: string | null;
+    categoryId: number;
   }
 > =>
   useMutation({
-    mutationFn: ({ userId, title, createdAt, content, startTime, endTime, color }) =>
-      createTodo(userId, title, createdAt, content, startTime, endTime, color),
+    mutationFn: ({ userId, title, date, content, startTime, endTime, color, categoryId }) =>
+      createTodo(userId, title, date, content, startTime, endTime, color, categoryId),
   });
 
 export const useGetAllTodos = (userId: number): UseQueryResult<SelectTodo[], Error> =>
   useQuery({ queryKey: ['todos', userId], queryFn: () => getAllTodosByUserId(userId), enabled: !!userId });
 
-export const useGetTodosMatchingDate = (userId: number, createdAt: Date): UseQueryResult<SelectTodo[], Error> =>
-  useQuery({ queryKey: ['todos', userId, createdAt], queryFn: () => getTodosByDate(userId, createdAt), enabled: !!userId });
+export const useGetTodosMatchingDate = (userId: number, date: Date): UseQueryResult<SelectTodo[], Error> =>
+  useQuery({ queryKey: ['todos', userId, date], queryFn: () => getTodosByDate(userId, date), enabled: !!userId });
 
 export const useGetAllTodosForTimetable = (userId: number): UseQueryResult<TodoForTimetable[], Error> =>
   useQuery({
@@ -44,7 +45,6 @@ export const useGetAllTodosForTimetable = (userId: number): UseQueryResult<TodoF
         ...todo,
         startTime: todo.startTime ? new Date(todo.startTime) : null,
         endTime: todo.endTime ? new Date(todo.endTime) : null,
-        id: todo.todoId,
         taskColor: todo.color,
       })),
   });

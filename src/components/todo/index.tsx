@@ -15,10 +15,8 @@ export default function Todo() {
   const {
     // 데이터
     displayingDate,
-    setDisplayingDate,
     todoId,
     setTodoId,
-    todoListData,
   } = useContext(TodoDataContext);
   const {
     // 달력
@@ -38,15 +36,9 @@ export default function Todo() {
   return (
     <S.TodoSection>
       <TodoHeader toggleCalendar={toggleIsCalendarOpen} />
-      <TodoCalendar
-        isOpened={isCalendarOpen}
-        date={displayingDate}
-        setDate={setDisplayingDate}
-        toggleOpen={toggleIsCalendarOpen}
-      />
-      <TodoPagination date={displayingDate} setDate={setDisplayingDate} />
+      <TodoCalendar isOpened={isCalendarOpen} date={displayingDate} toggleOpen={toggleIsCalendarOpen} />
+      <TodoPagination date={displayingDate} />
       <TodoList
-        dataList={todoListData}
         setTodoId={setTodoId}
         setTodoModalMode={setTodoModalMode}
         setIsModalOpenTrue={setIsModalOpenTrue}

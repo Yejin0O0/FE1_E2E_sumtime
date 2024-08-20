@@ -2,30 +2,33 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db, schema } from '@/db';
 
 export async function POST(req: NextRequest) {
-  const { userId, title, createdAt, content, startTime, endTime, color } = await req.json();
+  const { userId, title, date, content, startTime, endTime, color, categoryId } = await req.json();
 
   try {
-    const formattedCreatedAt = new Date(createdAt).toDateString();
+    const formattedCreatedAt = new Date(date).toDateString();
+
     const result = await db
       .insert(schema.todosTable)
       .values({
         title,
         content,
-        createdAt: formattedCreatedAt,
+        date: formattedCreatedAt,
         startTime,
         endTime,
         color,
         userId,
+        categoryId,
       })
       .returning({
-        todoId: schema.todosTable.todoId,
+        todoId: schema.todosTable.id,
         title: schema.todosTable.title,
         content: schema.todosTable.content,
-        createdAt: schema.todosTable.createdAt,
         startTime: schema.todosTable.startTime,
         endTime: schema.todosTable.endTime,
         color: schema.todosTable.color,
         userId: schema.todosTable.userId,
+        categoryId: schema.todosTable.categoryId,
+        date: schema.todosTable.date,
       });
     const insertedTodo = result[0];
 

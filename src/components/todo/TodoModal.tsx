@@ -12,6 +12,7 @@ import { red } from '@mui/material/colors';
 import { TimePicker } from '@mui/x-date-pickers';
 import { parseISO } from 'date-fns';
 import { useSession } from 'next-auth/react';
+import CategoryField from '@/components/todo/CategoryField';
 import { TodoModalStyle } from './Todo.styled';
 // import { checkTaskListOverlap } from '../../app/timetable/components';
 
@@ -97,29 +98,31 @@ export default function TodoModal({
   const handleCreateTodo = async () => {
     if (!sessionId) {
       alert('로그인이 필요합니다');
-    } else {
-      // session 존재할 때만 실행
-      await createTodo(
-        {
-          userId: sessionId,
-          title,
-          createdAt: displayingDate,
-          content,
-          startTime,
-          endTime,
-          color,
-        },
-        {
-          onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['todos', sessionId] });
-            handleCloseModal();
-          },
-          onError: (error) => {
-            alert(`Todo를 생성하는 데 실패했습니다.${error}`);
-          },
-        },
-      );
+      return;
     }
+
+    // session 존재할 때만 실행
+    await createTodo(
+      {
+        userId: sessionId,
+        title,
+        date: displayingDate,
+        content,
+        startTime,
+        endTime,
+        color,
+        categoryId: 1,
+      },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ['todos', sessionId] });
+          handleCloseModal();
+        },
+        onError: (error) => {
+          alert(`Todo를 생성하는 데 실패했습니다.${error}`);
+        },
+      },
+    );
   };
 
   const handleDelete = async () => {
@@ -167,21 +170,23 @@ export default function TodoModal({
               value={content}
               onChange={(e) => setContent(e.target.value)}
             />
-            <TimePicker
-              sx={{ width: '100%', margin: '10px 0' }}
-              views={['hours', 'minutes']}
-              label="시작 시간"
-              defaultValue={startTime ? parseISO(startTime) : null}
-              onChange={(value) => setStartTime(value ? value.toISOString() : null)}
-            />
-            <TimePicker
-              sx={{ width: '100%', margin: '10px 0' }}
-              views={['hours', 'minutes']}
-              label="종료 시간"
-              defaultValue={endTime ? parseISO(endTime) : null}
-              onChange={(value) => setEndTime(value ? value.toISOString() : null)}
-            />
-
+            <Box display="flex" gap={1}>
+              <TimePicker
+                sx={{ width: '100%', margin: '10px 0' }}
+                views={['hours', 'minutes']}
+                label="시작 시간"
+                defaultValue={startTime ? parseISO(startTime) : null}
+                onChange={(value) => setStartTime(value ? value.toISOString() : null)}
+              />
+              <TimePicker
+                sx={{ width: '100%', margin: '10px 0' }}
+                views={['hours', 'minutes']}
+                label="종료 시간"
+                defaultValue={endTime ? parseISO(endTime) : null}
+                onChange={(value) => setEndTime(value ? value.toISOString() : null)}
+              />
+            </Box>
+            <CategoryField />
             <TextField
               sx={{ width: '100%', margin: '10px 0' }}
               label="색"
