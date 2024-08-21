@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -12,8 +11,11 @@ import { red } from '@mui/material/colors';
 import { TimePicker } from '@mui/x-date-pickers';
 import { parseISO } from 'date-fns';
 import { useSession } from 'next-auth/react';
+import randomColor from 'randomcolor';
 import CategoryField from '@/components/todo/CategoryField';
 import { TodoModalStyle } from './Todo.styled';
+import ColorPickerInput from '../ColorPickerInput';
+
 // import { checkTaskListOverlap } from '../../app/timetable/components';
 
 interface TodoModalProps {
@@ -36,11 +38,11 @@ export default function TodoModal({
   const { data: session } = useSession();
   const sessionId = session?.user?.id; // session에서 받아온 id
   const { data: todoData, isSuccess: isSuccessGetOneTodo } = useGetOneTodo(todoId);
-  const [title, setTitle] = React.useState('');
-  const [content, setContent] = React.useState<string | null>('');
-  const [startTime, setStartTime] = React.useState<string | null>(null);
-  const [endTime, setEndTime] = React.useState<string | null>(null);
-  const [color, setColor] = React.useState<string | null>('');
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState<string | null>('');
+  const [startTime, setStartTime] = useState<string | null>(null);
+  const [endTime, setEndTime] = useState<string | null>(null);
+  const [color, setColor] = useState(randomColor());
 
   const queryClient = useQueryClient();
   const { mutate: updateTodo } = useUpdateTodo();
@@ -53,13 +55,12 @@ export default function TodoModal({
       setContent('');
       setStartTime(null);
       setEndTime(null);
-      setColor('');
+      setColor(randomColor());
     } else if (open && mode === 'update') {
       setTitle(todoData?.title || '');
       setContent(todoData?.content || '');
       setStartTime(todoData?.startTime || null);
       setEndTime(todoData?.endTime || null);
-      setColor(todoData?.color || '');
     }
   }, [open, mode, todoData]);
 
@@ -187,12 +188,7 @@ export default function TodoModal({
               />
             </Box>
             <CategoryField />
-            <TextField
-              sx={{ width: '100%', margin: '10px 0' }}
-              label="색"
-              value={color}
-              onChange={(e) => setColor(e.target.value)}
-            />
+            <ColorPickerInput color={color} setColor={setColor} />
           </Box>
           <Box display="flex" gap={1} m={1} justifyContent="flex-end">
             <Button onClick={handleCloseModal} variant="text" size="medium" color="error" sx={{ border: '1px solid pink' }}>
