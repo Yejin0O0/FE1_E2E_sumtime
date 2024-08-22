@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useClick, useDismiss, useFloating, useInteractions } from '@floating-ui/react';
+import { useClick, useDismiss, useFloating, useInteractions, offset } from '@floating-ui/react';
 import * as S from './ColorPickerInput.styled';
 import ColorPicker from '../ColorPicker';
 
@@ -14,6 +14,14 @@ function ColorPickerInput({ color, setColor }: ColorPickerInputProps) {
     open: isOpen,
     onOpenChange: setIsOpen,
     placement: 'right-start',
+    middleware: [
+      offset(() => {
+        return {
+          crossAxis: -56,
+          mainAxis: 8,
+        };
+      }),
+    ],
   });
   const click = useClick(context);
   const dismiss = useDismiss(context);
@@ -24,7 +32,14 @@ function ColorPickerInput({ color, setColor }: ColorPickerInputProps) {
       <S.LabelP htmlFor="color-input">Color</S.LabelP>
       <S.ColorPickerInput id="color-input" ref={refs.setReference} {...getReferenceProps()} $backgroundColor={color} />
       {isOpen && (
-        <ColorPicker color={color} setColor={setColor} ref={refs.setFloating} style={floatingStyles} {...getFloatingProps()} />
+        <ColorPicker
+          color={color}
+          setColor={setColor}
+          showPalette
+          ref={refs.setFloating}
+          style={floatingStyles}
+          {...getFloatingProps()}
+        />
       )}
     </S.ColorPickerInputLayout>
   );
