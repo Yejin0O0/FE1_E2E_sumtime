@@ -1,13 +1,12 @@
 'use client';
 
 import Timetable, { getTodayFromTime } from 'react-custom-timetable';
-import { useContext } from 'react';
-import { TodoDataContext } from '@/context/TodoDataContext';
 import { convertTodosForTimetable } from '@/utils/convertTodosForTimetable';
+import { useAppSelector } from '@/lib/hooks';
 import * as S from './TimeTable.styled';
 
 function TimeTable() {
-  const { todoListData } = useContext(TodoDataContext);
+  const { todoListData } = useAppSelector((state) => state.todoData);
   const allTodosForTimetable = convertTodosForTimetable(todoListData);
   const startTime = getTodayFromTime(0, 0, 1);
   const endTime = getTodayFromTime(23, 59, 59);

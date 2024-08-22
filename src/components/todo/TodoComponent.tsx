@@ -1,11 +1,12 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useUpdateTodoTime } from '@/api/hooks/todoHooks';
 import CheckCircleOutlinedIcon from '@mui/icons-material/CheckCircleOutlined';
 import PlayCircleFilledWhiteOutlinedIcon from '@mui/icons-material/PlayCircleFilledWhiteOutlined';
 import { IconButton } from '@mui/material';
 import Box from '@mui/material/Box';
-import { TodoDataContext } from '@/context/TodoDataContext';
+import { useAppSelector } from '@/lib/hooks';
+import { selectTodoData } from '@/lib/todos/todoDataSlice';
 import * as S from './Todo.styled';
 import { Text } from '../common';
 
@@ -18,7 +19,7 @@ interface TodoComponentProps {
 function TodoComponent({ todoId, title, setTodoId }: TodoComponentProps) {
   const queryClient = useQueryClient();
   const { mutate: updateTodoTime } = useUpdateTodoTime();
-  const { sessionId } = useContext(TodoDataContext);
+  const { sessionId } = useAppSelector(selectTodoData);
 
   const handleOpenModal = () => {
     // TodoList를 클릭한 경우

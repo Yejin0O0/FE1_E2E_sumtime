@@ -1,42 +1,34 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import Box from '@mui/material/Box';
 import * as S from '@/components/todo/Todo.styled';
 import TodoComponent from '@/components/todo/TodoComponent';
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
-import { TodoModalMode } from '@/types/todo';
-import { TodoDataContext } from '@/context/TodoDataContext';
+import { RootState } from '@/lib/store';
+import { useSelector, useDispatch } from 'react-redux';
+import { setTodoId } from '@/lib/todos/todoDataSlice';
+import { openModal, closeModalByFAB, openModalByFAB, setModalMode } from '@/lib/todos/todoUISlice';
 import { SkeletonRectangle } from '../common/SkeletonRectangle';
 
-interface PropsType {
-  setTodoId: (id: number) => void;
-  setIsModalOpenTrue: () => void;
-  setTodoModalMode: (mode: TodoModalMode) => void;
-  setIsModalOpenedByFABTrue: () => void;
-  setIsModalOpenedByFABFalse: () => void;
-}
+function TodoList() {
+  const dispatch = useDispatch();
 
-function TodoList({
-  setTodoId,
-  setIsModalOpenTrue,
-  setTodoModalMode,
-  setIsModalOpenedByFABTrue,
-  setIsModalOpenedByFABFalse,
-}: PropsType) {
-  const { todoListData, isLoading } = useContext(TodoDataContext);
+  // redux store에서 todoListData, isLoading 가져오기
+  const { todoListData } = useSelector((state: RootState) => state.todoData);
+  const { isLoading } = useSelector((state: RootState) => state.todoData);
 
   const handleOpenModalByFAB = () => {
-    setTodoId(0);
-    setIsModalOpenTrue();
-    setIsModalOpenedByFABTrue();
-    setTodoModalMode('create');
+    dispatch(setTodoId(0));
+    dispatch(openModalByFAB());
+    dispatch(openModal());
+    dispatch(setModalMode('create'));
   };
 
   const handleOpenModalByTodo = (id: number) => {
-    setTodoId(id);
-    setIsModalOpenTrue();
-    setIsModalOpenedByFABFalse();
-    setTodoModalMode('update');
+    dispatch(setTodoId(id));
+    dispatch(closeModalByFAB());
+    dispatch(openModal());
+    dispatch(setModalMode('update'));
   };
 
   return (

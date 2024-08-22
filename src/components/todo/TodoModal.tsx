@@ -10,31 +10,21 @@ import { useCreateTodo, useDeleteTodo, useGetOneTodo, useUpdateTodo } from '@/ap
 import { red } from '@mui/material/colors';
 import { TimePicker } from '@mui/x-date-pickers';
 import { parseISO } from 'date-fns';
-import { useSession } from 'next-auth/react';
 import randomColor from 'randomcolor';
 import CategoryField from '@/components/todo/CategoryField';
+import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { closeModal, selectTodoUI } from '@/lib/todos/todoUISlice'; // Redux 상태 추가
+import { selectTodoData } from '@/lib/todos/todoDataSlice'; // Redux 상태 추가
 import { TodoModalStyle } from './Todo.styled';
 import ColorPickerInput from '../ColorPickerInput';
 
-interface TodoModalProps {
-  open: boolean;
-  todoId: number;
-  isModalOpenedByFAB: boolean;
-  setIsModalOpenFalse: () => void;
-  mode: string;
-  displayingDate: Date;
-}
+export default function TodoModal() {
+  // Redux hook 사용: 기존 props로 주입된 값들은 Redux에서 가져옴
+  const dispatch = useAppDispatch();
+  const { isModalOpen, mode } = useAppSelector(selectTodoUI);
+  const { sessionId, todoId, displayingDate } = useAppSelector(selectTodoData);
 
-export default function TodoModal({
-  open,
-  todoId,
-  isModalOpenedByFAB,
-  setIsModalOpenFalse,
-  mode,
-  displayingDate,
-}: TodoModalProps) {
-  const { data: session } = useSession();
-  const sessionId = session?.user?.id; // session에서 받아온 id
+  // 데이터 가져오기
   const { data: todoData, isSuccess: isSuccessGetOneTodo } = useGetOneTodo(todoId);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState<string | null>('');
@@ -48,29 +38,29 @@ export default function TodoModal({
   const { mutate: deleteTodo } = useDeleteTodo();
 
   useEffect(() => {
-    if (open && mode === 'create') {
+    if (isModalOpen && mode === 'create') {
       setTitle('');
       setContent('');
       setStartTime(null);
       setEndTime(null);
       setColor(randomColor());
-    } else if (open && mode === 'update') {
+    } else if (isModalOpen && mode === 'update') {
       setTitle(todoData?.title || '');
       setContent(todoData?.content || '');
       setStartTime(todoData?.startTime || null);
       setEndTime(todoData?.endTime || null);
+      setColor(todoData?.color || randomColor());
     }
-  }, [open, mode, todoData]);
+  }, [isModalOpen, mode, todoData]);
 
   const handleCloseModal = () => {
-    setIsModalOpenFalse();
+    dispatch(closeModal());
   };
 
   const handleUpdateTodo = async () => {
     if (!sessionId) {
       alert('로그인이 필요합니다');
     } else {
-      // session 존재할 때만 실행
       await updateTodo(
         {
           todoId,
@@ -100,7 +90,6 @@ export default function TodoModal({
       return;
     }
 
-    // session 존재할 때만 실행
     await createTodo(
       {
         userId: sessionId,
@@ -128,7 +117,6 @@ export default function TodoModal({
     if (!sessionId) {
       alert('로그인이 필요합니다');
     } else {
-      // session 존재할 때만 실행
       await deleteTodo(todoId, {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ['todo', todoId] });
@@ -143,8 +131,9 @@ export default function TodoModal({
   };
 
   return (
-    (isModalOpenedByFAB || isSuccessGetOneTodo) && (
-      <Modal open={open} onClose={handleCloseModal} aria-labelledby="modal-title" aria-describedby="modal-description">
+    isModalOpen &&
+    (mode === 'create' || isSuccessGetOneTodo) && (
+      <Modal open={isModalOpen} onClose={handleCloseModal} aria-labelledby="modal-title" aria-describedby="modal-description">
         <Box sx={TodoModalStyle}>
           <Box display="flex" justifyContent="space-between" alignItems="center">
             <Typography id="modal-title" variant="h6" component="h2">

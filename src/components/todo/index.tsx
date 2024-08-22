@@ -1,59 +1,62 @@
 'use client';
 
-import React, { useContext } from 'react';
-import { TodoDataContext } from '@/context/TodoDataContext';
-import { TodoUIContext } from '@/context/TodoUIContext';
+import React, { useEffect } from 'react';
+import { useAppDispatch } from '@/lib/hooks';
+import { setDisplayingDate, setLoading, setTodoListData, setSessionId } from '@/lib/todos/todoDataSlice';
 import TodoHeader from '@/components/todo/TodoHeader';
 import TodoPagination from '@/components/todo/TodoPagination';
 import TodoCalendar from '@/components/todo/TodoCalendar';
 import TodoReport from '@/components/todo/TodoReport';
 import TodoList from '@/components/todo/TodoList';
+import * as S from '@/components/todo/Todo.styled';
+import { useSession } from 'next-auth/react';
+import { useParams } from 'next/navigation';
+import { useGetTodosMatchingDate } from '@/api/hooks/todoHooks';
+import { useMemo } from 'react';
 import TodoModal from './TodoModal';
-import * as S from './Todo.styled';
 
 export default function Todo() {
-  const {
-    // 데이터
-    displayingDate,
-    todoId,
-    setTodoId,
-  } = useContext(TodoDataContext);
-  const {
-    // 달력
-    isCalendarOpen,
-    toggleIsCalendarOpen,
-    // 모달
-    mode,
-    setTodoModalMode,
-    isModalOpen,
-    setIsModalOpenTrue,
-    setIsModalOpenFalse,
-    isModalOpenedByFAB,
-    setIsModalOpenedByFABTrue,
-    setIsModalOpenedByFABFalse,
-  } = useContext(TodoUIContext);
+  const dispatch = useAppDispatch();
+  const { data: session } = useSession();
+  const sessionId = session?.user?.id;
+  // TodoPagination, TodoCalendar에서 선택한 날짜를 가져옴
+  const params = useParams();
+  const { year, month, day } = params;
+
+  const displayingDate = useMemo(() => {
+    return year && month && day ? new Date(Number(year), Number(month) - 1, Number(day)) : new Date();
+  }, [year, month, day]);
+
+  const { data: todoListData = [], isLoading } = useGetTodosMatchingDate(sessionId, displayingDate);
+
+  // sessionId가 변경될 때마다 redux store에 저장
+  useEffect(() => {
+    if (sessionId) {
+      dispatch(setSessionId(sessionId));
+    }
+  }, [sessionId, dispatch]);
+
+  // displayingDate가 변경될 때마다 redux store에 저장
+  useEffect(() => {
+    dispatch(setDisplayingDate(displayingDate));
+  }, [displayingDate, dispatch]);
+
+  // todoListData가 변경될 때마다 redux store에 저장
+  useEffect(() => {
+    dispatch(setLoading(isLoading));
+    if (!isLoading && todoListData) {
+      dispatch(setTodoListData(todoListData));
+    }
+  }, [todoListData, dispatch, isLoading]);
 
   return (
     <S.TodoSection>
-      <TodoHeader toggleCalendar={toggleIsCalendarOpen} />
-      <TodoCalendar isOpened={isCalendarOpen} date={displayingDate} toggleOpen={toggleIsCalendarOpen} />
-      <TodoPagination date={displayingDate} />
-      <TodoList
-        setTodoId={setTodoId}
-        setTodoModalMode={setTodoModalMode}
-        setIsModalOpenTrue={setIsModalOpenTrue}
-        setIsModalOpenedByFABTrue={setIsModalOpenedByFABTrue}
-        setIsModalOpenedByFABFalse={setIsModalOpenedByFABFalse}
-      />
+      <TodoHeader />
+      <TodoCalendar />
+      <TodoPagination />
+      <TodoList />
       <TodoReport />
-      <TodoModal
-        open={isModalOpen}
-        setIsModalOpenFalse={setIsModalOpenFalse}
-        todoId={todoId}
-        isModalOpenedByFAB={isModalOpenedByFAB}
-        mode={mode}
-        displayingDate={displayingDate}
-      />
+      <TodoModal />
     </S.TodoSection>
   );
 }
