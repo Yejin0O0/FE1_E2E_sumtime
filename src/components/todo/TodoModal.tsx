@@ -16,8 +16,6 @@ import CategoryField from '@/components/todo/CategoryField';
 import { TodoModalStyle } from './Todo.styled';
 import ColorPickerInput from '../ColorPickerInput';
 
-// import { checkTaskListOverlap } from '../../app/timetable/components';
-
 interface TodoModalProps {
   open: boolean;
   todoId: number;

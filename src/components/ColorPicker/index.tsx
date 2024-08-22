@@ -4,7 +4,7 @@ import * as S from './ColorPicker.styled';
 
 interface ColorPickerProps extends React.ComponentPropsWithRef<'div'> {
   color: string;
-  setColor: React.Dispatch<React.SetStateAction<string>>;
+  setColor: (newColor: string) => void;
 }
 
 function ColorPicker(props: ColorPickerProps, ref: React.Ref<HTMLDivElement>) {
