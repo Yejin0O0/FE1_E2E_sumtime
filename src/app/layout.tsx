@@ -5,6 +5,7 @@ import AuthProvider from '@/components/common/AuthProvider';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import LocalizationProviders from '@/utils/LocalizationProviders';
+import StoreProvider from '@/app/StoreProvider';
 
 export const metadata: Metadata = {
   title: 'sumday',
@@ -19,7 +20,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body>
         <AuthProvider session={session}>
           <LocalizationProviders>
-            <ReactQueryProviders>{children}</ReactQueryProviders>
+            <ReactQueryProviders>
+              <StoreProvider>{children}</StoreProvider>
+            </ReactQueryProviders>
           </LocalizationProviders>
         </AuthProvider>
       </body>
