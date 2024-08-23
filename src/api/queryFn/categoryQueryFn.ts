@@ -15,7 +15,7 @@ export interface CreateCategoryInfo {
 
 export const getCategoryList = async (): Promise<Category[]> => {
   try {
-    const { data } = await axios.get('/api/category');
+    const { data } = await axios.get('/api/categories');
 
     return data.categories;
   } catch (error) {
@@ -28,7 +28,7 @@ export const getCategoryList = async (): Promise<Category[]> => {
 
 export const getCategory = async (categoryId: number | undefined): Promise<Category> => {
   try {
-    const { data } = await axios.get(`/api/category/${categoryId}`);
+    const { data } = await axios.get(`/api/categories/${categoryId}`);
 
     return data;
   } catch (error) {
@@ -41,7 +41,7 @@ export const getCategory = async (categoryId: number | undefined): Promise<Categ
 
 export const createCategory = async (createInfo: CreateCategoryInfo): Promise<Category> => {
   try {
-    const { data } = await axios.post('/api/category', {
+    const { data } = await axios.post('/api/categories', {
       title: createInfo.title,
       color: createInfo.color,
       isDisplayed: createInfo.isDisplayed,
@@ -58,7 +58,7 @@ export const createCategory = async (createInfo: CreateCategoryInfo): Promise<Ca
 
 export const updateCategory = async (categoryId: number, createInfo: CreateCategoryInfo): Promise<Category> => {
   try {
-    const { data } = await axios.put(`/api/category/${categoryId}`, {
+    const { data } = await axios.put(`/api/categories/${categoryId}`, {
       title: createInfo.title,
       color: createInfo.color,
       isDisplayed: createInfo.isDisplayed,
@@ -75,7 +75,7 @@ export const updateCategory = async (categoryId: number, createInfo: CreateCateg
 
 export const deleteCategory = async (categoryId: number): Promise<string> => {
   try {
-    const { data } = await axios.delete(`/api/category/${categoryId}`);
+    const { data } = await axios.delete(`/api/categories/${categoryId}`);
 
     return data.message;
   } catch (error) {
