@@ -57,9 +57,9 @@ function CategoryModal({ isOpen, close, title, mutateAction, data, setData, id }
             value="isReported"
             control={
               <Switch
-                checked={Boolean(data.isReported)}
+                checked={Boolean(data.isDisplayed)}
                 onChange={(e) => {
-                  setData('isReported', e.target.checked ? 1 : 0);
+                  setData('isDisplayed', e.target.checked ? 1 : 0);
                 }}
                 name="isReported"
               />

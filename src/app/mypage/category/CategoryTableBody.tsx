@@ -18,7 +18,7 @@ function CategoryTableBody() {
 
   const [data, setData] = useState<CreateCategoryInfo>(() => ({
     title: '',
-    isReported: 0,
+    isDisplayed: 0,
     color: '',
   }));
 
@@ -67,13 +67,13 @@ function CategoryTableBody() {
               <S.ColorCode>{category.color}</S.ColorCode>
             </Flex>
           </TableCell>
-          <TableCell align="right">{convertBoolStateToString(category.isReported)}</TableCell>
+          <TableCell align="right">{convertBoolStateToString(category.isDisplayed)}</TableCell>
           <TableCell align="right">
             <Button
               onClick={() => {
                 setCategoryData('title', category.title);
                 setCategoryData('color', category.color || '');
-                setCategoryData('isReported', category.isReported || 0);
+                setCategoryData('isDisplayed', category.isDisplayed || 0);
                 clickUpdateButton(category.id);
               }}
             >

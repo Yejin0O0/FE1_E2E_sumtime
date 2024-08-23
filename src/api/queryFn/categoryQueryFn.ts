@@ -4,13 +4,13 @@ export interface Category {
   id: number;
   title: string;
   color: string | null;
-  isReported: number | null;
+  isDisplayed: number | null;
 }
 
 export interface CreateCategoryInfo {
   title: string;
   color: string | null;
-  isReported: number | null;
+  isDisplayed: number | null;
 }
 
 export const getCategoryList = async (): Promise<Category[]> => {
@@ -44,7 +44,7 @@ export const createCategory = async (createInfo: CreateCategoryInfo): Promise<Ca
     const { data } = await axios.post('/api/category', {
       title: createInfo.title,
       color: createInfo.color,
-      isReported: createInfo.isReported,
+      isDisplayed: createInfo.isDisplayed,
     });
 
     return data.category;
@@ -61,7 +61,7 @@ export const updateCategory = async (categoryId: number, createInfo: CreateCateg
     const { data } = await axios.put(`/api/category/${categoryId}`, {
       title: createInfo.title,
       color: createInfo.color,
-      isReported: createInfo.isReported,
+      isDisplayed: createInfo.isDisplayed,
     });
 
     return data.category;

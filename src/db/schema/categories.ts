@@ -5,13 +5,14 @@ export const categoriesTable = sqliteTable('categories', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   title: text('title').notNull(),
   color: text('color'),
-  isReported: integer('is_reported').notNull().default(1),
+  isDisplayed: integer('is_displayed').notNull().default(1),
   createdAt: text('created_at')
     .notNull()
     .$default(() => sql`CURRENT_TIMESTAMP`),
   updatedAt: text('updated_at')
     .notNull()
     .$onUpdate(() => sql`CURRENT_TIMESTAMP`),
+  userId: integer('user_id').notNull(),
 });
 
 export type InsertCategory = typeof categoriesTable.$inferInsert;

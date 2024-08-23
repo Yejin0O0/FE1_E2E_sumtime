@@ -1,27 +1,36 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/db';
 import { InsertCategory, categoriesTable } from '@/db/schema';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { title, color, isReported } = body;
+    const { title, color, isDisplayed } = body;
+    const session = await getServerSession(authOptions);
+
+    if (!session) {
+      return NextResponse.json({ error: 'unAuthorized Error' }, { status: 401 });
+    }
+
+    const userId = session.user.id;
 
     if (!title) {
       return NextResponse.json({ error: 'title 값을 입력해주세요' }, { status: 400 });
     }
 
-    const newCategory: InsertCategory = {
+    const newCategory: Pick<InsertCategory, 'title' | 'color' | 'isDisplayed' | 'userId'> = {
       title,
       color: color || null,
-      isReported: isReported !== undefined ? isReported : 1,
+      isDisplayed: isDisplayed !== undefined ? isDisplayed : 1,
+      userId,
     };
 
     const insertedCategory = await db.insert(categoriesTable).values(newCategory).returning({
-      id: categoriesTable.id,
       title: categoriesTable.title,
       color: categoriesTable.color,
-      isReported: categoriesTable.isReported,
+      isDisplayed: categoriesTable.isDisplayed,
     });
 
     return NextResponse.json(insertedCategory, { status: 201 });

@@ -8,7 +8,7 @@ interface User {
 
 export const createUser = async (email: string, password: string, nickname: string): Promise<string> => {
   try {
-    const response = await axios.post('/api/user/create', { email, password, nickname });
+    const response = await axios.post('/api/user', { email, password, nickname });
     return response.data.userId;
   } catch (e) {
     if (e instanceof AxiosError) {

@@ -12,7 +12,7 @@ export const createTodo = async (
   categoryId: number,
 ): Promise<SelectTodo> => {
   try {
-    const { data } = await axios.post('/api/todo/create', {
+    const { data } = await axios.post(`/api/todos`, {
       userId,
       title,
       date,
@@ -31,21 +31,9 @@ export const createTodo = async (
   }
 };
 
-export const getAllTodosByUserId = async (userId: number): Promise<SelectTodo[]> => {
+export const getTodosByDate = async (date: Date): Promise<SelectTodo[]> => {
   try {
-    const { data } = await axios.post('/api/todo/getAllByUserId', { userId });
-    return data.todos;
-  } catch (error) {
-    if (error instanceof AxiosError) {
-      throw error;
-    }
-    throw error;
-  }
-};
-
-export const getTodosByDate = async (userId: number, date: Date): Promise<SelectTodo[]> => {
-  try {
-    const { data } = await axios.post('/api/todo/getByDate', { userId, date });
+    const { data } = await axios.get('/api/todos/', { params: { date } });
     return data.todos;
   } catch (error) {
     if (error instanceof AxiosError) {
@@ -57,7 +45,7 @@ export const getTodosByDate = async (userId: number, date: Date): Promise<Select
 
 export const getOneTodoByTodoId = async (todoId: number): Promise<SelectTodo> => {
   try {
-    const { data } = await axios.post('/api/todo/getOneByTodoId', { todoId });
+    const { data } = await axios.get(`/api/todos/${todoId}`);
     return data.todo;
   } catch (error) {
     if (error instanceof AxiosError) {
@@ -76,7 +64,7 @@ export const updateTodo = async (
   color: string | null,
 ): Promise<SelectTodo> => {
   try {
-    const { data } = await axios.put('/api/todo/update', { todoId, title, content, startTime, endTime, color });
+    const { data } = await axios.put(`/api/todos/${todoId}`, { todoId, title, content, startTime, endTime, color });
     return data.todo;
   } catch (error) {
     if (error instanceof AxiosError) {
@@ -88,7 +76,7 @@ export const updateTodo = async (
 
 export const updateTodoTime = async (todoId: number, startTime: string | null, endTime: string | null): Promise<SelectTodo> => {
   try {
-    const { data } = await axios.put('/api/todo/updateTime', { todoId, startTime, endTime });
+    const { data } = await axios.put(`/api/todos/${todoId}`, { todoId, startTime, endTime });
     return data.todo;
   } catch (error) {
     if (error instanceof AxiosError) {
@@ -100,7 +88,7 @@ export const updateTodoTime = async (todoId: number, startTime: string | null, e
 
 export const deleteTodo = async (todoId: number): Promise<string> => {
   try {
-    const { data } = await axios.delete('/api/todo/delete/', { data: { todoId } });
+    const { data } = await axios.delete(`/api/todos/${todoId}`, { data: { todoId } });
     return data.message;
   } catch (error) {
     if (error instanceof AxiosError) {

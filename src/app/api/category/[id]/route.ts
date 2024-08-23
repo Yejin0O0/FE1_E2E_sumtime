@@ -21,7 +21,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
       id: category.id,
       title: category.title,
       color: category.color,
-      isReported: category.isReported,
+      isDisplayed: category.isDisplayed,
     };
 
     return NextResponse.json(filteredCategory, { status: 200 });
@@ -40,13 +40,13 @@ export async function PUT(request: Request, { params }: { params: { id: string }
     }
 
     const body = await request.json();
-    const { title, color, isReported } = body;
+    const { title, color, isDisplayed } = body;
 
     const updatedCategory: Partial<typeof categoriesTable.$inferInsert> = {};
 
     if (title) updatedCategory.title = title;
     if (color) updatedCategory.color = color;
-    if (typeof isReported === 'number') updatedCategory.isReported = isReported;
+    if (typeof isDisplayed === 'number') updatedCategory.isDisplayed = isDisplayed;
 
     if (Object.keys(updatedCategory).length === 0) {
       return NextResponse.json({ error: '수정할 필드가 없습니다.' }, { status: 400 });
@@ -60,7 +60,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
         id: categoriesTable.id,
         title: categoriesTable.title,
         color: categoriesTable.color,
-        isReported: categoriesTable.isReported,
+        isDisplayed: categoriesTable.isDisplayed,
       })
       .get();
 
