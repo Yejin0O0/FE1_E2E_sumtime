@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import Link from 'next/link';
 import { Flex } from '../common';
 
 export const Container = styled.div`
@@ -23,6 +24,13 @@ export const ProfileDiv = styled(Flex)`
   height: 100%;
 `;
 
+export const MenuButton = styled.button`
+  position: relative;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+`;
+
 export const UserP = styled.p`
   height: 100%;
   line-height: 3;
@@ -37,4 +45,9 @@ export const IconWrapper = styled(Flex)`
   width: 20px;
   margin: 0 10px;
   cursor: pointer;
+`;
+
+export const HeaderLink = styled(Link)`
+  text-decoration: none;
+  color: inherit;
 `;
