@@ -48,8 +48,8 @@ function CategoryTableBody() {
     close();
   };
 
-  const convertBoolStateToString = (isReported: number | null) => {
-    return isReported ? '공개' : '비공개';
+  const convertBoolStateToString = (isDisplayed: number | null) => {
+    return isDisplayed ? '공개' : '비공개';
   };
 
   if (!categoryList) return null;
