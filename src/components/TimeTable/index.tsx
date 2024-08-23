@@ -24,6 +24,7 @@ function TimeTable() {
           displayCurrentTime
           ellipsisText="+"
           currentTimeLineStyle="dashed 1px red"
+          taskSlotStyle={{ color: 'white', textShadow: '1px 1px 1px gray' }}
         />
       )}
     </S.TimeTableSection>
