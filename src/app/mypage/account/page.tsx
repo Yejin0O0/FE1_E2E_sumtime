@@ -1,7 +1,7 @@
 'use client';
 
 import { useSession } from 'next-auth/react';
-import { Button, TextField } from '@mui/material';
+import { Alert, AlertTitle, Button, Snackbar, SnackbarCloseReason, TextField } from '@mui/material';
 import { useRef, useState } from 'react';
 import * as S from './Account.styled';
 
@@ -14,6 +14,7 @@ function Account() {
 
   const { email, name } = userData.user;
   const [isEditState, setIsEditState] = useState(false);
+  const [open, setOpen] = useState(false);
   const nameRef = useRef<HTMLInputElement>(null);
 
   const handleEditClick = () => {
@@ -25,15 +26,17 @@ function Account() {
     setIsEditState(!isEditState);
   };
 
-  const changePassword = () => {
-    // 비밀번호 변경 버튼 클릭 시 서버 연동 파트
-    console.log('Change Password');
+  const handleClick = () => {
+    setOpen(true);
   };
 
-  const deleteAccount = () => {
-    // 탈퇴하기 버튼 클릭 시 서버 연동 파트
-    console.log('Delete Account');
+  const handleClose = (event?: React.SyntheticEvent | Event, reason?: SnackbarCloseReason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpen(false);
   };
+
   return (
     <S.Container>
       <S.Title>Account</S.Title>
@@ -59,16 +62,26 @@ function Account() {
             <Button onClick={handleEditClick}>{isEditState ? '저장' : '수정'}</Button>
           </S.InputWrapper>
         </S.ItemWrapper>
-        <S.ItemWrapper>
-          <S.SectionTitle>Password Find</S.SectionTitle>
-          <Button onClick={changePassword}>비밀번호 바꾸기 or 수정</Button>
-        </S.ItemWrapper>
+
         <S.ItemWrapper>
           <S.SectionTitle>Delete Account</S.SectionTitle>
-          <Button onClick={deleteAccount} color="error">
+          <Button onClick={handleClick} color="warning">
             탈퇴하기
           </Button>
         </S.ItemWrapper>
+        <Snackbar
+          open={open}
+          autoHideDuration={6000}
+          onClose={handleClose}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        >
+          <Alert severity="warning">
+            <AlertTitle> 문의 부탁드립니다</AlertTitle>
+            탈퇴를 원하신다면 아래 이메일로 문의 부탁드립니다.
+            <br />
+            ~~~@~~~.com
+          </Alert>
+        </Snackbar>
       </S.Section>
     </S.Container>
   );

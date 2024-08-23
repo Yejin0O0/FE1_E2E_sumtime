@@ -54,17 +54,17 @@ function CategoryModal({ isOpen, close, title, mutateAction, data, setData, id }
           />
           <ColorPickerInput color={deleteUndefined(data.color)} setColor={handleColorChange} />
           <FormControlLabel
-            value="isReported"
+            value="isDisplayed"
             control={
               <Switch
-                checked={Boolean(data.isReported)}
+                checked={Boolean(data.isDisplayed)}
                 onChange={(e) => {
-                  setData('isReported', e.target.checked ? 1 : 0);
+                  setData('isDisplayed', e.target.checked ? 1 : 0);
                 }}
-                name="isReported"
+                name="isDisplayed"
               />
             }
-            label="isReported"
+            label="isDisplayed"
             labelPlacement="start"
             sx={{ color: 'rgba(0, 0, 0, 0.4)', fontSize: '1rem' }}
           />

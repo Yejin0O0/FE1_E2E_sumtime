@@ -12,6 +12,7 @@ import { TimePicker } from '@mui/x-date-pickers';
 import { parseISO } from 'date-fns';
 import randomColor from 'randomcolor';
 import CategoryField from '@/components/todo/CategoryField';
+import { isValid } from 'date-fns';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { closeModal, selectTodoUI } from '@/lib/todos/todoUISlice'; // Redux 상태 추가
 import { selectTodoData } from '@/lib/todos/todoDataSlice'; // Redux 상태 추가
@@ -57,11 +58,11 @@ export default function TodoModal() {
     dispatch(closeModal());
   };
 
-  const handleUpdateTodo = async () => {
+  const handleUpdate = async () => {
     if (!sessionId) {
       alert('로그인이 필요합니다');
     } else {
-      await updateTodo(
+      updateTodo(
         {
           todoId,
           title,
@@ -84,13 +85,13 @@ export default function TodoModal() {
     }
   };
 
-  const handleCreateTodo = async () => {
+  const handleCreate = async () => {
     if (!sessionId) {
       alert('로그인이 필요합니다');
       return;
     }
 
-    await createTodo(
+    createTodo(
       {
         userId: sessionId,
         title,
@@ -117,7 +118,7 @@ export default function TodoModal() {
     if (!sessionId) {
       alert('로그인이 필요합니다');
     } else {
-      await deleteTodo(todoId, {
+      deleteTodo(todoId, {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ['todo', todoId] });
           queryClient.invalidateQueries({ queryKey: ['todos', sessionId] });
@@ -127,6 +128,34 @@ export default function TodoModal() {
           alert(`Todo를 삭제하는 데 실패했습니다.${error}`);
         },
       });
+    }
+  };
+  const validateCreateTodo = () => {
+    if (title.length === 0 || title.trim().length === 0) {
+      alert('제목을 작성해주세요');
+      return false;
+    }
+    if (endTime && startTime === null) {
+      alert('시작 시간을 확인해주세요.');
+      return false;
+    }
+    if (startTime && endTime === null) {
+      alert('종료 시간을 확인해주세요.');
+      return false;
+    }
+    if (startTime && endTime && startTime >= endTime) {
+      alert('시작 시간이 종료 시간보다 늦습니다.');
+      return false;
+    }
+    return true;
+  };
+  const handleSaveClick = () => {
+    if (validateCreateTodo()) {
+      if (mode === 'create') {
+        handleCreate();
+      } else {
+        handleUpdate();
+      }
     }
   };
 
@@ -151,29 +180,35 @@ export default function TodoModal() {
               label="제목"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
+              onBlur={() => setTitle((prev) => prev.trim())}
             />
             <TextField
               sx={{ width: '100%', margin: '10px 0' }}
               label="설명"
               value={content}
               onChange={(e) => setContent(e.target.value)}
+              onBlur={() => setTitle((prev) => prev.trim())}
             />
-            <Box display="flex" gap={1}>
-              <TimePicker
-                sx={{ width: '100%', margin: '10px 0' }}
-                views={['hours', 'minutes']}
-                label="시작 시간"
-                defaultValue={startTime ? parseISO(startTime) : null}
-                onChange={(value) => setStartTime(value ? value.toISOString() : null)}
-              />
-              <TimePicker
-                sx={{ width: '100%', margin: '10px 0' }}
-                views={['hours', 'minutes']}
-                label="종료 시간"
-                defaultValue={endTime ? parseISO(endTime) : null}
-                onChange={(value) => setEndTime(value ? value.toISOString() : null)}
-              />
-            </Box>
+            {mode === 'update' && (
+              <Box display="flex" gap={1}>
+                <TimePicker
+                  sx={{ width: '100%', margin: '10px 0' }}
+                  views={['hours', 'minutes']}
+                  label="시작 시간"
+                  value={startTime ? parseISO(startTime) : null}
+                  maxTime={endTime ? parseISO(endTime) : undefined}
+                  onChange={(value) => setStartTime(value && isValid(value) ? value.toISOString() : null)}
+                />
+                <TimePicker
+                  sx={{ width: '100%', margin: '10px 0' }}
+                  views={['hours', 'minutes']}
+                  label="종료 시간"
+                  value={endTime ? parseISO(endTime) : null}
+                  minTime={startTime ? parseISO(startTime) : undefined}
+                  onChange={(value) => setEndTime(value && isValid(value) ? value.toISOString() : null)}
+                />
+              </Box>
+            )}
             <CategoryField />
             <ColorPickerInput color={color} setColor={setColor} />
           </Box>
@@ -181,7 +216,7 @@ export default function TodoModal() {
             <Button onClick={handleCloseModal} variant="text" size="medium" color="error" sx={{ border: '1px solid pink' }}>
               취소
             </Button>
-            <Button onClick={mode === 'create' ? handleCreateTodo : handleUpdateTodo} variant="contained" color="primary">
+            <Button onClick={handleSaveClick} variant="contained" color="primary">
               저장
             </Button>
           </Box>

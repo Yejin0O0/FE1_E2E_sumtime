@@ -3,7 +3,7 @@
 import Header from '@/components/Header';
 import { Box, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 import { ReactNode } from 'react';
-import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
+import ManageAccountsOutlinedIcon from '@mui/icons-material/ManageAccountsOutlined';
 import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
 import LiveHelpOutlinedIcon from '@mui/icons-material/LiveHelpOutlined';
 import ExitToAppOutlinedIcon from '@mui/icons-material/ExitToAppOutlined';
@@ -19,7 +19,7 @@ interface MyPageLayoutProps {
 const MENU_ITEM = [
   {
     href: '/mypage/account',
-    icon: <AccountCircleOutlinedIcon sx={{ color: 'black' }} />,
+    icon: <ManageAccountsOutlinedIcon sx={{ color: 'black' }} />,
     text: '계정',
   },
   { href: '/mypage/category', icon: <CategoryOutlinedIcon sx={{ color: 'black' }} />, text: '카테고리' },

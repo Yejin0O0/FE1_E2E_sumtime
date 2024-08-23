@@ -2,7 +2,6 @@ import { useMutation, UseMutationResult, useQuery, UseQueryResult } from '@tanst
 import {
   createTodo,
   deleteTodo,
-  getAllTodosByUserId,
   getOneTodoByTodoId,
   getTodosByDate,
   updateTodo,
@@ -29,15 +28,12 @@ export const useCreateTodo = (): UseMutationResult<
       createTodo(userId, title, date, content, startTime, endTime, color, categoryId),
   });
 
-export const useGetAllTodos = (userId: number): UseQueryResult<SelectTodo[], Error> =>
-  useQuery({ queryKey: ['todos', userId], queryFn: () => getAllTodosByUserId(userId), enabled: !!userId });
-
 export const useGetTodosMatchingDate = (userId: number | undefined, date: Date): UseQueryResult<SelectTodo[], Error> =>
   useQuery({
     queryKey: ['todos', userId, date],
     queryFn: () => {
       if (!userId) return Promise.resolve([]); // 클라이언트가 아닌 todoHooks에서 userId 예외처리
-      return getTodosByDate(userId, date);
+      return getTodosByDate(date);
     },
     enabled: !!userId,
   });
@@ -45,7 +41,7 @@ export const useGetTodosMatchingDate = (userId: number | undefined, date: Date):
 export const useGetAllTodosForTimetable = (userId: number): UseQueryResult<TodoForTimetable[], Error> =>
   useQuery({
     queryKey: ['todos', userId],
-    queryFn: () => getTodosByDate(userId, new Date()),
+    queryFn: () => getTodosByDate(new Date()),
     enabled: !!userId,
     select: (data) =>
       data.map((todo) => ({
