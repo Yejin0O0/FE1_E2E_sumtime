@@ -64,21 +64,22 @@ export const useUpdateTodo = (): UseMutationResult<
     content: string | null;
     startTime: string | null;
     endTime: string | null;
+    isProgress: boolean;
     color: string | null;
   }
 > =>
   useMutation({
-    mutationFn: ({ todoId, title, content, startTime, endTime, color }) =>
-      updateTodo(todoId, title, content, startTime, endTime, color),
+    mutationFn: ({ todoId, title, content, startTime, endTime, isProgress, color }) =>
+      updateTodo(todoId, title, content, startTime, endTime, isProgress, color),
   });
 
 export const useUpdateTodoTime = (): UseMutationResult<
   SelectTodo,
   Error,
-  { todoId: number; startTime: string | null; endTime: string | null }
+  { todoId: number; startTime: string | null; endTime: string | null; isProgress: boolean }
 > =>
   useMutation({
-    mutationFn: ({ todoId, startTime, endTime }) => updateTodoTime(todoId, startTime, endTime),
+    mutationFn: ({ todoId, startTime, endTime, isProgress }) => updateTodoTime(todoId, startTime, endTime, isProgress),
   });
 
 export const useDeleteTodo = (): UseMutationResult<string, Error, number> =>

@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Box } from '@mui/material';
-import TodoComponent from '@/components/todo/TodoComponent';
 import { RootState } from '@/lib/store';
 import { useSelector, useDispatch } from 'react-redux';
 import { setTodoId } from '@/lib/todos/todoDataSlice';
 import { openModal, closeModalByFAB, setModalMode } from '@/lib/todos/todoUISlice';
+import TodoWrapper from '@/components/todo/TodoList/TodoWrapper';
 import * as TodoStyle from './TodoList.styled';
 import { SkeletonRectangle } from '../../common/SkeletonRectangle';
 import * as CommonStyle from '../../common';
@@ -17,8 +17,16 @@ function TodoList() {
   const dispatch = useDispatch();
 
   // redux store에서 todoListData, isLoading 가져오기
-  const { todoListData } = useSelector((state: RootState) => state.todoData);
-  const { isLoading } = useSelector((state: RootState) => state.todoData);
+  const { todoListData, isLoading } = useSelector((state: RootState) => state.todoData);
+  const [isListProgressing, setIsListProgressing] = React.useState(false);
+
+  useEffect(() => {
+    if (todoListData.some((todo) => todo.isProgress)) {
+      setIsListProgressing(true);
+    } else {
+      setIsListProgressing(false);
+    }
+  }, [todoListData]);
 
   const handleOpenModalByTodo = (id: number) => {
     dispatch(setTodoId(id));
@@ -48,7 +56,15 @@ function TodoList() {
       <S.TodoComponentsSection>
         <Box>
           {todoListData.map((todo) => (
-            <TodoComponent key={todo.id} todoId={todo.id} title={todo.title} setTodoId={handleOpenModalByTodo} />
+            <TodoWrapper
+              key={todo.id}
+              todoId={todo.id}
+              title={todo.title}
+              endTime={todo.endTime}
+              setTodoId={handleOpenModalByTodo}
+              isProgress={!!todo.isProgress}
+              isListProgressing={isListProgressing}
+            />
           ))}
         </Box>
       </S.TodoComponentsSection>

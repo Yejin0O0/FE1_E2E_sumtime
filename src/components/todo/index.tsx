@@ -7,7 +7,7 @@ import TodoHeader from '@/components/todo/TodoHeader';
 import TodoPagination from '@/components/todo/TodoPagination';
 import TodoCalendar from '@/components/todo/TodoCalendar';
 import TodoReport from '@/components/todo/TodoReport';
-import TodoList from '@/components/todo/TodoList';
+import TodoList from '@/components/todo/TodoList/index';
 import * as S from '@/components/todo/Todo.styled';
 import { useSession } from 'next-auth/react';
 import { useParams } from 'next/navigation';

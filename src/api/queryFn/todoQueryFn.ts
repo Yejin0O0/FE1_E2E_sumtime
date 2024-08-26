@@ -61,10 +61,11 @@ export const updateTodo = async (
   content: string | null,
   startTime: string | null,
   endTime: string | null,
+  isProgress: boolean,
   color: string | null,
 ): Promise<SelectTodo> => {
   try {
-    const { data } = await axios.put(`/api/todos/${todoId}`, { todoId, title, content, startTime, endTime, color });
+    const { data } = await axios.put(`/api/todos/${todoId}`, { todoId, title, content, startTime, endTime, isProgress, color });
     return data.todo;
   } catch (error) {
     if (error instanceof AxiosError) {
@@ -74,9 +75,14 @@ export const updateTodo = async (
   }
 };
 
-export const updateTodoTime = async (todoId: number, startTime: string | null, endTime: string | null): Promise<SelectTodo> => {
+export const updateTodoTime = async (
+  todoId: number,
+  startTime: string | null,
+  endTime: string | null,
+  isProgress: boolean,
+): Promise<SelectTodo> => {
   try {
-    const { data } = await axios.put(`/api/todos/${todoId}`, { todoId, startTime, endTime });
+    const { data } = await axios.put(`/api/todos/${todoId}`, { todoId, startTime, endTime, isProgress });
     return data.todo;
   } catch (error) {
     if (error instanceof AxiosError) {
