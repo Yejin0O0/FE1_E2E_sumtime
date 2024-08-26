@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useAppDispatch } from '@/lib/hooks';
 import { setDisplayingDate, setLoading, setTodoListData, setSessionId } from '@/lib/todos/todoDataSlice';
 import TodoHeader from '@/components/todo/TodoHeader';
@@ -12,7 +12,6 @@ import * as S from '@/components/todo/Todo.styled';
 import { useSession } from 'next-auth/react';
 import { useParams } from 'next/navigation';
 import { useGetTodosMatchingDate } from '@/api/hooks/todoHooks';
-import { useMemo } from 'react';
 import TodoModal from './TodoModal';
 
 export default function Todo() {
