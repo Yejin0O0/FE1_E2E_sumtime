@@ -127,7 +127,6 @@ export default function TodoModal() {
     } else {
       deleteTodo(todoId, {
         onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ['todo', todoId] });
           queryClient.invalidateQueries({ queryKey: ['todos', sessionId] });
           handleCloseModal();
         },
