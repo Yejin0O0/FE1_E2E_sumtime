@@ -3,11 +3,9 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import { TextField, IconButton } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { TextField } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
-import { useCreateTodo, useDeleteTodo, useGetOneTodo, useUpdateTodo } from '@/api/hooks/todoHooks';
-import { red } from '@mui/material/colors';
+import { useCreateTodo, useGetOneTodo, useUpdateTodo } from '@/api/hooks/todoHooks';
 import { TimePicker } from '@mui/x-date-pickers';
 import { parseISO, isValid, isBefore, isToday, isAfter } from 'date-fns';
 import randomColor from 'randomcolor';
@@ -15,8 +13,9 @@ import CategoryField from '@/components/todo/CategoryField';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { closeModal, selectTodoUI } from '@/lib/todos/todoUISlice'; // Redux 상태 추가
 import { selectTodoData } from '@/lib/todos/todoDataSlice'; // Redux 상태 추가
-import { TodoModalStyle } from './Todo.styled';
-import ColorPickerInput from '../ColorPickerInput';
+import { TodoModalStyle } from '../Todo.styled';
+import ColorPickerInput from '../../ColorPickerInput';
+import DeleteTodoButton from './DeleteTodoButton';
 
 export default function TodoModal() {
   // Redux hook 사용: 기존 props로 주입된 값들은 Redux에서 가져옴
@@ -35,7 +34,6 @@ export default function TodoModal() {
   const queryClient = useQueryClient();
   const { mutate: updateTodo } = useUpdateTodo();
   const { mutate: createTodo } = useCreateTodo();
-  const { mutate: deleteTodo } = useDeleteTodo();
 
   const now = new Date(); // 현재 시간
   const today = new Date();
@@ -121,21 +119,6 @@ export default function TodoModal() {
     );
   };
 
-  const handleDelete = async () => {
-    if (!sessionId) {
-      alert('로그인이 필요합니다');
-    } else {
-      deleteTodo(todoId, {
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ['todos', sessionId] });
-          handleCloseModal();
-        },
-        onError: (error) => {
-          alert(`Todo를 삭제하는 데 실패했습니다.${error}`);
-        },
-      });
-    }
-  };
   const validateCreateTodo = () => {
     if (title.length === 0 || title.trim().length === 0) {
       alert('제목을 작성해주세요');
@@ -190,11 +173,7 @@ export default function TodoModal() {
             <Typography id="modal-title" variant="h6" component="h2">
               {mode === 'create' ? 'Todo 생성' : 'Todo 수정'}
             </Typography>
-            {mode === 'update' && (
-              <IconButton onClick={handleDelete} color="secondary">
-                <DeleteIcon sx={{ color: red[400], fontSize: 25 }} />
-              </IconButton>
-            )}
+            {mode === 'update' && <DeleteTodoButton todoId={todoId} handleCloseParentModal={handleCloseModal} />}
           </Box>
           <Box m={1}>
             <TextField
