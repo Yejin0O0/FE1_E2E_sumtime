@@ -3,7 +3,7 @@ import { SelectTodo } from '@/db/schema/todos';
 
 interface TodoDataState {
   sessionId: number | undefined;
-  displayingDate: Date;
+  displayingDate: Date | null;
   todoId: number;
   todoListData: SelectTodo[];
   isLoading: boolean;
@@ -11,7 +11,7 @@ interface TodoDataState {
 
 const initialState: TodoDataState = {
   sessionId: undefined,
-  displayingDate: new Date(),
+  displayingDate: null,
   todoId: 0,
   todoListData: [],
   isLoading: false,
@@ -24,7 +24,7 @@ const todoDataSlice = createSlice({
     setSessionId: (state, action: PayloadAction<number | undefined>) => {
       state.sessionId = action.payload;
     },
-    setDisplayingDate: (state, action: PayloadAction<Date>) => {
+    setDisplayingDate: (state, action: PayloadAction<Date | null>) => {
       state.displayingDate = action.payload; // sessionId 및 displayingDate가 외부에서 주입됨
     },
     setTodoId: (state, action: PayloadAction<number>) => {
