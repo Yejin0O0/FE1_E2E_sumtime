@@ -2,6 +2,7 @@ import { NextAuthOptions, User } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { and, eq, sql } from 'drizzle-orm';
 import { db, schema } from '@/db';
+import bcrypt from 'bcrypt';
 
 export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
@@ -24,27 +25,39 @@ export const authOptions: NextAuthOptions = {
           throw new Error('please enter the email and password');
         }
 
-        const user = db
+        const userQuery = db
           .select({
             id: schema.usersTable.id,
             email: schema.usersTable.email,
             name: schema.usersTable.nickname,
+            password: schema.usersTable.password,
           })
           .from(schema.usersTable)
-          .where(
-            and(
-              eq(schema.usersTable.email, sql.placeholder('email')),
-              eq(schema.usersTable.password, sql.placeholder('password')),
-            ),
-          )
+          .where(and(eq(schema.usersTable.email, sql.placeholder('email'))))
           .prepare();
 
         try {
-          const userData = await user.execute({ email: credentials.email, password: credentials.password });
-          if (userData.length > 0) {
-            return userData[0];
+          const userData = await userQuery.execute({ email: credentials.email });
+          const user = userData[0];
+
+          // 사용자가 존재하는지 확인합니다.
+          if (!user) {
+            throw new Error('No user found');
           }
-          throw new Error('no user info');
+
+          // 사용자가 입력한 비밀번호와 데이터베이스에 저장된 암호화된 비밀번호를 비교합니다.
+          const isPasswordValid = bcrypt.compareSync(credentials.password, user.password);
+
+          if (!isPasswordValid) {
+            throw new Error('Invalid credentials');
+          }
+
+          // 비밀번호가 일치하면 사용자 정보를 반환합니다.
+          return {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+          };
         } catch (error) {
           return null;
         }

@@ -1,16 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db, schema } from '@/db';
+import bcrypt from 'bcrypt';
 
 export async function POST(req: NextRequest) {
   const { email, password, nickname } = await req.json();
 
   try {
     const result = await db.transaction(async (tx) => {
+      const hashedPassword = bcrypt.hashSync(password, 10);
       const userResult = await tx
         .insert(schema.usersTable)
         .values({
           email,
-          password,
+          password: hashedPassword,
           nickname,
         })
         .returning({ userId: schema.usersTable.id });
