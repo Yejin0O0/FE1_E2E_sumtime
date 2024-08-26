@@ -42,7 +42,8 @@ export const SignupValidationDiv = styled(Flex)`
 `;
 
 export const SignupValidationSpan = styled.span<ValidationSpanProps>`
-  font-size: 14px;
+  font-size: 12px;
+
   color: ${(props) => (props?.$color ? props.$color : props?.theme?.color?.fontColor)};
 `;
 
