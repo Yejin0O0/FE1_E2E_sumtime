@@ -25,6 +25,17 @@ button {
   padding: 0;
 }
 
+/* 스크롤 없애는 css */
+::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, and Opera */
+}
+
+/* 스크롤 없애는 css */
+body {
+  -ms-overflow-style: none; /* Internet Explorer and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
 ul,
 ol,
 li {
