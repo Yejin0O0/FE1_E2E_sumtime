@@ -10,15 +10,6 @@ export const TodoSection = styled(Flex)`
   border-left: 2px solid whitesmoke;
 `;
 
-export const TodoComponentsSection = styled(Container)`
-  height: 100%;
-  overflow-y: auto; /* scrolling */
-  border-radius: 8px;
-  padding: 10px;
-  box-sizing: border-box;
-  box-shadow: 1px 1px 10px lightgrey;
-`;
-
 export const ATodoComponentContainer = styled(Container)`
   margin: 10px;
   height: auto;
@@ -57,12 +48,6 @@ export const TodoContainer = styled(Flex)`
   button + button {
     margin-left: 10px; // 버튼 사이의 간격을 위한 마진
   }
-`;
-
-export const FloatingButton = styled.div`
-  position: absolute;
-  bottom: 5%;
-  right: 5%;
 `;
 
 // mui TodoModal에만 쓰이는 Style

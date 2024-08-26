@@ -1,13 +1,17 @@
 import React from 'react';
-import { Pagination } from '@mui/material';
+import { Pagination, Box, Skeleton } from '@mui/material';
 import { getDaysInMonth } from 'date-fns';
-import Box from '@mui/material/Box';
 import { useRouter } from 'next/navigation';
 import { useAppSelector } from '@/lib/hooks';
 
 function TodoPagination() {
   const displayingDate = useAppSelector((state) => state.todoData.displayingDate);
   const router = useRouter();
+
+  if (!displayingDate) {
+    return <Skeleton width="100%" height="64px" />;
+  }
+
   return (
     <Box
       marginTop={1}

@@ -1,12 +1,16 @@
 import useGetCategoryList from '@/api/hooks/categoryHooks/useGetCategoryList';
 import { Flex } from '@/components/common';
-import { Button, TableBody, TableCell, TableRow } from '@mui/material';
+import { Button, styled, TableBody, TableCell, TableRow, Tooltip } from '@mui/material';
 import useBooleanState from '@/hooks/utils/useBooleanState';
 import { useState } from 'react';
 import useUpdateCategory from '@/api/hooks/categoryHooks/useUpdateCategory';
 import { CreateCategoryInfo } from '@/api/queryFn/categoryQueryFn';
 import * as S from './Category.styled';
 import CategoryModal from './CategoryModal';
+
+interface StyledTableRowProps {
+  disabled: boolean;
+}
 
 function CategoryTableBody() {
   const { value: isOpen, setTrue: open, setFalse: close } = useBooleanState();
@@ -49,39 +53,57 @@ function CategoryTableBody() {
   };
 
   const convertBoolStateToString = (isDisplayed: number | null) => {
-    return isDisplayed ? '공개' : '비공개';
+    return isDisplayed ? '포함' : '비포함';
   };
 
   if (!categoryList) return null;
 
+  const StyledTableRow = styled(TableRow)<StyledTableRowProps>(({ theme, disabled }) => ({
+    backgroundColor: disabled ? theme.palette.action.hover : 'inherit',
+    cursor: disabled ? 'not-allowed' : 'default',
+    opacity: disabled ? 0.5 : 1,
+    '&:last-child td, &:last-child th': {
+      border: 0,
+    },
+    '& td': {
+      color: disabled ? theme.palette.text.disabled : theme.palette.text.primary,
+    },
+  }));
+
   return (
     <TableBody>
-      {categoryList.map((category) => (
-        <TableRow key={category.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-          <TableCell component="th" scope="row" sx={{ maxWidth: '200px', overflowX: 'auto' }}>
-            {category.title}
-          </TableCell>
-          <TableCell align="right">
-            <Flex $gap="20px">
-              <S.ColorState hexColor={category.color} />
-              <S.ColorCode>{category.color}</S.ColorCode>
-            </Flex>
-          </TableCell>
-          <TableCell align="right">{convertBoolStateToString(category.isDisplayed)}</TableCell>
-          <TableCell align="right">
-            <Button
-              onClick={() => {
-                setCategoryData('title', category.title);
-                setCategoryData('color', category.color || '');
-                setCategoryData('isDisplayed', category.isDisplayed || 0);
-                clickUpdateButton(category.id);
-              }}
-            >
-              수정
-            </Button>
-          </TableCell>
-        </TableRow>
-      ))}
+      {categoryList.map((category) => {
+        const isDisable = category.isDefault === 1;
+        return (
+          <Tooltip key={category.id} title="기본 카테고리는 수정 불가능 합니다." disableHoverListener={!isDisable}>
+            <StyledTableRow disabled={isDisable}>
+              <TableCell component="th" scope="row" sx={{ maxWidth: '200px', overflowX: 'auto' }}>
+                {category.title}
+              </TableCell>
+              <TableCell align="right">
+                <Flex $gap="20px">
+                  <S.ColorState hexColor={category.color} />
+                  <S.ColorCode>{category.color}</S.ColorCode>
+                </Flex>
+              </TableCell>
+              <TableCell align="right">{convertBoolStateToString(category.isDisplayed)}</TableCell>
+              <TableCell align="right">
+                <Button
+                  disabled={isDisable}
+                  onClick={() => {
+                    setCategoryData('title', category.title);
+                    setCategoryData('color', category.color || '');
+                    setCategoryData('isDisplayed', category.isDisplayed || 0);
+                    clickUpdateButton(category.id);
+                  }}
+                >
+                  수정
+                </Button>
+              </TableCell>
+            </StyledTableRow>
+          </Tooltip>
+        );
+      })}
       <CategoryModal
         isOpen={isOpen}
         close={handleCloseModal}

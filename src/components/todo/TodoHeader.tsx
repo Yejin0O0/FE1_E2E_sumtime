@@ -3,7 +3,7 @@ import { Text } from '@/components/common';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale/ko';
 import Box from '@mui/material/Box';
-import { IconButton } from '@mui/material';
+import { IconButton, Skeleton } from '@mui/material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { useAppSelector, useAppDispatch } from '@/lib/hooks';
 import { toggleCalendar } from '@/lib/todos/todoUISlice';
@@ -17,6 +17,10 @@ function TodoHeader() {
   const handleToggleCalendar = () => {
     dispatch(toggleCalendar());
   };
+
+  if (!displayingDate) {
+    return <Skeleton width="100%" height="64px" />;
+  }
 
   return (
     <Box width="100%" height={56} borderRadius={2} display="flex" alignItems="center" boxShadow="1px 1px 10px lightgray">

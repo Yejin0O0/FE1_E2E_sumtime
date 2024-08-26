@@ -2,9 +2,11 @@ import axios, { AxiosError } from 'axios';
 
 export interface Category {
   id: number;
+  userId: number;
   title: string;
   color: string | null;
   isDisplayed: number | null;
+  isDefault: number;
 }
 
 export interface CreateCategoryInfo {

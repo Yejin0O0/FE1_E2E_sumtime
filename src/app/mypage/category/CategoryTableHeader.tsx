@@ -4,9 +4,9 @@ function CategoryTableHeader() {
   return (
     <TableHead>
       <TableRow>
-        <TableCell>Title</TableCell>
-        <TableCell align="right">Category Color</TableCell>
-        <TableCell align="right">is Reported</TableCell>
+        <TableCell>제목</TableCell>
+        <TableCell align="right">색상</TableCell>
+        <TableCell align="right">차트</TableCell>
         <TableCell align="right" sx={{ paddingRight: '35px' }}>
           수정
         </TableCell>

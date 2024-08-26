@@ -27,6 +27,7 @@ export async function POST(req: NextRequest) {
           title: '기본 카테고리',
           color: '#d3d3d3',
           isDisplayed: 1,
+          isDefault: 1,
           userId,
         })
         .returning({ categoryId: schema.categoriesTable.id });

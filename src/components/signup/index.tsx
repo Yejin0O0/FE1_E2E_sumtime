@@ -97,12 +97,12 @@ function SignupSection() {
 
   const getEmailValidationMessage = () => {
     if (isEmailChecked === 'inProgress') {
-      return <S.SignupValidationSpan>이메일 중복 여부를 확인해주세요</S.SignupValidationSpan>;
+      return <S.SignupValidationSpan $color="#d32f2f">이메일 중복 여부를 확인해주세요</S.SignupValidationSpan>;
     }
     if (isEmailChecked === 'success') {
-      return <S.SignupValidationSpan>사용 가능한 이메일입니다.</S.SignupValidationSpan>;
+      return <S.SignupValidationSpan $color="#1976d2">사용 가능한 이메일입니다.</S.SignupValidationSpan>;
     }
-    return <S.SignupValidationSpan $color="red">이미 가입된 이메일입니다.</S.SignupValidationSpan>;
+    return <S.SignupValidationSpan $color="#d32f2f">이미 가입된 이메일입니다.</S.SignupValidationSpan>;
   };
 
   const handleDuplicateValidation = () => {
