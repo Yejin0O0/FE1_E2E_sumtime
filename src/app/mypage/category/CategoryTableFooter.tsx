@@ -3,12 +3,10 @@ import { Button, TableCell, TableFooter, TableRow } from '@mui/material';
 import useCreateCategory from '@/api/hooks/categoryHooks/useCreateCategory';
 import { useState } from 'react';
 import { CreateCategoryInfo } from '@/api/queryFn/categoryQueryFn';
-import randomColor from 'randomcolor';
 import CategoryModal from './CategoryModal';
 
 function CategoryTableFooter() {
   const { value: isOpen, setTrue: open, setFalse: close } = useBooleanState();
-
   const [data, setData] = useState<CreateCategoryInfo>(() => ({
     title: '',
     isDisplayed: 0,
@@ -30,11 +28,6 @@ function CategoryTableFooter() {
     }));
   };
 
-  const openModal = () => {
-    setCategoryData('color', randomColor());
-    open();
-  };
-
   const { mutate: createCategory } = useCreateCategory();
 
   const createFunction = (body: CreateCategoryInfo) => {
@@ -52,7 +45,7 @@ function CategoryTableFooter() {
     <TableFooter sx={{ position: 'sticky', bottom: 0, backgroundColor: 'lightgray', zIndex: 1 }}>
       <TableRow>
         <TableCell colSpan={4} align="center" sx={{ fontSize: '15px', color: 'gray', border: 0, padding: 0 }}>
-          <Button sx={{ width: '100%', padding: '20px' }} onClick={openModal}>
+          <Button sx={{ width: '100%', padding: '20px' }} onClick={open}>
             + Add New Category
           </Button>
         </TableCell>
