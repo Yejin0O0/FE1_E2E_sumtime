@@ -9,10 +9,9 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useCreateTodo, useDeleteTodo, useGetOneTodo, useUpdateTodo } from '@/api/hooks/todoHooks';
 import { red } from '@mui/material/colors';
 import { TimePicker } from '@mui/x-date-pickers';
-import { parseISO } from 'date-fns';
+import { parseISO, isValid, isBefore, isToday, isAfter } from 'date-fns';
 import randomColor from 'randomcolor';
 import CategoryField from '@/components/todo/CategoryField';
-import { isValid } from 'date-fns';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { closeModal, selectTodoUI } from '@/lib/todos/todoUISlice'; // Redux 상태 추가
 import { selectTodoData } from '@/lib/todos/todoDataSlice'; // Redux 상태 추가
@@ -37,6 +36,14 @@ export default function TodoModal() {
   const { mutate: updateTodo } = useUpdateTodo();
   const { mutate: createTodo } = useCreateTodo();
   const { mutate: deleteTodo } = useDeleteTodo();
+
+  const now = new Date(); // 현재 시간
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // 오늘의 시작 시점
+
+  const isPastDate = isBefore(displayingDate, today);
+  const isTodayDate = isToday(displayingDate);
+  const isFutureDate = isAfter(displayingDate, today);
 
   useEffect(() => {
     if (isModalOpen && mode === 'create') {
@@ -149,6 +156,7 @@ export default function TodoModal() {
     }
     return true;
   };
+
   const handleSaveClick = () => {
     if (validateCreateTodo()) {
       if (mode === 'create') {
@@ -158,6 +166,21 @@ export default function TodoModal() {
       }
     }
   };
+
+  const getTimePickerProps = () => {
+    if (isFutureDate) {
+      return { minTime: undefined, maxTime: undefined };
+    }
+    if (isPastDate) {
+      return { minTime: undefined, maxTime: undefined };
+    }
+    if (isTodayDate && mode === 'update') {
+      return { minTime: today, maxTime: now };
+    }
+    return { minTime: undefined, maxTime: undefined };
+  };
+
+  const { minTime, maxTime } = getTimePickerProps();
 
   return (
     isModalOpen &&
@@ -189,14 +212,16 @@ export default function TodoModal() {
               onChange={(e) => setContent(e.target.value)}
               onBlur={() => setTitle((prev) => prev.trim())}
             />
-            {mode === 'update' && (
+
+            {(isPastDate || (isTodayDate && mode === 'update')) && (
               <Box display="flex" gap={1}>
                 <TimePicker
                   sx={{ width: '100%', margin: '10px 0' }}
                   views={['hours', 'minutes']}
                   label="시작 시간"
                   value={startTime ? parseISO(startTime) : null}
-                  maxTime={endTime ? parseISO(endTime) : undefined}
+                  minTime={minTime} // 설정된 minTime 사용
+                  maxTime={endTime ? parseISO(endTime) : maxTime} // 설정된 maxTime 사용
                   onChange={(value) => setStartTime(value && isValid(value) ? value.toISOString() : null)}
                 />
                 <TimePicker
@@ -204,11 +229,13 @@ export default function TodoModal() {
                   views={['hours', 'minutes']}
                   label="종료 시간"
                   value={endTime ? parseISO(endTime) : null}
-                  minTime={startTime ? parseISO(startTime) : undefined}
+                  minTime={startTime ? parseISO(startTime) : minTime} // 설정된 minTime 사용
+                  maxTime={maxTime} // 설정된 maxTime 사용
                   onChange={(value) => setEndTime(value && isValid(value) ? value.toISOString() : null)}
                 />
               </Box>
             )}
+
             <CategoryField />
             <ColorPickerInput color={color} setColor={setColor} />
           </Box>
