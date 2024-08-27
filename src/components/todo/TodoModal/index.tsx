@@ -22,7 +22,6 @@ import { checkTaskListOverlap } from 'react-custom-timetable';
 import { convertTodosForTimetable } from '@/utils/timetable/convertTodosForTimetable';
 
 import { TodoModalStyle } from '../Todo.styled';
-import ColorPickerInput from '../../ColorPickerInput';
 
 export default function TodoModal() {
   // Redux hook 사용: 기존 props로 주입된 값들은 Redux에서 가져옴
@@ -262,7 +261,6 @@ export default function TodoModal() {
             )}
 
             <CategoryField />
-            <ColorPickerInput color={color} setColor={setColor} />
           </Box>
           <Box display="flex" gap={1} m={1} justifyContent="flex-end">
             <Button onClick={handleCloseModal} variant="text" size="medium" color="error" sx={{ border: '1px solid pink' }}>
