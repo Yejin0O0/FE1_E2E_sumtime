@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo } from 'react';
 import { useAppDispatch } from '@/lib/hooks';
-import { setDisplayingDate, setLoading, setTodoListData, setSessionId } from '@/lib/todos/todoDataSlice';
+import { setDisplayingDate, setSessionId } from '@/lib/todos/todoDataSlice';
 import TodoHeader from '@/components/todo/TodoHeader';
 import TodoPagination from '@/components/todo/TodoPagination';
 import TodoCalendar from '@/components/todo/TodoCalendar';
@@ -11,7 +11,6 @@ import TodoList from '@/components/todo/TodoList/index';
 import * as S from '@/components/todo/Todo.styled';
 import { useSession } from 'next-auth/react';
 import { useParams } from 'next/navigation';
-import { useGetTodosMatchingDate } from '@/api/hooks/todoHooks';
 import TodoModal from './TodoModal';
 
 export default function Todo() {
@@ -26,8 +25,6 @@ export default function Todo() {
     return year && month && day ? new Date(Number(year), Number(month) - 1, Number(day)) : new Date();
   }, [year, month, day]);
 
-  const { data: todoListData = [], isLoading } = useGetTodosMatchingDate(sessionId, displayingDate);
-
   // sessionId가 변경될 때마다 redux store에 저장
   useEffect(() => {
     if (sessionId) {
@@ -39,14 +36,6 @@ export default function Todo() {
   useEffect(() => {
     dispatch(setDisplayingDate(displayingDate));
   }, [displayingDate, dispatch]);
-
-  // todoListData가 변경될 때마다 redux store에 저장
-  useEffect(() => {
-    dispatch(setLoading(isLoading));
-    if (!isLoading && todoListData) {
-      dispatch(setTodoListData(todoListData));
-    }
-  }, [todoListData, dispatch, isLoading]);
 
   return (
     <S.TodoSection>
