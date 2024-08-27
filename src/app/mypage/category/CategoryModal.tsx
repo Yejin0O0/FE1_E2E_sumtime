@@ -1,9 +1,11 @@
 import { Box, Button, FormControlLabel, IconButton, Modal, Switch, TextField, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { TodoModalStyle } from '@/components/todo/Todo.styled';
-import ColorPickerInput from '@/components/ColorPickerInput';
+import ColorPickerBox from '@/components/ColorPickerBox';
 import useDeleteCategory from '@/api/hooks/categoryHooks/useDeleteCategory';
 import { CreateCategoryInfo } from '@/api/queryFn/categoryQueryFn';
+import DeleteConfirmModal from '@/components/Modal/DeleteConfirmModal';
+import useBooleanState from '@/hooks/utils/useBooleanState';
 
 interface CategoryModalProps {
   isOpen: boolean;
@@ -22,14 +24,17 @@ function CategoryModal({ isOpen, close, title, mutateAction, data, setData, id }
     setData('color', newColor);
   };
 
-  const handelDeleteCategory = () => {
-    deleteCategory(id!);
-    close();
-  };
-
   const deleteUndefined = (d: string | null | undefined) => {
     if (d === undefined || d === null) return '';
     return d;
+  };
+
+  const { value: isDeleteModalOpen, setTrue: deleteModalOpen, setFalse: deleteModalClose } = useBooleanState(false);
+
+  const handelDeleteCategory = () => {
+    deleteCategory(id!);
+    deleteModalClose();
+    close();
   };
 
   return (
@@ -40,10 +45,11 @@ function CategoryModal({ isOpen, close, title, mutateAction, data, setData, id }
             Category {title}
           </Typography>
           {title === '수정' && (
-            <IconButton onClick={handelDeleteCategory} color="secondary">
+            <IconButton onClick={deleteModalOpen} color="secondary">
               <DeleteIcon sx={{ color: 'red', fontSize: 25 }} />
             </IconButton>
           )}
+          <DeleteConfirmModal id={id!} open={isDeleteModalOpen} handleClose={deleteModalClose} deleteFn={handelDeleteCategory} />
         </Box>
         <Box>
           <TextField
@@ -52,7 +58,7 @@ function CategoryModal({ isOpen, close, title, mutateAction, data, setData, id }
             value={data.title}
             onChange={(e) => setData('title', e.target.value)}
           />
-          <ColorPickerInput color={deleteUndefined(data.color)} setColor={handleColorChange} />
+          <ColorPickerBox color={deleteUndefined(data.color)} setColor={handleColorChange} />
           <FormControlLabel
             value="isDisplayed"
             control={

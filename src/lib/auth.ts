@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import { NextAuthOptions, User } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { and, eq, sql } from 'drizzle-orm';
@@ -66,15 +67,52 @@ export const authOptions: NextAuthOptions = {
   ],
 
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
+      if (trigger === 'update' && session?.user.name) {
+        try {
+          const userId = Number(session.user.id);
+
+          // DB에서 사용자 정보를 업데이트합니다.
+          await db
+            .update(schema.usersTable)
+            .set({
+              nickname: session.user.name,
+            })
+            .where(eq(schema.usersTable.id, userId))
+            .execute();
+
+          // DB에서 업데이트된 사용자 정보를 가져옵니다.
+          const userFromDb = await db
+            .select({
+              name: schema.usersTable.nickname,
+            })
+            .from(schema.usersTable)
+            .where(eq(schema.usersTable.id, userId))
+            .execute();
+
+          if (userFromDb.length > 0) {
+            const { name } = userFromDb[0];
+            token.name = name; // 토큰에 사용자 이름을 업데이트합니다.
+            token.user = {
+              ...(token.user as Record<string, unknown>),
+              name,
+            };
+          }
+        } catch (error) {
+          console.error('Error updating or fetching user from database:', error);
+        }
+      }
+
       if (user) {
         return {
           ...token,
           user,
         };
       }
+
       return token;
     },
+
     async session({ session, token }) {
       if (token && token.user) {
         return {
@@ -82,6 +120,7 @@ export const authOptions: NextAuthOptions = {
           user: token.user as User,
         };
       }
+
       return session;
     },
   },
