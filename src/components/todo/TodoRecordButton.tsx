@@ -35,9 +35,7 @@ function TodoRecordButton({ toggleRecord, todoId, isProgress, isListProgressing 
         height="1.5rem"
         borderRadius="50%"
         border={isRecordBlocked ? '1px solid #b8b8b8' : '1px solid #CE4934'}
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
+        position="relative"
       >
         <Box
           position="absolute"
