@@ -17,7 +17,7 @@ const calculateRemainingTime = (totalRecordedDuration: number): PieValueType => 
 const convertToChartData = (dailyTaskSummery: Record<string, PieValueType>) => {
   return Object.keys(dailyTaskSummery).map((key, index) => ({
     id: index,
-    value: dailyTaskSummery[key].value / (ONE_DAY_MS / 24),
+    value: dailyTaskSummery[key].value / (ONE_DAY_MS / 24 / 60),
     color: dailyTaskSummery[key].color,
     label: dailyTaskSummery[key].label,
   }));
@@ -54,4 +54,14 @@ const formatToChartData = (todoList: TodoDateType[], categoryList: Category[] | 
   return convertToChartData(dailyTaskSummery);
 };
 
-export { formatToChartData };
+const formatMinutesToTime = (minutes: number): string => {
+  const hours = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+
+  const formattedHours = hours.toString().padStart(2, ' ');
+  const formattedMinutes = mins.toString().padStart(2, '0');
+
+  return mins === 0 ? `${formattedHours}시간` : `${formattedHours}시 ${formattedMinutes}분`;
+};
+
+export { formatToChartData, formatMinutesToTime };

@@ -6,7 +6,7 @@ import useGetCategoryList from '@/api/hooks/categoryHooks/useGetCategoryList';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/lib/store';
 import * as S from './TodoReport.styled';
-import { formatToChartData } from './util';
+import { formatToChartData, formatMinutesToTime } from './util';
 
 function TodoReport() {
   const categoryList = useGetCategoryList();
@@ -32,6 +32,7 @@ function TodoReport() {
           series={[
             {
               data: chartDataList,
+              valueFormatter: ({ value }) => formatMinutesToTime(value),
               innerRadius: 30,
               cornerRadius: 2,
               paddingAngle: 1,
