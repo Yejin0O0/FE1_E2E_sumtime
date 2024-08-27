@@ -11,8 +11,8 @@ import { useCreateUser } from '@/api/hooks/userHooks';
 import { useEmailValidation } from '@/hooks/auth/useEmailValidation';
 import { usePasswordValidation } from '@/hooks/auth/usePasswordValidation';
 import Link from 'next/link';
+import { Spinner } from '@/components/common';
 import * as S from './Signup.styled';
-import Spinner from '../common/Spinner';
 
 type EmailCheckStatus = 'inProgress' | 'success' | 'fail';
 
