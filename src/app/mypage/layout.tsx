@@ -33,7 +33,7 @@ function MyPageLayout({ children }: MyPageLayoutProps) {
     <>
       <Header />
       <S.Container>
-        <Box display="flex" flexDirection="column" gap="30px" sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+        <Box display="flex" flexDirection="column" gap="30px" sx={{ width: 360, bgcolor: 'background.paper' }}>
           {MENU_ITEM.map((item) => {
             const isActive = pathname === item.href;
             return (

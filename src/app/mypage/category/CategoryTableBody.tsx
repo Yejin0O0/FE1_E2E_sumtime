@@ -53,7 +53,7 @@ function CategoryTableBody() {
   };
 
   const convertBoolStateToString = (isDisplayed: number | null) => {
-    return isDisplayed ? '포함' : '비포함';
+    return isDisplayed ? '포함' : '미포함';
   };
 
   if (!categoryList) return null;
