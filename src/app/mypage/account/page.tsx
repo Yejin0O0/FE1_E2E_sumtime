@@ -3,27 +3,50 @@
 import { useSession } from 'next-auth/react';
 import { Alert, AlertTitle, Button, Snackbar, SnackbarCloseReason, TextField } from '@mui/material';
 import { useRef, useState } from 'react';
+import { NICKNAME_REG_EXP } from '@/constants/regExp';
 import * as S from './Account.styled';
 
 function Account() {
-  const { data: userData } = useSession();
+  const { data: userData, update } = useSession();
 
   if (!userData) {
     return null;
   }
+  const [fieldErrors, setFieldErrors] = useState<string | null>('');
+
+  const handleNicknameValidation = (nickname: string) => {
+    if (!nickname) {
+      setFieldErrors('닉네임을 입력해주세요');
+      return false;
+    }
+    if (!NICKNAME_REG_EXP.test(nickname)) {
+      setFieldErrors('닉네임은 1~20자의 한글, 알파벳, 숫자만 사용 가능합니다');
+      return false;
+    }
+    setFieldErrors(null);
+    return true;
+  };
 
   const { email, name } = userData.user;
   const [isEditState, setIsEditState] = useState(false);
   const [open, setOpen] = useState(false);
   const nameRef = useRef<HTMLInputElement>(null);
 
-  const handleEditClick = () => {
+  const handleEditClick = async () => {
     if (isEditState) {
-      // 닉네임 수정 후 서버 연동 파트
       const newName = nameRef.current?.value || '';
-      console.log('New name:', newName);
+
+      if (handleNicknameValidation(newName)) {
+        try {
+          await update({ ...userData, user: { ...userData.user, name: newName } });
+          setIsEditState(!isEditState);
+        } catch (error) {
+          console.error('Update failed:', error);
+        }
+      }
+    } else {
+      setIsEditState(true);
     }
-    setIsEditState(!isEditState);
   };
 
   const handleClick = () => {
@@ -61,6 +84,7 @@ function Account() {
             <TextField inputRef={nameRef} disabled={!isEditState} defaultValue={name} />
             <Button onClick={handleEditClick}>{isEditState ? '저장' : '수정'}</Button>
           </S.InputWrapper>
+          <S.ValidationSpan $color="#d32f2f">{fieldErrors}</S.ValidationSpan>
         </S.ItemWrapper>
 
         <S.ItemWrapper>

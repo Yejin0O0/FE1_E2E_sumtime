@@ -31,3 +31,8 @@ export const InputWrapper = styled.div`
   display: flex;
   gap: 10px;
 `;
+
+export const ValidationSpan = styled.span<{ $color: string }>`
+  font-size: 14px;
+  color: ${({ $color }) => $color};
+`;
