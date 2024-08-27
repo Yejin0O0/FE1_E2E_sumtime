@@ -1,6 +1,6 @@
 import React from 'react';
 import { PieChart } from '@mui/x-charts';
-import { convertTodosForTimetable as convertDateStringToDate } from '@/utils/convertTodosForTimetable';
+import { convertTodosForTimetable as convertDateStringToDate } from '@/utils/timetable/convertTodosForTimetable';
 import { Grid } from '@mui/material';
 import useGetCategoryList from '@/api/hooks/categoryHooks/useGetCategoryList';
 import { useSelector } from 'react-redux';

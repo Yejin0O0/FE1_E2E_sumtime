@@ -13,6 +13,8 @@ import CategoryField from '@/components/todo/CategoryField';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { closeModal, selectTodoUI } from '@/lib/todos/todoUISlice'; // Redux 상태 추가
 import { selectTodoData } from '@/lib/todos/todoDataSlice'; // Redux 상태 추가
+import { checkTaskListOverlap } from 'react-custom-timetable';
+import { convertTodosForTimetable } from '@/utils/timetable/convertTodosForTimetable';
 import { TodoModalStyle } from '../Todo.styled';
 import ColorPickerInput from '../../ColorPickerInput';
 import DeleteTodoButton from './DeleteTodoButton';
@@ -21,7 +23,7 @@ export default function TodoModal() {
   // Redux hook 사용: 기존 props로 주입된 값들은 Redux에서 가져옴
   const dispatch = useAppDispatch();
   const { isModalOpen, mode } = useAppSelector(selectTodoUI);
-  const { sessionId, todoId, displayingDate } = useAppSelector(selectTodoData);
+  const { sessionId, todoId, displayingDate, todoListData } = useAppSelector(selectTodoData);
 
   // 데이터 가져오기
   const { data: todoData, isSuccess: isSuccessGetOneTodo } = useGetOneTodo(todoId);
@@ -66,29 +68,47 @@ export default function TodoModal() {
   const handleUpdate = async () => {
     if (!sessionId) {
       alert('로그인이 필요합니다');
-    } else {
-      updateTodo(
-        {
-          todoId,
-          title,
-          content,
-          startTime,
-          endTime,
-          isProgress: false,
-          color,
-        },
-        {
-          onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['todo', todoId] });
-            queryClient.invalidateQueries({ queryKey: ['todos', sessionId] });
-            handleCloseModal();
-          },
-          onError: (error) => {
-            alert(`Todo 업데이트에 실패했습니다.${error}`);
-          },
-        },
-      );
+      return;
     }
+
+    const updatedTodo = {
+      todoId,
+      title,
+      content,
+      startTime,
+      endTime,
+      isProgress: false,
+      color,
+    };
+
+    const updatedTodoList = [
+      ...todoListData,
+      {
+        ...updatedTodo,
+        date: displayingDate instanceof Date ? displayingDate.toISOString() : displayingDate || '',
+        id: todoId,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        userId: sessionId,
+        categoryId: 1,
+        isProgress: 0,
+      },
+    ];
+    if (checkTaskListOverlap(convertTodosForTimetable(updatedTodoList))) {
+      alert('시간표가 중복됩니다. 시간을 다시 확인해주세요.');
+      return;
+    }
+
+    updateTodo(updatedTodo, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['todo', todoId] });
+        queryClient.invalidateQueries({ queryKey: ['todos', sessionId] });
+        handleCloseModal();
+      },
+      onError: (error) => {
+        alert(`Todo 업데이트에 실패했습니다.${error}`);
+      },
+    });
   };
 
   const handleCreate = async () => {
@@ -97,27 +117,26 @@ export default function TodoModal() {
       return;
     }
 
-    createTodo(
-      {
-        userId: sessionId,
-        title,
-        date: displayingDate ?? new Date(),
-        content,
-        startTime,
-        endTime,
-        color,
-        categoryId: 1,
+    const newTodo = {
+      userId: sessionId,
+      title,
+      date: displayingDate ?? new Date(),
+      content,
+      startTime,
+      endTime,
+      color,
+      categoryId: 1,
+    };
+
+    createTodo(newTodo, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['todos', sessionId] });
+        handleCloseModal();
       },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ['todos', sessionId] });
-          handleCloseModal();
-        },
-        onError: (error) => {
-          alert(`Todo를 생성하는 데 실패했습니다.${error}`);
-        },
+      onError: (error) => {
+        alert(`Todo를 생성하는 데 실패했습니다.${error}`);
       },
-    );
+    });
   };
 
   const validateCreateTodo = () => {

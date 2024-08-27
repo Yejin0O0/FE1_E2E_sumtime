@@ -1,7 +1,7 @@
 'use client';
 
 import Timetable, { getTodayFromTime } from 'react-custom-timetable';
-import { convertTodosForTimetable } from '@/utils/convertTodosForTimetable';
+import { convertTodosForTimetable } from '@/utils/timetable/convertTodosForTimetable';
 import { useAppSelector } from '@/lib/hooks';
 import * as S from './TimeTable.styled';
 
