@@ -35,7 +35,7 @@ function TodoPagination() {
           router.push(`/day/${newYear}/${newMonth}/${newDay}`);
         }}
         count={getDaysInMonth(displayingDate)}
-        siblingCount={5}
+        siblingCount={3}
         boundaryCount={0}
         color="primary"
         size="medium"

@@ -1,7 +1,7 @@
 'use client';
 
 import Timetable, { getTodayFromTime } from 'react-custom-timetable';
-import { convertTodosForTimetable } from '@/utils/convertTodosForTimetable';
+import { convertTodosForTimetable } from '@/utils/timetable/convertTodosForTimetable';
 import { useAppSelector } from '@/lib/hooks';
 import * as S from './TimeTable.styled';
 
@@ -22,7 +22,7 @@ function TimeTable() {
           timeTableSize="2000px"
           timetableDirection="COLUMN"
           displayCurrentTime
-          ellipsisText="+"
+          ellipsisText=""
           currentTimeLineStyle="dashed 1px red"
           taskSlotStyle={{ color: 'white', textShadow: '1px 1px 1px gray' }}
         />

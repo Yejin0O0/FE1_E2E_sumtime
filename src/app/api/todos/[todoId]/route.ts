@@ -25,7 +25,9 @@ export async function GET(request: Request, { params }: { params: { todoId: stri
 }
 
 export async function PUT(req: NextRequest) {
-  const { todoId, title, content, startTime, endTime, color } = await req.json();
+  const { todoId, title, content, startTime, endTime, isProgress, color } = await req.json();
+
+  const isProgressToNumber = isProgress ? 1 : 0;
 
   try {
     // 업데이트할 필드 동적 설정
@@ -36,6 +38,7 @@ export async function PUT(req: NextRequest) {
         ...(!!content && { content }),
         ...(!!startTime && { startTime }),
         ...(!!endTime && { endTime }),
+        ...{ isProgress: isProgressToNumber },
         ...(!!color && { color }),
       })
       .where(eq(schema.todosTable.id, parseInt(todoId, 10)))

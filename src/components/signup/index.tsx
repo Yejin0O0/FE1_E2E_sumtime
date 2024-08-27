@@ -10,7 +10,9 @@ import { NICKNAME_REG_EXP } from '@/constants/regExp';
 import { useCreateUser } from '@/api/hooks/userHooks';
 import { useEmailValidation } from '@/hooks/auth/useEmailValidation';
 import { usePasswordValidation } from '@/hooks/auth/usePasswordValidation';
+import Link from 'next/link';
 import * as S from './Signup.styled';
+import Spinner from '../common/Spinner';
 
 type EmailCheckStatus = 'inProgress' | 'success' | 'fail';
 
@@ -20,6 +22,8 @@ type FieldErrorsType = {
 };
 
 function SignupSection() {
+  const [loading, setLoading] = useState(false);
+
   const [fieldErrors, setFieldErrors] = useState<FieldErrorsType>({
     confirmPassword: null,
     nickname: null,
@@ -77,7 +81,6 @@ function SignupSection() {
   const checkEmailDuplication = async () => {
     const email = emailInputRef.current?.value || '';
     if (handleEmailValidation()) {
-      setIsEmailChecked('inProgress');
       try {
         const isEmailAvailable = await checkEmailDuplicated(email);
         if (isEmailAvailable) {
@@ -117,6 +120,7 @@ function SignupSection() {
     const isDuplicationValid = handleDuplicateValidation();
 
     if (isEmailValid && isPasswordValid && isNicknameValid && isConfirmPasswordValid && isDuplicationValid) {
+      setLoading(true);
       const email = emailInputRef.current?.value || '';
       const password = passwordInputRef.current?.value || '';
       const nickname = nicknameInputRef.current?.value || '';
@@ -135,6 +139,10 @@ function SignupSection() {
             },
             onError: () => {
               alert('회원가입에 실패했습니다. 다시 시도해 주세요.');
+              setLoading(false);
+            },
+            onSettled: () => {
+              setLoading(false);
             },
           },
         );
@@ -149,77 +157,95 @@ function SignupSection() {
     setIsEmailChecked('inProgress'); // 이메일이 변경되면 중복 확인 상태를 초기화
   };
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === ' ') {
+      event.preventDefault();
+    }
+  };
+
+  if (loading) {
+    return <Spinner />;
+  }
+
   return (
     <S.SignupSection>
-      <S.SignupLogo src={logo.src} alt="logo" />
+      <Link href="/landing">
+        <S.SignupLogo src={logo.src} alt="logo" />
+      </Link>
 
-      <S.SignupInputDiv>
-        <TextField
-          fullWidth
-          id="outlined-error-helper-text"
-          label="email"
-          variant="standard"
-          type="email"
-          inputRef={emailInputRef}
-          error={!!emailErrorMessage}
-          helperText={emailErrorMessage}
-          onBlur={handleEmailValidation}
-          onChange={handleEmailChange}
-        />
-        <S.SignupValidationDiv $align="center" $justify="space-between">
-          {getEmailValidationMessage()}
+      <>
+        <S.SignupInputDiv>
+          <TextField
+            fullWidth
+            id="outlined-error-helper-text"
+            label="email"
+            variant="standard"
+            type="email"
+            inputRef={emailInputRef}
+            error={!!emailErrorMessage}
+            helperText={emailErrorMessage}
+            onBlur={handleEmailValidation}
+            onChange={handleEmailChange}
+            onKeyDown={handleKeyDown}
+          />
+          <S.SignupValidationDiv $align="center" $justify="space-between">
+            {getEmailValidationMessage()}
 
-          <Button size="small" onClick={checkEmailDuplication}>
-            중복검사
-          </Button>
-        </S.SignupValidationDiv>
-      </S.SignupInputDiv>
+            <Button size="small" onClick={checkEmailDuplication}>
+              중복검사
+            </Button>
+          </S.SignupValidationDiv>
+        </S.SignupInputDiv>
 
-      <S.SignupInputDiv>
-        <TextField
-          fullWidth
-          id="outlined-error-helper-text"
-          label="비밀번호"
-          variant="standard"
-          type="password"
-          inputRef={passwordInputRef}
-          error={!!passwordErrorMessage}
-          helperText={passwordErrorMessage}
-          onBlur={handlePasswordValidation}
-        />
-      </S.SignupInputDiv>
+        <S.SignupInputDiv>
+          <TextField
+            fullWidth
+            id="outlined-error-helper-text"
+            label="비밀번호"
+            variant="standard"
+            type="password"
+            inputRef={passwordInputRef}
+            error={!!passwordErrorMessage}
+            helperText={passwordErrorMessage}
+            onBlur={handlePasswordValidation}
+            onKeyDown={handleKeyDown}
+          />
+        </S.SignupInputDiv>
 
-      <S.SignupInputDiv>
-        <TextField
-          fullWidth
-          id="outlined-error-helper-text"
-          label="비밀번호 확인"
-          variant="standard"
-          type="password"
-          inputRef={confirmPasswordInputRef}
-          error={!!fieldErrors.confirmPassword}
-          helperText={fieldErrors.confirmPassword}
-          onBlur={handleConfirmPasswordValidation}
-        />
-      </S.SignupInputDiv>
+        <S.SignupInputDiv>
+          <TextField
+            fullWidth
+            id="outlined-error-helper-text"
+            label="비밀번호 확인"
+            variant="standard"
+            type="password"
+            inputRef={confirmPasswordInputRef}
+            error={!!fieldErrors.confirmPassword}
+            helperText={fieldErrors.confirmPassword}
+            onBlur={handleConfirmPasswordValidation}
+            onKeyDown={handleKeyDown}
+          />
+        </S.SignupInputDiv>
 
-      <S.SignupInputDiv>
-        <TextField
-          fullWidth
-          id="outlined-error-helper-text"
-          label="닉네임"
-          variant="standard"
-          type="text"
-          inputRef={nicknameInputRef}
-          error={!!fieldErrors.nickname}
-          helperText={fieldErrors.nickname}
-          onBlur={handleNicknameValidation}
-        />
-      </S.SignupInputDiv>
+        <S.SignupInputDiv>
+          <TextField
+            fullWidth
+            id="outlined-error-helper-text"
+            label="닉네임"
+            variant="standard"
+            type="text"
+            inputRef={nicknameInputRef}
+            error={!!fieldErrors.nickname}
+            helperText={fieldErrors.nickname}
+            onBlur={handleNicknameValidation}
+            onKeyDown={handleKeyDown}
+          />
+        </S.SignupInputDiv>
 
-      <Button variant="outlined" onClick={registerUserHandler}>
-        회원가입
-      </Button>
+        <Button variant="outlined" onClick={registerUserHandler}>
+          회원가입
+        </Button>
+      </>
     </S.SignupSection>
   );
 }

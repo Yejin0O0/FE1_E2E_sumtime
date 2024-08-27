@@ -28,11 +28,12 @@ export const useCreateTodo = (): UseMutationResult<
       createTodo(userId, title, date, content, startTime, endTime, color, categoryId),
   });
 
-export const useGetTodosMatchingDate = (userId: number | undefined, date: Date): UseQueryResult<SelectTodo[], Error> =>
+export const useGetTodosMatchingDate = (userId: number | undefined, date: Date | null): UseQueryResult<SelectTodo[], Error> =>
   useQuery({
     queryKey: ['todos', userId, date],
     queryFn: () => {
       if (!userId) return Promise.resolve([]); // 클라이언트가 아닌 todoHooks에서 userId 예외처리
+      if (!date) return [];
       return getTodosByDate(date);
     },
     enabled: !!userId,
@@ -64,21 +65,22 @@ export const useUpdateTodo = (): UseMutationResult<
     content: string | null;
     startTime: string | null;
     endTime: string | null;
+    isProgress: boolean;
     color: string | null;
   }
 > =>
   useMutation({
-    mutationFn: ({ todoId, title, content, startTime, endTime, color }) =>
-      updateTodo(todoId, title, content, startTime, endTime, color),
+    mutationFn: ({ todoId, title, content, startTime, endTime, isProgress, color }) =>
+      updateTodo(todoId, title, content, startTime, endTime, isProgress, color),
   });
 
 export const useUpdateTodoTime = (): UseMutationResult<
   SelectTodo,
   Error,
-  { todoId: number; startTime: string | null; endTime: string | null }
+  { todoId: number; startTime: string | null; endTime: string | null; isProgress: boolean }
 > =>
   useMutation({
-    mutationFn: ({ todoId, startTime, endTime }) => updateTodoTime(todoId, startTime, endTime),
+    mutationFn: ({ todoId, startTime, endTime, isProgress }) => updateTodoTime(todoId, startTime, endTime, isProgress),
   });
 
 export const useDeleteTodo = (): UseMutationResult<string, Error, number> =>

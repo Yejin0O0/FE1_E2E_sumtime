@@ -37,6 +37,7 @@ export async function POST(req: NextRequest) {
         content: schema.todosTable.content,
         startTime: schema.todosTable.startTime,
         endTime: schema.todosTable.endTime,
+        isProgress: schema.todosTable.isProgress,
         color: schema.todosTable.color,
         userId: schema.todosTable.userId,
         categoryId: schema.todosTable.categoryId,

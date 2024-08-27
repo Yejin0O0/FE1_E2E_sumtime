@@ -9,11 +9,15 @@ const S = { ...TodoStyle, ...CommonStyle };
 
 function EmptyTodoList() {
   return (
-    <Box position="relative" width="100%" height="50%">
+    <Box position="relative" width="100%">
       <S.TodoComponentsSection>
-        <Box paddingTop={2}>
+        <Box>
           <S.Flex $direction="column" $align="center" $gap="32px">
-            <img src={EmptyTodoListIcon.src} width="240px" height="240px" alt="" />
+            <img
+              alt="todo list is empty"
+              srcSet={`${EmptyTodoListIcon.src} 512w`}
+              sizes="(max-width: 1280px) 120px, (max-width: 1600px) 180px, 240px"
+            />
             <S.Flex $direction="column" $align="center">
               <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: '500' }}>
                 기록된 정보가 없습니다.

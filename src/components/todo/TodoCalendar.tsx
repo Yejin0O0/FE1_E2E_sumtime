@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import Box from '@mui/material/Box';
 import { DateCalendar } from '@mui/x-date-pickers';
 import { useRouter } from 'next/navigation';
@@ -12,10 +12,28 @@ function TodoCalendar() {
   const dispatch = useAppDispatch();
   const router = useRouter();
 
+  const calendarRef = useRef<HTMLDivElement>(null);
+
+  const handleClickOutside = (event: MouseEvent) => {
+    if (calendarRef.current && !calendarRef.current.contains(event.target as Node)) {
+      dispatch(toggleCalendar());
+    }
+  };
+
+  useEffect(() => {
+    if (isOpened) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpened]);
+
   return (
     <Box
+      ref={calendarRef}
       position="absolute"
-      zIndex="1"
+      zIndex="2"
       bgcolor="white"
       top="84px"
       borderRadius={2}

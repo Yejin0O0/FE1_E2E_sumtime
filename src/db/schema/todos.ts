@@ -16,6 +16,7 @@ export const todosTable = sqliteTable('todos', {
   date: text('date').notNull(),
   startTime: text('start_time'),
   endTime: text('end_time'),
+  isProgress: integer('is_progress').default(0),
   color: text('color'),
   userId: integer('user_id')
     .notNull()
