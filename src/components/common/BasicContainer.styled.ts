@@ -8,9 +8,9 @@ const BasicContainer = styled(Flex)`
   flex-direction: row;
   justify-content: space-between;
   align-items: start;
-  max-width: 1440px;
+  max-width: 960px;
   background-color: #ffffff;
-  height: 100vh;
+  height: calc(100vh - 65px);
   margin: 0 auto; /* 가운데 정렬 */
 `;
 

@@ -6,6 +6,7 @@ import { useSession } from 'next-auth/react';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import Box from '@mui/material/Box';
 import HeaderList from './HeaderList';
 
 function Header() {
@@ -24,24 +25,27 @@ function Header() {
   };
 
   return (
-    <S.Container>
-      <S.Logo src={logo.src} alt="logo" onClick={() => router.push('/')} />
-      <S.ProfileDiv $align="center">
-        <S.UserName>{session?.user.name}</S.UserName>
-        <S.UserP>님의 하루를 더해보세요!</S.UserP>
-        <S.MenuButton
-          aria-controls={open ? 'basic-menu' : undefined}
-          aria-haspopup="true"
-          aria-expanded={open ? 'true' : undefined}
-          onClick={handleClick}
-        >
-          <S.IconWrapper>
-            <AccountCircleIcon fontSize="large" />
-          </S.IconWrapper>
-        </S.MenuButton>
-        <HeaderList anchorEl={anchorEl} open={open} onClose={handleClose} />
-      </S.ProfileDiv>
-    </S.Container>
+    <Box>
+      <S.Container>
+        <S.Logo src={logo.src} alt="logo" onClick={() => router.push('/')} />
+        <S.ProfileDiv $align="center">
+          <S.UserName>{session?.user.name}</S.UserName>
+          <S.UserP>님의 하루를 더해보세요!</S.UserP>
+          <S.MenuButton
+            aria-controls={open ? 'basic-menu' : undefined}
+            aria-haspopup="true"
+            aria-expanded={open ? 'true' : undefined}
+            onClick={handleClick}
+          >
+            <S.IconWrapper>
+              <AccountCircleIcon fontSize="large" />
+            </S.IconWrapper>
+          </S.MenuButton>
+          <HeaderList anchorEl={anchorEl} open={open} onClose={handleClose} />
+        </S.ProfileDiv>
+      </S.Container>
+      <Box height="65px" position="relative" left="calc(50% - 480px)" />
+    </Box>
   );
 }
 

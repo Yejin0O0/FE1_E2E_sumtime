@@ -21,9 +21,8 @@ function TodoReport() {
       borderRadius={2}
       boxShadow="1px 1px 10px lightgray"
       height="300px"
-      marginTop={2}
       width="100%"
-      sx={{ margin: '16px auto', display: 'flex' }}
+      sx={{ margin: '0 auto', marginTop: '16px', display: 'flex' }}
       padding={1}
     >
       <Grid item xs={8}>
