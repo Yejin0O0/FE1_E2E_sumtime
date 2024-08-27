@@ -19,7 +19,7 @@ export default async function middleware(req: NextRequest) {
   }
 
   if (isAuthenticatedOnlyPath && !isAuthenticated) {
-    return NextResponse.redirect(new URL('/login', req.url));
+    return NextResponse.redirect(new URL('/landing', req.url));
   }
 
   return NextResponse.next();

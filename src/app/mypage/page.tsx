@@ -1,5 +1,7 @@
+import { notFound } from 'next/navigation';
+
 function MyPage() {
-  return <div>MyPage page.tsx</div>;
+  return notFound();
 }
 
 export default MyPage;
