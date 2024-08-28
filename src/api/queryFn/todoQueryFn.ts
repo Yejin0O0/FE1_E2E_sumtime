@@ -32,6 +32,7 @@ export const createTodo = async (
 };
 
 export const getTodosByDate = async (date: Date): Promise<SelectTodo[]> => {
+  console.log('****************** in query fn: ', date);
   try {
     const { data } = await axios.get('/api/todos/', { params: { date } });
     return data.todos;
