@@ -67,11 +67,12 @@ export const useUpdateTodo = (): UseMutationResult<
     endTime: string | null;
     isProgress: boolean;
     color: string | null;
+    categoryId: number;
   }
 > =>
   useMutation({
-    mutationFn: ({ todoId, title, content, startTime, endTime, isProgress, color }) =>
-      updateTodo(todoId, title, content, startTime, endTime, isProgress, color),
+    mutationFn: ({ todoId, title, content, startTime, endTime, isProgress, color, categoryId }) =>
+      updateTodo(todoId, title, content, startTime, endTime, isProgress, color, categoryId),
   });
 
 export const useUpdateTodoTime = (): UseMutationResult<

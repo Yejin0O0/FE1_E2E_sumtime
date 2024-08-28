@@ -25,38 +25,49 @@ export async function GET(request: Request, { params }: { params: { todoId: stri
 }
 
 export async function PUT(req: NextRequest) {
-  const { todoId, title, content, startTime, endTime, isProgress, color } = await req.json();
+  const { todoId, categoryId, title, content, startTime, endTime, isProgress } = await req.json();
 
   const isProgressToNumber = isProgress ? 1 : 0;
 
   try {
     // 업데이트할 필드 동적 설정
-    const result = await db
-      .update(schema.todosTable)
-      .set({
-        ...(!!title && { title }),
-        ...(!!content && { content }),
-        ...(!!startTime && { startTime }),
-        ...(!!endTime && { endTime }),
-        ...{ isProgress: isProgressToNumber },
-        ...(!!color && { color }),
-      })
-      .where(eq(schema.todosTable.id, parseInt(todoId, 10)))
-      .returning({
-        todoId: schema.todosTable.id,
-        title: schema.todosTable.title,
-        content: schema.todosTable.content,
-        startTime: schema.todosTable.startTime,
-        endTime: schema.todosTable.endTime,
-        color: schema.todosTable.color,
-        userId: schema.todosTable.userId,
-      });
+    const result = await db.transaction(async (tx) => {
+      const resultCategory = await tx
+        .select({ color: schema.categoriesTable.color })
+        .from(schema.categoriesTable)
+        .where(eq(schema.categoriesTable.id, categoryId));
 
-    if (result.length > 0) {
-      const updatedTodo = result[0];
-      return NextResponse.json({ todo: updatedTodo });
-    }
-    return NextResponse.json({ error: 'Todo not found or no changes made' }, { status: 404 });
+      if (resultCategory.length === 0) {
+        throw new Error('Category not found');
+      }
+
+      const resultUpdate = await tx
+        .update(schema.todosTable)
+        .set({
+          ...(!!title && { title }),
+          ...(!!content && { content }),
+          ...(!!startTime && { startTime }),
+          ...(!!endTime && { endTime }),
+          ...{ isProgress: isProgressToNumber },
+          ...{ color: resultCategory[0].color },
+        })
+        .where(eq(schema.todosTable.id, parseInt(todoId, 10)))
+        .returning({
+          todoId: schema.todosTable.id,
+          title: schema.todosTable.title,
+          content: schema.todosTable.content,
+          startTime: schema.todosTable.startTime,
+          endTime: schema.todosTable.endTime,
+          color: schema.todosTable.color,
+          userId: schema.todosTable.userId,
+        });
+
+      if (resultUpdate.length === 0) {
+        throw new Error('Failed to update todo');
+      }
+      return resultUpdate[0];
+    });
+    return NextResponse.json({ todo: result });
   } catch (error) {
     if (error instanceof Error) {
       return NextResponse.json({ error: 'Failed to update todo', details: error.message }, { status: 500 });

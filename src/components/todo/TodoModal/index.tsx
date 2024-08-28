@@ -76,6 +76,7 @@ export default function TodoModal() {
       endTime,
       isProgress: false,
       color,
+      categoryId: 1,
     };
 
     const updatedTodoList = [
@@ -87,7 +88,6 @@ export default function TodoModal() {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         userId: sessionId,
-        categoryId: 1,
         isProgress: 0,
       },
     ];
