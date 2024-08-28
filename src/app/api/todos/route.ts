@@ -4,6 +4,8 @@ import { and, eq } from 'drizzle-orm';
 import { parseISO } from 'date-fns';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
+import { toZonedTime } from 'date-fns-tz';
+import { TIME_ZONE } from '@/constants/index';
 
 // 새로운 to-do 생성
 export async function POST(req: NextRequest) {
@@ -14,43 +16,71 @@ export async function POST(req: NextRequest) {
   }
 
   const userId = session.user.id;
-  const { title, date, content, startTime, endTime, color, categoryId } = await req.json();
+  const { title, date, content, startTime, endTime, categoryId } = await req.json();
 
   try {
-    const formatedDisplayingDate = new Date(date).toDateString();
+    const formatedDisplayingDate = toZonedTime(new Date(date), TIME_ZONE).toDateString();
+    // const formatedDisplayingDate = new Date(date).toDateString();
 
-    const result = await db
-      .insert(schema.todosTable)
-      .values({
-        title,
-        content,
-        date: formatedDisplayingDate,
-        startTime,
-        endTime,
-        color,
-        userId,
-        categoryId,
-      })
-      .returning({
-        todoId: schema.todosTable.id,
-        title: schema.todosTable.title,
-        content: schema.todosTable.content,
-        startTime: schema.todosTable.startTime,
-        endTime: schema.todosTable.endTime,
-        isProgress: schema.todosTable.isProgress,
-        color: schema.todosTable.color,
-        userId: schema.todosTable.userId,
-        categoryId: schema.todosTable.categoryId,
-        date: schema.todosTable.date,
-      });
-    const insertedTodo = result[0];
+    const result = await db.transaction(async (tx) => {
+      const resultCategoryColor = await tx
+        .select({ color: schema.categoriesTable.color })
+        .from(schema.categoriesTable)
+        .where(eq(schema.categoriesTable.id, categoryId));
 
-    return NextResponse.json({ todo: insertedTodo });
+      if (resultCategoryColor.length === 0) {
+        throw new Error('Category not found');
+      }
+
+      const resultInsert = await tx
+        .insert(schema.todosTable)
+        .values({
+          title,
+          content,
+          date: formatedDisplayingDate,
+          startTime,
+          endTime,
+          userId,
+          categoryId,
+          color: resultCategoryColor[0].color,
+        })
+        .returning({
+          todoId: schema.todosTable.id,
+          title: schema.todosTable.title,
+          content: schema.todosTable.content,
+          startTime: schema.todosTable.startTime,
+          endTime: schema.todosTable.endTime,
+          isProgress: schema.todosTable.isProgress,
+          color: schema.todosTable.color,
+          userId: schema.todosTable.userId,
+          categoryId: schema.todosTable.categoryId,
+          date: schema.todosTable.date,
+        });
+
+      if (resultInsert.length === 0) {
+        throw new Error('Failed to insert todo');
+      }
+      return resultInsert;
+    });
+
+    return NextResponse.json({ todo: result });
   } catch (error) {
     if (error instanceof Error) {
-      return NextResponse.json({ error: 'Failed to add todo', details: error.message }, { status: 500 });
+      return NextResponse.json(
+        {
+          error: 'Failed to add todo',
+          details: error.message,
+        },
+        { status: 500 },
+      );
     }
-    return NextResponse.json({ error: 'Failed to add todo', details: 'Unknown error occurred' }, { status: 500 });
+    return NextResponse.json(
+      {
+        error: 'Failed to add todo',
+        details: 'Unknown error occurred',
+      },
+      { status: 500 },
+    );
   }
 }
 
@@ -83,6 +113,12 @@ export async function GET(req: NextRequest) {
     }
     return NextResponse.json({ todos: [] });
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to fetch Todos', details: (error as Error).message }, { status: 500 });
+    return NextResponse.json(
+      {
+        error: 'Failed to fetch Todos',
+        details: (error as Error).message,
+      },
+      { status: 500 },
+    );
   }
 }
