@@ -1,11 +1,8 @@
-import { Box, Button, FormControlLabel, IconButton, Modal, Switch, TextField, Typography } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { Box, Button, FormControlLabel, Modal, Switch, TextField, Typography } from '@mui/material';
 import { TodoModalStyle } from '@/components/todo/Todo.styled';
 import ColorPickerBox from '@/components/ColorPickerBox';
-import useDeleteCategory from '@/api/hooks/categoryHooks/useDeleteCategory';
 import { CreateCategoryInfo } from '@/api/queryFn/categoryQueryFn';
-import DeleteConfirmModal from '@/components/Modal/DeleteConfirmModal';
-import useBooleanState from '@/hooks/utils/useBooleanState';
+import DeleteCategoryButton from './DeleteCategoryButton';
 
 interface CategoryModalProps {
   isOpen: boolean;
@@ -18,8 +15,6 @@ interface CategoryModalProps {
 }
 
 function CategoryModal({ isOpen, close, title, mutateAction, data, setData, id }: CategoryModalProps) {
-  const { mutate: deleteCategory } = useDeleteCategory();
-
   const handleColorChange = (newColor: string) => {
     setData('color', newColor);
   };
@@ -29,14 +24,6 @@ function CategoryModal({ isOpen, close, title, mutateAction, data, setData, id }
     return d;
   };
 
-  const { value: isDeleteModalOpen, setTrue: deleteModalOpen, setFalse: deleteModalClose } = useBooleanState(false);
-
-  const handelDeleteCategory = () => {
-    deleteCategory(id!);
-    deleteModalClose();
-    close();
-  };
-
   return (
     <Modal open={isOpen} onClose={close} aria-labelledby="modal-title" aria-describedby="modal-description">
       <Box sx={TodoModalStyle}>
@@ -44,12 +31,7 @@ function CategoryModal({ isOpen, close, title, mutateAction, data, setData, id }
           <Typography id="modal-title" variant="h6" component="h2">
             Category {title}
           </Typography>
-          {title === '수정' && (
-            <IconButton onClick={deleteModalOpen} color="secondary">
-              <DeleteIcon sx={{ color: 'red', fontSize: 25 }} />
-            </IconButton>
-          )}
-          <DeleteConfirmModal id={id!} open={isDeleteModalOpen} handleClose={deleteModalClose} deleteFn={handelDeleteCategory} />
+          {title === '수정' && <DeleteCategoryButton categoryId={id!} handleCloseParentModal={close} />}
         </Box>
         <Box>
           <TextField

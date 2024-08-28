@@ -1,11 +1,7 @@
 import { useEffect, useState } from 'react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import Modal from '@mui/material/Modal';
-import { IconButton, TextField } from '@mui/material';
+import { TextField, Box, Button, Typography, Modal } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
-import { useCreateTodo, useDeleteTodo, useGetOneTodo, useUpdateTodo } from '@/api/hooks/todoHooks';
+import { useCreateTodo, useGetOneTodo, useUpdateTodo } from '@/api/hooks/todoHooks';
 import { TimePicker } from '@mui/x-date-pickers';
 import { parseISO, isValid, isBefore, isToday, isAfter } from 'date-fns';
 import randomColor from 'randomcolor';
@@ -14,14 +10,11 @@ import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { closeModal, selectTodoUI } from '@/lib/todos/todoUISlice'; // Redux 상태 추가
 import { selectTodoData } from '@/lib/todos/todoDataSlice'; // Redux 상태 추가
 
-import DeleteIcon from '@mui/icons-material/Delete';
-import useBooleanState from '@/hooks/utils/useBooleanState';
-import DeleteConfirmModal from '@/components/Modal/DeleteConfirmModal';
-
 import { checkTaskListOverlap } from 'react-custom-timetable';
 import { convertTodosForTimetable } from '@/utils/timetable/convertTodosForTimetable';
 
 import { TodoModalStyle } from '../Todo.styled';
+import DeleteTodoButton from './DeleteTodoButton';
 
 export default function TodoModal() {
   // Redux hook 사용: 기존 props로 주입된 값들은 Redux에서 가져옴
@@ -188,23 +181,6 @@ export default function TodoModal() {
 
   const { minTime, maxTime } = getTimePickerProps();
 
-  const { value: isDeleteModalOpen, setTrue: deleteModalOpen, setFalse: deleteModalClose } = useBooleanState(false);
-
-  const { mutate: deleteTodo } = useDeleteTodo();
-
-  const handelDeleteTodo = (id: number) => {
-    return deleteTodo(id, {
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['todos', sessionId] });
-        deleteModalClose();
-        handleCloseModal();
-      },
-      onError: (error) => {
-        alert(`Todo를 삭제하는 데 실패했습니다.${error}`);
-      },
-    });
-  };
-
   return (
     isModalOpen &&
     (mode === 'create' || isSuccessGetOneTodo) && (
@@ -214,12 +190,7 @@ export default function TodoModal() {
             <Typography id="modal-title" variant="h6" component="h2">
               {mode === 'create' ? 'Todo 생성' : 'Todo 수정'}
             </Typography>
-            {mode === 'update' && (
-              <IconButton onClick={deleteModalOpen} color="secondary">
-                <DeleteIcon sx={{ color: 'red[400]', fontSize: 25 }} />
-              </IconButton>
-            )}
-            <DeleteConfirmModal id={todoId} open={isDeleteModalOpen} handleClose={deleteModalOpen} deleteFn={handelDeleteTodo} />
+            {mode === 'update' && <DeleteTodoButton todoId={todoId} handleCloseParentModal={handleCloseModal} />}
           </Box>
           <Box m={1}>
             <TextField
