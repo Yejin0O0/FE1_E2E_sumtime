@@ -7,9 +7,7 @@ import {
   updateTodo,
   updateTodoTime,
 } from '@/api/queryFn/todoQueryFn';
-import { SelectTodo, TodoForTimetable } from '@/db/schema/todos';
-import { toZonedTime } from 'date-fns-tz';
-import { TIME_ZONE } from '@/constants';
+import { SelectTodo } from '@/db/schema/todos';
 
 // const clientTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
@@ -36,25 +34,12 @@ export const useGetTodosMatchingDate = (userId: number | undefined, date: Date |
   useQuery({
     queryKey: ['todos', userId, date],
     queryFn: () => {
+      console.log('***************** in react query date:', date); // date 값 출력
       if (!userId) return Promise.resolve([]); // 클라이언트가 아닌 todoHooks에서 userId 예외처리
       if (!date) return [];
       return getTodosByDate(date);
     },
     enabled: !!userId,
-  });
-
-export const useGetAllTodosForTimetable = (userId: number): UseQueryResult<TodoForTimetable[], Error> =>
-  useQuery({
-    queryKey: ['todos', userId],
-    queryFn: () => getTodosByDate(toZonedTime(new Date(), TIME_ZONE)),
-    enabled: !!userId,
-    select: (data) =>
-      data.map((todo) => ({
-        ...todo,
-        startTime: todo.startTime ? toZonedTime(new Date(todo.startTime), TIME_ZONE) : null,
-        endTime: todo.endTime ? toZonedTime(new Date(todo.endTime), TIME_ZONE) : null,
-        taskColor: todo.color,
-      })),
   });
 
 export const useGetOneTodo = (todoId: number): UseQueryResult<SelectTodo, Error> =>
