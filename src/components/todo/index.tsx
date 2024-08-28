@@ -22,9 +22,27 @@ export default function Todo() {
   const params = useParams();
   const { year, month, day } = params;
 
+  const nowDate = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Seoul' }));
+  const nowHour = nowDate.getHours();
+  const nowMin = nowDate.getHours();
+  const nowSecond = nowDate.getHours();
+
+  console.log(
+    '범인: ',
+    new Date(
+      new Date(Number(year), Number(month) - 1, Number(day), nowHour, nowMin, nowSecond).toLocaleString('en-US', {
+        timeZone: 'Asia/Seoul',
+      }),
+    ),
+  );
+
   const displayingDate = useMemo(() => {
     return year && month && day
-      ? new Date(new Date(Number(year), Number(month) - 1, Number(day)).toLocaleString('en-US', { timeZone: 'Asia/Seoul' }))
+      ? new Date(
+          new Date(Number(year), Number(month) - 1, Number(day), nowHour, nowMin, nowSecond).toLocaleString('en-US', {
+            timeZone: 'Asia/Seoul',
+          }),
+        )
       : TODAY;
   }, [year, month, day]);
 
