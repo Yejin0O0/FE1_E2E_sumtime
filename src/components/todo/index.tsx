@@ -11,6 +11,8 @@ import TodoList from '@/components/todo/TodoList/index';
 import * as S from '@/components/todo/Todo.styled';
 import { useSession } from 'next-auth/react';
 import { useParams } from 'next/navigation';
+import { toZonedTime } from 'date-fns-tz';
+import { TIME_ZONE, TODAY } from '@/constants';
 import TodoModal from './TodoModal';
 
 export default function Todo() {
@@ -22,7 +24,7 @@ export default function Todo() {
   const { year, month, day } = params;
 
   const displayingDate = useMemo(() => {
-    return year && month && day ? new Date(Number(year), Number(month) - 1, Number(day)) : new Date();
+    return year && month && day ? toZonedTime(new Date(Number(year), Number(month) - 1, Number(day)), TIME_ZONE) : TODAY;
   }, [year, month, day]);
 
   // sessionId가 변경될 때마다 redux store에 저장

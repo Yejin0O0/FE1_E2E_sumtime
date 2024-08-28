@@ -9,10 +9,12 @@ import CategoryField from '@/components/todo/CategoryField';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { closeModal, selectTodoUI } from '@/lib/todos/todoUISlice'; // Redux 상태 추가
 import { selectTodoData } from '@/lib/todos/todoDataSlice'; // Redux 상태 추가
+import { TIME_ZONE } from '@/constants';
 
 import { checkTaskListOverlap } from 'react-custom-timetable';
 import { convertTodosForTimetable } from '@/utils/timetable/convertTodosForTimetable';
 
+import { toZonedTime } from 'date-fns-tz';
 import { TodoModalStyle } from '../Todo.styled';
 import DeleteTodoButton from './DeleteTodoButton';
 
@@ -34,13 +36,13 @@ export default function TodoModal() {
   const { mutate: updateTodo } = useUpdateTodo();
   const { mutate: createTodo } = useCreateTodo();
 
-  const now = new Date(); // 현재 시간
-  const today = new Date();
+  const now = toZonedTime(new Date(), TIME_ZONE); // 현재 시간
+  const today = toZonedTime(new Date(), TIME_ZONE);
   today.setHours(0, 0, 0, 0); // 오늘의 시작 시점
 
-  const isPastDate = isBefore(displayingDate ?? new Date(), today);
-  const isTodayDate = isToday(displayingDate ?? new Date());
-  const isFutureDate = isAfter(displayingDate ?? new Date(), today);
+  const isPastDate = isBefore(displayingDate ?? now, today);
+  const isTodayDate = isToday(displayingDate ?? now);
+  const isFutureDate = isAfter(displayingDate ?? now, today);
 
   useEffect(() => {
     if (isModalOpen && mode === 'create') {
@@ -85,8 +87,8 @@ export default function TodoModal() {
         ...updatedTodo,
         date: displayingDate instanceof Date ? displayingDate.toISOString() : displayingDate || '',
         id: todoId,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+        createdAt: toZonedTime(new Date(), TIME_ZONE).toISOString(),
+        updatedAt: toZonedTime(new Date(), TIME_ZONE).toISOString(),
         userId: sessionId,
         isProgress: 0,
       },
@@ -117,7 +119,7 @@ export default function TodoModal() {
     const newTodo = {
       userId: sessionId,
       title,
-      date: displayingDate ?? new Date(),
+      date: displayingDate ?? toZonedTime(new Date(), TIME_ZONE),
       content,
       startTime,
       endTime,
@@ -217,7 +219,7 @@ export default function TodoModal() {
                   value={startTime ? parseISO(startTime) : null}
                   minTime={minTime} // 설정된 minTime 사용
                   maxTime={endTime ? parseISO(endTime) : maxTime} // 설정된 maxTime 사용
-                  onChange={(value) => setStartTime(value && isValid(value) ? value.toISOString() : null)}
+                  onChange={(value) => setStartTime(value && isValid(value) ? toZonedTime(value, TIME_ZONE).toISOString() : null)} //! !!!! 이거 바꿔볼 것
                 />
                 <TimePicker
                   sx={{ width: '100%', margin: '10px 0' }}
@@ -226,7 +228,7 @@ export default function TodoModal() {
                   value={endTime ? parseISO(endTime) : null}
                   minTime={startTime ? parseISO(startTime) : minTime} // 설정된 minTime 사용
                   maxTime={maxTime} // 설정된 maxTime 사용
-                  onChange={(value) => setEndTime(value && isValid(value) ? value.toISOString() : null)}
+                  onChange={(value) => setEndTime(value && isValid(value) ? toZonedTime(value, TIME_ZONE).toISOString() : null)}
                 />
               </Box>
             )}

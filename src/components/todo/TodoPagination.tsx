@@ -27,7 +27,8 @@ function TodoPagination() {
         defaultPage={displayingDate.getDate()}
         page={displayingDate.getDate()}
         onChange={(e, value) => {
-          const newDate = new Date(displayingDate);
+          const newDate = displayingDate;
+          // const newDate = new Date(displayingDate);
           newDate.setDate(value);
           const newYear = newDate.getFullYear();
           const newMonth = newDate.getMonth() + 1;
