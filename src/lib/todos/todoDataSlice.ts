@@ -10,6 +10,8 @@ interface TodoDataState {
   isLoading: boolean;
 }
 
+console.log('!!!!!!!!!in redux:', TODAY);
+
 const initialState: TodoDataState = {
   sessionId: undefined,
   displayingDate: TODAY,
