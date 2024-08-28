@@ -8,6 +8,7 @@ import { useGetTodosMatchingDate } from '@/api/hooks/todoHooks';
 import { useSession } from 'next-auth/react';
 import { useAppSelector } from '@/lib/hooks';
 
+import { TODAY, TIME_ZONE } from '@/constants';
 import * as TodoStyle from './TodoList.styled';
 import * as CommonStyle from '../../common';
 import EmptyTodoList from './EmptyTodoList';
@@ -22,6 +23,9 @@ function TodoList() {
   const { displayingDate } = useAppSelector(selectTodoData);
 
   const { data: todoListData = [], isLoading } = useGetTodosMatchingDate(sessionId, displayingDate);
+  console.log('--------------displayingDate', displayingDate);
+  console.log('---------------------TODAY', TODAY);
+  console.log('--------------===========TIME_ZONE', TIME_ZONE);
 
   useEffect(() => {
     dispatch(setLoading(isLoading));
