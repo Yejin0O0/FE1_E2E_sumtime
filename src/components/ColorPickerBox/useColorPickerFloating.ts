@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { offset, useClick, useDismiss, useFloating, useInteractions } from '@floating-ui/react';
+import { flip, offset, shift, useClick, useDismiss, useFloating, useInteractions } from '@floating-ui/react';
 
 function useColorPickerFloating() {
   const [isOpen, setIsOpen] = useState(false);
   const { refs, floatingStyles, context } = useFloating({
     open: isOpen,
     onOpenChange: setIsOpen,
-    placement: 'left-start',
+    placement: 'right-start',
     middleware: [
       offset(() => {
         return {
@@ -14,6 +14,11 @@ function useColorPickerFloating() {
           mainAxis: 8,
         };
       }),
+      shift({
+        mainAxis: true,
+        crossAxis: true,
+      }),
+      flip(),
     ],
   });
   const click = useClick(context);

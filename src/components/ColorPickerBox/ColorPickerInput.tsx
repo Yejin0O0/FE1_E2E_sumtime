@@ -19,6 +19,7 @@ function ColorPickerInput({ color, setColor, ...restStyleProps }: ColorPickerInp
         ref={refs.setReference}
         {...getReferenceProps()}
         $backgroundColor={color}
+        readOnly
       />
       {isOpen && (
         <ColorPicker
