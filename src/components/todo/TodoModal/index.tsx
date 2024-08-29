@@ -75,13 +75,13 @@ export default function TodoModal() {
       content,
       startTime,
       endTime,
-      isProgress: false,
+      isProgress: !endTime,
       color,
       categoryId: 1,
     };
 
     const updatedTodoList = [
-      ...todoListData,
+      ...todoListData.filter((todo) => todo.id !== todoId),
       {
         ...updatedTodo,
         date: displayingDate instanceof Date ? displayingDate.toISOString() : displayingDate || '',
@@ -89,7 +89,8 @@ export default function TodoModal() {
         createdAt: toZonedTime(new Date(), TIME_ZONE).toISOString(),
         updatedAt: toZonedTime(new Date(), TIME_ZONE).toISOString(),
         userId: sessionId,
-        isProgress: 0,
+        categoryId: 1,
+        isProgress: endTime ? 0 : 1,
       },
     ];
     if (checkTaskListOverlap(convertTodosForTimetable(updatedTodoList))) {
@@ -142,11 +143,11 @@ export default function TodoModal() {
       alert('제목을 작성해주세요');
       return false;
     }
-    if (endTime && startTime === null) {
+    if (endTime && startTime === null && !todoData?.isProgress) {
       alert('시작 시간을 확인해주세요.');
       return false;
     }
-    if (startTime && endTime === null) {
+    if (startTime && endTime === null && !todoData?.isProgress) {
       alert('종료 시간을 확인해주세요.');
       return false;
     }
