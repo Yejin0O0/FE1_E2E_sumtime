@@ -56,6 +56,7 @@ export async function POST(request: Request) {
       title: categoriesTable.title,
       color: categoriesTable.color,
       isDisplayed: categoriesTable.isDisplayed,
+      id: categoriesTable.id,
     });
 
     return NextResponse.json(insertedCategory, { status: 201 });

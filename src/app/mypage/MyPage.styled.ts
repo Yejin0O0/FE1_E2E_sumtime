@@ -6,10 +6,9 @@ export const Container = styled(Flex)`
   flex-direction: row;
   align-items: start;
   max-width: 960px;
-
+  padding-top: 65px;
   background-color: #ffffff;
   margin: 0 auto;
-  margin-top: 25px;
 `;
 
 export const ChildrenWrapper = styled(Flex)`

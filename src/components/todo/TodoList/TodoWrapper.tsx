@@ -5,8 +5,11 @@ import { useAppSelector } from '@/lib/hooks';
 import { selectTodoData } from '@/lib/todos/todoDataSlice';
 import GlowingBorder from '@/components/todo/GlowingBorder';
 import Todo from '@/components/todo/Todo';
+import { endOfDay } from 'date-fns';
 import { toZonedTime } from 'date-fns-tz';
 import { TIME_ZONE } from '@/constants';
+import { checkTaskListOverlap } from 'react-custom-timetable';
+import { convertTodosForTimetable } from '@/utils/timetable/convertTodosForTimetable';
 import * as S from '../Todo.styled';
 
 interface TodoWrapperProps {
@@ -21,7 +24,7 @@ interface TodoWrapperProps {
 function TodoWrapper({ todoId, title, setTodoId, endTime, isProgress, isListProgressing }: TodoWrapperProps) {
   const queryClient = useQueryClient();
   const { mutate: updateTodoTime } = useUpdateTodoTime();
-  const { sessionId } = useAppSelector(selectTodoData);
+  const { sessionId, displayingDate, todoListData } = useAppSelector(selectTodoData);
 
   const handleOpenModal = () => {
     // TodoList를 클릭한 경우
@@ -29,28 +32,51 @@ function TodoWrapper({ todoId, title, setTodoId, endTime, isProgress, isListProg
   };
 
   const toggleRecord = async (id: number) => {
-    // const newStartTime = !isProgress ? new Date().toISOString() : null;
+    if (!sessionId) {
+      alert('로그인이 필요합니다.');
+      return;
+    }
+
     const newStartTime = !isProgress ? toZonedTime(new Date(), TIME_ZONE).toISOString() : null;
     const newEndTime = isProgress ? toZonedTime(new Date(), TIME_ZONE).toISOString() : null;
-
-    updateTodoTime(
+    const updatedTodo = {
+      todoId: id,
+      categoryId: 1,
+      startTime: newStartTime,
+      endTime: newEndTime,
+      isProgress: !isProgress,
+    };
+    const updatedTodoList = [
+      ...todoListData.filter((todo) => todo.id !== id),
       {
-        todoId: id,
+        ...updatedTodo,
+        title,
+        content: '',
+        color: '',
+        date: displayingDate instanceof Date ? displayingDate.toISOString() : displayingDate || '',
+        id: todoId,
+        createdAt: toZonedTime(new Date(), TIME_ZONE).toISOString(),
+        updatedAt: toZonedTime(new Date(), TIME_ZONE).toISOString(),
+        endTime: toZonedTime(endOfDay(new Date()), TIME_ZONE).toISOString(),
+        userId: sessionId,
         categoryId: 1,
-        startTime: newStartTime,
-        endTime: newEndTime,
-        isProgress: !isProgress,
+        isProgress: endTime ? 0 : 1,
       },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ['todo', todoId] });
-          queryClient.invalidateQueries({ queryKey: ['todos', sessionId] });
-        },
-        onError: (error) => {
-          alert(`Todo 업데이트에 실패했습니다.${error}`);
-        },
+    ];
+    if (checkTaskListOverlap(convertTodosForTimetable(updatedTodoList))) {
+      alert('현재 시간 이후에 등록된 일정이 있습니다.\n해당 일정을 제거하거나, 일정이 끝난 후 다시 시도하세요.');
+      return;
+    }
+
+    updateTodoTime(updatedTodo, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['todo', todoId] });
+        queryClient.invalidateQueries({ queryKey: ['todos', sessionId] });
       },
-    );
+      onError: (error) => {
+        alert(`Todo 업데이트에 실패했습니다.${error}`);
+      },
+    });
   };
 
   return (
