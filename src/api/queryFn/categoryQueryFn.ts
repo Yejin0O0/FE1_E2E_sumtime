@@ -41,6 +41,7 @@ export const getCategory = async (categoryId: number | undefined): Promise<Categ
   }
 };
 
+// TODO: CategoryType과 return 값 동일하게 맞추기
 export const createCategory = async (createInfo: CreateCategoryInfo): Promise<Category> => {
   try {
     const { data } = await axios.post('/api/categories', {
@@ -49,7 +50,7 @@ export const createCategory = async (createInfo: CreateCategoryInfo): Promise<Ca
       isDisplayed: createInfo.isDisplayed,
     });
 
-    return data.category;
+    return data[0];
   } catch (error) {
     if (error instanceof AxiosError) {
       console.error('AxiosError: 카테고리를 생성할 수 없습니다.', error.message);
