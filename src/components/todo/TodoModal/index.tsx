@@ -12,7 +12,6 @@ import { selectTodoData } from '@/lib/todos/todoDataSlice'; // Redux 상태 추�
 import { TIME_ZONE } from '@/constants';
 import { checkTaskListOverlap } from 'react-custom-timetable';
 import { convertTodosForTimetable } from '@/utils/timetable/convertTodosForTimetable';
-
 import { toZonedTime } from 'date-fns-tz';
 import { TodoModalStyle } from '../Todo.styled';
 import DeleteTodoButton from './DeleteTodoButton';
@@ -38,7 +37,6 @@ export default function TodoModal() {
   const now = toZonedTime(new Date(), TIME_ZONE); // 현재 시간
   const today = toZonedTime(new Date(), TIME_ZONE);
   today.setHours(0, 0, 0, 0); // 오늘의 시작 시점
-
   const isPastDate = isBefore(displayingDate ?? now, today);
   const isTodayDate = isToday(displayingDate ?? now);
   const isFutureDate = isAfter(displayingDate ?? now, today);
@@ -170,18 +168,18 @@ export default function TodoModal() {
 
   const getTimePickerProps = () => {
     if (isFutureDate) {
-      return { minTime: undefined, maxTime: undefined };
+      return { minTime: undefined, maxTime: undefined, disableFuture: true };
     }
     if (isPastDate) {
-      return { minTime: undefined, maxTime: undefined };
+      return { minTime: undefined, maxTime: undefined, disableFuture: false };
     }
     if (isTodayDate && mode === 'update') {
-      return { minTime: today, maxTime: now };
+      return { minTime: today, maxTime: now, disableFuture: true };
     }
-    return { minTime: undefined, maxTime: undefined };
+    return { minTime: undefined, maxTime: undefined, disableFuture: undefined };
   };
 
-  const { minTime, maxTime } = getTimePickerProps();
+  const { minTime, maxTime, disableFuture } = getTimePickerProps();
 
   return (
     isModalOpen &&
@@ -220,6 +218,7 @@ export default function TodoModal() {
                   minTime={minTime} // 설정된 minTime 사용
                   maxTime={endTime ? parseISO(endTime) : maxTime} // 설정된 maxTime 사용
                   onChange={(value) => setStartTime(value && isValid(value) ? toZonedTime(value, TIME_ZONE).toISOString() : null)} //! !!!! 이거 바꿔볼 것
+                  disableFuture={disableFuture}
                 />
                 <TimePicker
                   sx={{ width: '100%', margin: '10px 0' }}
@@ -229,6 +228,7 @@ export default function TodoModal() {
                   minTime={startTime ? parseISO(startTime) : minTime} // 설정된 minTime 사용
                   maxTime={maxTime} // 설정된 maxTime 사용
                   onChange={(value) => setEndTime(value && isValid(value) ? toZonedTime(value, TIME_ZONE).toISOString() : null)}
+                  disableFuture={disableFuture}
                 />
               </Box>
             )}
