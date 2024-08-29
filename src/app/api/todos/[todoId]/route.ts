@@ -26,9 +26,7 @@ export async function GET(request: Request, { params }: { params: { todoId: stri
 
 export async function PUT(req: NextRequest) {
   const { todoId, categoryId, title, content, startTime, endTime, isProgress } = await req.json();
-
   const isProgressToNumber = isProgress ? 1 : 0;
-
   try {
     // 업데이트할 필드 동적 설정
     const result = await db.transaction(async (tx) => {

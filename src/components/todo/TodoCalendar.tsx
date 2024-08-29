@@ -4,7 +4,7 @@ import { DateCalendar } from '@mui/x-date-pickers';
 import { useRouter } from 'next/navigation';
 import { useAppSelector, useAppDispatch } from '@/lib/hooks';
 import { toggleCalendar } from '@/lib/todos/todoUISlice';
-import { TODAY } from '@/constants';
+import { getToday } from '@/constants';
 
 function TodoCalendar() {
   // redux사용 위한 selector, dispatch 사용
@@ -41,7 +41,7 @@ function TodoCalendar() {
       display={isOpened ? 'block' : 'none'}
     >
       <DateCalendar
-        defaultValue={TODAY}
+        defaultValue={getToday()}
         value={date}
         onChange={(value) => {
           const newYear = value.getFullYear();

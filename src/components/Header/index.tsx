@@ -7,6 +7,9 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Box from '@mui/material/Box';
+import { setDisplayingDate } from '@/lib/todos/todoDataSlice';
+import { useAppDispatch } from '@/lib/hooks';
+import { getToday } from '@/constants';
 import HeaderList from './HeaderList';
 
 function Header() {
@@ -23,11 +26,20 @@ function Header() {
   const handleClose = () => {
     setAnchorEl(null);
   };
+  const dispatch = useAppDispatch();
 
   return (
     <Box>
       <S.Container>
-        <S.Logo src={logo.src} alt="logo" onClick={() => router.push('/')} />
+        <S.Logo
+          src={logo.src}
+          alt="logo"
+          onClick={() => {
+            router.push('/');
+            dispatch(setDisplayingDate(getToday()));
+          }}
+        />
+
         <S.ProfileDiv $align="center">
           <S.UserName>{session?.user.name}</S.UserName>
           <S.UserP>님의 하루를 더해보세요!</S.UserP>

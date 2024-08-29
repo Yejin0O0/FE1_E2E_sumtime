@@ -26,6 +26,7 @@ export const Container = styled.div`
 export const Logo = styled.img`
   height: 100%;
   cursor: pointer;
+  width: 170px;
 `;
 
 export const ProfileDiv = styled(Flex)`

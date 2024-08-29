@@ -57,7 +57,6 @@ export default function CategoryField() {
       createCategory({ title: lastValue, color: randomColor(), isDisplayed: 0 });
     } else if (lastValue && !selectedCategory.includes(lastValue)) {
       // Option을 선택할 때 진행되는 코드
-      console.log('lastValue lastValue && !selectedCategory.includes(lastValue)', lastValue);
       setSelectedCategory([lastValue]); // Select only the last chosen category
     }
   };
@@ -174,8 +173,6 @@ export default function CategoryField() {
             </Box>
           )}
           onChange={(e, value) => {
-            console.log('엔터침;');
-
             handleCategoryChange(value); // 얜 엔터를 치면 간다.
           }}
         />

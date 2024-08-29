@@ -7,7 +7,7 @@ const BasicContainer = styled(Flex)`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  align-items: start;
+  align-items: center;
   max-width: 960px;
   background-color: #ffffff;
   height: calc(100vh - 65px);
