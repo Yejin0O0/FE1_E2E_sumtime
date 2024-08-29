@@ -103,7 +103,7 @@ function Account() {
             <AlertTitle> 문의 부탁드립니다</AlertTitle>
             탈퇴를 원하신다면 아래 이메일로 문의 부탁드립니다.
             <br />
-            ~~~@~~~.com
+            dbshaejin@gmail.com
           </Alert>
         </Snackbar>
       </S.Section>

@@ -30,8 +30,8 @@ export default function CategoryField() {
   const { mutate: updateCategory } = useUpdateCategory();
   const { mutate: createCategory } = useCreateCategory();
 
-  const sampleCategoryList = useGetCategoryList();
-  const filteredCategoryList = sampleCategoryList?.map(({ userId, isDefault, ...rest }) => rest);
+  const { categoryList } = useGetCategoryList();
+  const filteredCategoryList = categoryList?.map(({ userId, isDefault, ...rest }) => rest);
 
   const handleEdit = (id: number, title: string, color: string, isDisplayed: number) => {
     setEditingCategory({ id, title, color, isDisplayed });
