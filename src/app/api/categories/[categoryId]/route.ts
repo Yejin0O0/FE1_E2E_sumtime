@@ -1,5 +1,5 @@
 import { db } from '@/db';
-import { categoriesTable } from '@/db/schema';
+import { categoriesTable, todosTable } from '@/db/schema';
 import { authOptions } from '@/lib/auth';
 import { and, eq } from 'drizzle-orm';
 import { getServerSession } from 'next-auth';
@@ -106,7 +106,6 @@ export async function DELETE(request: Request, { params }: { params: { categoryI
   }
 
   const userId = session.user.id;
-
   const categoryId = Number(params.categoryId);
 
   if (Number.isNaN(categoryId)) {
@@ -114,33 +113,48 @@ export async function DELETE(request: Request, { params }: { params: { categoryI
   }
 
   try {
-    const existingCategory = await db
-      .select()
-      .from(categoriesTable)
-      .where(and(eq(categoriesTable.id, categoryId), eq(categoriesTable.userId, userId)))
-      .get();
+    await db.transaction(async (tx) => {
+      // 삭제하려는 카테고리 확인
+      const category = await tx
+        .select()
+        .from(categoriesTable)
+        .where(and(eq(categoriesTable.id, categoryId), eq(categoriesTable.userId, userId)))
+        .get();
 
-    if (!existingCategory) {
-      return NextResponse.json({ error: '삭제할 카테고리를 찾을 수 없습니다.' }, { status: 404 });
-    }
+      if (!category) {
+        return NextResponse.json({ error: '삭제할 카테고리를 찾을 수 없습니다.' }, { status: 404 });
+      }
 
-    const category = await db
-      .select()
-      .from(categoriesTable)
-      .where(and(eq(categoriesTable.id, categoryId), eq(categoriesTable.userId, userId)))
-      .get();
+      if (category.isDefault === 1) {
+        return NextResponse.json({ error: '기본 카테고리는 삭제할 수 없습니다.' }, { status: 400 });
+      }
 
-    if (!category) {
-      return NextResponse.json({ error: '카테고리 정보를 가져오는 데 실패했습니다.' }, { status: 500 });
-    }
+      // 사용자 기본 카테고리 ID 조회
+      const defaultCategory = await tx
+        .select()
+        .from(categoriesTable)
+        .where(and(eq(categoriesTable.userId, userId), eq(categoriesTable.isDefault, 1)))
+        .get();
 
-    if (category.isDefault === 1) {
-      return NextResponse.json({ error: '기본 카테고리는 삭제할 수 없습니다.' }, { status: 400 });
-    }
+      if (!defaultCategory) {
+        return NextResponse.json({ error: '기본 카테고리를 찾을 수 없습니다.' }, { status: 404 });
+      }
 
-    await db.delete(categoriesTable).where(eq(categoriesTable.id, categoryId)).run();
+      const defaultCategoryId = defaultCategory.id;
+      const defaultCategoryColor = defaultCategory.color;
 
-    return NextResponse.json({ message: '카테고리가 성공적으로 삭제되었습니다.' }, { status: 200 });
+      // 삭제하려는 카테고리에 속한 모든 Todos 의 categoryId를  기본 카테고리로 변경
+      const resultDelete = await tx
+        .update(todosTable)
+        .set({ categoryId: defaultCategoryId, color: defaultCategoryColor })
+        .where(and(eq(todosTable.categoryId, categoryId), eq(todosTable.userId, userId)))
+        .run();
+
+      await tx.delete(categoriesTable).where(eq(categoriesTable.id, categoryId)).run();
+
+      return resultDelete;
+    });
+    return NextResponse.json({ message: '카테고리가 삭제되었습니다.' }, { status: 200 });
   } catch (error) {
     console.error('Error deleting category:', error);
     return NextResponse.json({ error: '카테고리 삭제에 실패했습니다.' }, { status: 500 });
