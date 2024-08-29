@@ -24,11 +24,13 @@ function TodoList() {
   const { data: todoListData = [], isLoading } = useGetTodosMatchingDate(sessionId, displayingDate);
 
   useEffect(() => {
-    dispatch(setLoading(isLoading));
-    if (!isLoading && todoListData) {
-      dispatch(setTodoListData(todoListData));
+    if (!isLoading) {
+      dispatch(setLoading(isLoading));
+      if (todoListData) {
+        dispatch(setTodoListData(todoListData));
+      }
     }
-  }, [todoListData, dispatch, isLoading]);
+  }, [todoListData, isLoading]);
 
   const [isListProgressing, setIsListProgressing] = React.useState(false);
 
