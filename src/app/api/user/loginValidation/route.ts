@@ -8,8 +8,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Email and password is required' }, { status: 400 });
   }
 
-  console.log('Received email and password', email, password);
-
   try {
     const user = await db
       .select({
@@ -20,8 +18,6 @@ export async function POST(req: NextRequest) {
       .from(schema.usersTable)
       .where(and(eq(schema.usersTable.email, email), eq(schema.usersTable.password, password)))
       .get();
-
-    console.log('Query result:', user);
 
     if (user) {
       return NextResponse.json({ user });

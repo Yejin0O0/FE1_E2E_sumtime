@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { SelectTodo } from '@/db/schema/todos';
-import { TODAY } from '@/constants';
+import { getToday } from '@/constants';
 
 interface TodoDataState {
   sessionId: number | undefined;
@@ -10,11 +10,9 @@ interface TodoDataState {
   isLoading: boolean;
 }
 
-console.log('!!!!!!!!!in redux:', TODAY);
-
 const initialState: TodoDataState = {
   sessionId: undefined,
-  displayingDate: TODAY,
+  displayingDate: getToday(),
   todoId: 0,
   todoListData: [],
   isLoading: false,

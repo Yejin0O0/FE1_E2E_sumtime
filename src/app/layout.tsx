@@ -23,7 +23,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   return (
     <html lang="kr" className={notoSans.className}>
-      <body>
+      <body style={{ display: 'flex', justifyContent: 'center' }}>
         <AuthProvider session={session}>
           <LocalizationProviders>
             <ReactQueryProviders>

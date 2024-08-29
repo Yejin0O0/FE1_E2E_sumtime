@@ -6,7 +6,7 @@ import { selectTodoData } from '@/lib/todos/todoDataSlice';
 import GlowingBorder from '@/components/todo/GlowingBorder';
 import Todo from '@/components/todo/Todo';
 import { toZonedTime } from 'date-fns-tz';
-import { TIME_ZONE } from '@/constants/index';
+import { TIME_ZONE } from '@/constants';
 import * as S from '../Todo.styled';
 
 interface TodoWrapperProps {
@@ -31,12 +31,12 @@ function TodoWrapper({ todoId, title, setTodoId, endTime, isProgress, isListProg
   const toggleRecord = async (id: number) => {
     // const newStartTime = !isProgress ? new Date().toISOString() : null;
     const newStartTime = !isProgress ? toZonedTime(new Date(), TIME_ZONE).toISOString() : null;
-
     const newEndTime = isProgress ? toZonedTime(new Date(), TIME_ZONE).toISOString() : null;
 
     updateTodoTime(
       {
         todoId: id,
+        categoryId: 1,
         startTime: newStartTime,
         endTime: newEndTime,
         isProgress: !isProgress,

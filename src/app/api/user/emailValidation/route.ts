@@ -10,8 +10,6 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Email query parameter is required' }, { status: 400 });
   }
 
-  console.log('Received email:', email);
-
   try {
     const user = await db
       .select({
@@ -20,8 +18,6 @@ export async function GET(req: NextRequest) {
       .from(schema.usersTable)
       .where(eq(schema.usersTable.email, email))
       .get();
-
-    console.log('Query result:', user);
 
     if (user) {
       return NextResponse.json({ isValid: false });

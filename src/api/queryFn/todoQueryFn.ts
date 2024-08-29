@@ -32,7 +32,6 @@ export const createTodo = async (
 };
 
 export const getTodosByDate = async (date: Date): Promise<SelectTodo[]> => {
-  console.log('****************** in query fn: ', date);
   try {
     const { data } = await axios.get('/api/todos/', { params: { date } });
     return data.todos;
@@ -91,9 +90,10 @@ export const updateTodoTime = async (
   startTime: string | null,
   endTime: string | null,
   isProgress: boolean,
+  categoryId: number,
 ): Promise<SelectTodo> => {
   try {
-    const { data } = await axios.put(`/api/todos/${todoId}`, { todoId, startTime, endTime, isProgress });
+    const { data } = await axios.put(`/api/todos/${todoId}`, { todoId, startTime, endTime, isProgress, categoryId });
     return data.todo;
   } catch (error) {
     if (error instanceof AxiosError) {

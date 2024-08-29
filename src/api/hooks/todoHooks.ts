@@ -34,7 +34,6 @@ export const useGetTodosMatchingDate = (userId: number | undefined, date: Date |
   useQuery({
     queryKey: ['todos', userId, date],
     queryFn: () => {
-      console.log('***************** in react query date:', date); // date 값 출력
       if (!userId) return Promise.resolve([]); // 클라이언트가 아닌 todoHooks에서 userId 예외처리
       if (!date) return [];
       return getTodosByDate(date);
@@ -67,10 +66,11 @@ export const useUpdateTodo = (): UseMutationResult<
 export const useUpdateTodoTime = (): UseMutationResult<
   SelectTodo,
   Error,
-  { todoId: number; startTime: string | null; endTime: string | null; isProgress: boolean }
+  { todoId: number; startTime: string | null; endTime: string | null; isProgress: boolean; categoryId: number }
 > =>
   useMutation({
-    mutationFn: ({ todoId, startTime, endTime, isProgress }) => updateTodoTime(todoId, startTime, endTime, isProgress),
+    mutationFn: ({ todoId, startTime, endTime, isProgress, categoryId }) =>
+      updateTodoTime(todoId, startTime, endTime, isProgress, categoryId),
   });
 
 export const useDeleteTodo = (): UseMutationResult<string, Error, number> =>

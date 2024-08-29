@@ -35,11 +35,8 @@ function FAQ() {
             </Flex>
           </Box>
           <Box>
-            <Typography variant="h5" gutterBottom>
-              문의 사항 안내
-            </Typography>
             <Typography variant="body1" gutterBottom>
-              자세한 문의 사항은 testEmail@gmail.com 로 보내주세요.
+              자세한 문의 사항은 dbshaejin@gmail.com 로 보내주세요.
             </Typography>
           </Box>
         </Flex>

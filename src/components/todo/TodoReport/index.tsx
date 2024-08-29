@@ -9,7 +9,8 @@ import * as S from './TodoReport.styled';
 import { formatToChartData, formatMinutesToTime } from './util';
 
 function TodoReport() {
-  const categoryList = useGetCategoryList();
+  const { categoryList } = useGetCategoryList();
+
   const { todoListData } = useSelector((state: RootState) => state.todoData);
   const todoList = convertDateStringToDate(todoListData);
   const chartDataList = formatToChartData(todoList, categoryList);

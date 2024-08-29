@@ -11,14 +11,14 @@ function CategoryTableFooter() {
 
   const [data, setData] = useState<CreateCategoryInfo>(() => ({
     title: '',
-    isDisplayed: 0,
+    isDisplayed: 1,
     color: '',
   }));
 
   const resetForm = () => {
     setData({
       title: '',
-      isDisplayed: 0,
+      isDisplayed: 1,
       color: '',
     });
   };
@@ -53,7 +53,7 @@ function CategoryTableFooter() {
       <TableRow>
         <TableCell colSpan={4} align="center" sx={{ fontSize: '15px', color: 'gray', border: 0, padding: 0 }}>
           <Button sx={{ width: '100%', padding: '20px' }} onClick={openModal}>
-            + Add New Category
+            + 새 카테고리 생성
           </Button>
         </TableCell>
       </TableRow>

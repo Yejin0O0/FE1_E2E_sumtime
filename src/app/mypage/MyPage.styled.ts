@@ -5,7 +5,8 @@ export const Container = styled(Flex)`
   display: flex;
   flex-direction: row;
   align-items: start;
-  max-width: 1440px;
+  max-width: 960px;
+
   background-color: #ffffff;
   margin: 0 auto;
   margin-top: 25px;

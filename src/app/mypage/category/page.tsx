@@ -14,9 +14,9 @@ function Category() {
       <S.Title>Category</S.Title>
       <S.Section>
         <S.ItemWrapper>
-          <Paper sx={{ width: '100%' }}>
-            <TableContainer sx={{ maxHeight: 500 }}>
-              <Table sx={{ minWidth: 750 }} stickyHeader>
+          <Paper sx={{ width: '100%', height: '100%' }}>
+            <TableContainer sx={{ height: 468, display: 'flex', flexDirection: 'column' }}>
+              <Table sx={{ minWidth: 750, flex: '1 1 auto' }} stickyHeader>
                 <CategoryTableHeader />
                 <CategoryTableBody />
                 <CategoryTableFooter />

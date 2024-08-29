@@ -10,8 +10,6 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Email query parameter is required' }, { status: 400 });
   }
 
-  console.log('Received email:', email);
-
   try {
     const user = await db
       .select({
@@ -21,14 +19,11 @@ export async function GET(req: NextRequest) {
       .where(eq(schema.usersTable.email, email))
       .get();
 
-    console.log('Query result:', user);
-
     if (user) {
       return NextResponse.json({ userId: user.userId });
     }
     return NextResponse.json({ error: 'User not found' }, { status: 404 });
   } catch (error) {
-    console.error('Error fetching user:', error);
     return NextResponse.json({ error: 'Failed to fetch user', details: (error as Error).message }, { status: 500 });
   }
 }
