@@ -121,11 +121,19 @@ export default function CategoryField({ categoryId, setCategoryId }: CategoryFie
 
                 if (newValue.editType === 'update' && editingCategory) {
                   const title = newValue.title.replace('Update ', '');
-                  const { id, isDisplayed, color } = editingCategory;
+                  const { id, isDisplayed, color, isDefault } = editingCategory;
 
                   if (!isDisplayed || !id || !color) {
                     return;
                   }
+
+                  // default category라면
+                  if (isDefault === 1) {
+                    alert('기본 카테고리는 변경할 수 없습니다.');
+                    setEditingCategory({ ...editingCategory });
+                    return;
+                  }
+
                   setEditingCategory({ ...editingCategory, title });
 
                   updateCategory(
@@ -171,11 +179,6 @@ export default function CategoryField({ categoryId, setCategoryId }: CategoryFie
                   return option;
                 }
 
-                // if (option.inputValue) {
-                //   return option.inputValue;
-                // }
-
-                // Regular option
                 return option.title;
               }}
               freeSolo

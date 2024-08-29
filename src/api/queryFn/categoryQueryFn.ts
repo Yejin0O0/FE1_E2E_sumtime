@@ -79,11 +79,10 @@ export const updateCategory = async (categoryId: number, createInfo: CreateCateg
 export const deleteCategory = async (categoryId: number): Promise<string> => {
   try {
     const { data } = await axios.delete(`/api/categories/${categoryId}`);
-
     return data.message;
   } catch (error) {
     if (error instanceof AxiosError) {
-      console.error('AxiosError: 카테고리를 수정할 수 없습니다.', error.message);
+      console.error('AxiosError: 카테고리를 제거할 수 없습니다.', error.message);
       throw error;
     }
     throw error;
