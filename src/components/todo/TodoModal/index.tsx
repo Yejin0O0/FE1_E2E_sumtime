@@ -73,7 +73,7 @@ export default function TodoModal() {
       content,
       startTime,
       endTime,
-      isProgress: !endTime,
+      isProgress: !endTime && !!startTime,
       color,
       categoryId: 1,
     };
