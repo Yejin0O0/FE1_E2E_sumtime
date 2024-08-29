@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 export const ChartLegendLayout = styled.div`
-  height: 280px;
+  height: 200px;
   overflow-y: auto;
 `;
 
@@ -21,6 +21,7 @@ export const LegendColor = styled.div<{ $backgroundColor?: string }>`
 export const LegendContentLayout = styled.p`
   text-overflow: ellipsis;
   overflow: hidden;
+  font-size: 12px;
 `;
 
 export const TodoReportLayout = styled.div`
