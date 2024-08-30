@@ -20,7 +20,6 @@ export async function POST(req: NextRequest) {
 
   try {
     const formatedDisplayingDate = toZonedTime(new Date(date), TIME_ZONE).toDateString();
-    // const formatedDisplayingDate = new Date(date).toDateString();
 
     const result = await db.transaction(async (tx) => {
       const resultCategoryColor = await tx

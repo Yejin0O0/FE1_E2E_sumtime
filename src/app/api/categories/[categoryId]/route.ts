@@ -71,26 +71,30 @@ export async function PUT(request: Request, { params }: { params: { categoryId: 
       return NextResponse.json({ error: '수정할 필드가 없습니다.' }, { status: 400 });
     }
 
-    const result = await db
-      .update(categoriesTable)
-      .set(updatedCategory)
-      .where(and(eq(categoriesTable.id, categoryId), eq(categoriesTable.userId, userId)))
-      .returning({
-        id: categoriesTable.id,
-        title: categoriesTable.title,
-        color: categoriesTable.color,
-        isDisplayed: categoriesTable.isDisplayed,
-        isDefault: categoriesTable.isDefault,
-      })
-      .get();
-
-    if (!result) {
-      return NextResponse.json({ error: '카테고리를 찾을 수 없습니다.' }, { status: 404 });
-    }
-    if (result.isDefault === 1) {
-      return NextResponse.json({ error: '기본 카테고리는 수정할 수 없습니다.' });
-    }
-
+    const result = await db.transaction(async (tx) => {
+      const resultUpdate = await db
+        .update(categoriesTable)
+        .set(updatedCategory)
+        .where(and(eq(categoriesTable.id, categoryId), eq(categoriesTable.userId, userId)))
+        .returning({
+          id: categoriesTable.id,
+          title: categoriesTable.title,
+          color: categoriesTable.color,
+          isDisplayed: categoriesTable.isDisplayed,
+          isDefault: categoriesTable.isDefault,
+        })
+        .get();
+      if (!resultUpdate) {
+        throw new Error('카테고리를 찾을 수 없습니다.');
+      }
+      if (resultUpdate.isDefault === 1) {
+        throw new Error('기본 카테고리는 수정할 수 없습니다.');
+      }
+      if (color) {
+        await tx.update(todosTable).set({ color }).where(eq(todosTable.categoryId, categoryId)).execute();
+      }
+      return resultUpdate;
+    });
     return NextResponse.json(result, { status: 200 });
   } catch (error) {
     console.error('Error updating category:', error);
