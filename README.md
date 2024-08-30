@@ -22,13 +22,15 @@ SumTime 서비스는 사용자의 일정을 체계적으로 관리하고, 각 �
 ![image](https://github.com/user-attachments/assets/40e10d86-9647-4374-9de0-6aff33ba5e1c)
 
 ### Todo Page
-![image](https://github.com/user-attachments/assets/676b9815-624a-401a-aeef-b56e34b02877)
+<img width="955" alt="image" src="https://github.com/user-attachments/assets/0e19e6a9-d1e5-4e09-91b8-c0a371bb1289">
+
 
 ### MyPage
 - Account
 ![image](https://github.com/user-attachments/assets/2a5c1ec1-ffbe-4a49-8a1a-4c395b46e31d)
 - Category
-![image](https://github.com/user-attachments/assets/44317bd5-3ca8-4ad8-9a77-682eb39990f4)
+- <img width="777" alt="image" src="https://github.com/user-attachments/assets/4ae185e9-5941-45de-9a87-67c8c51b4598">
+
 - FAQ
   ![image](https://github.com/user-attachments/assets/2437ac90-0c0b-4aa7-9d87-7d03536ae5c1)
 
@@ -225,7 +227,7 @@ feat: 회원가입 기능 추가
 
 ### Todo 페이지
 
-<img width="708" alt="todo page" src="https://github.com/user-attachments/assets/2d7c6a63-209d-4678-ad92-386af7396df2">
+<img width="708" alt="todo page" src="2">
 
 ### Todo 페이지 - Modal
 
