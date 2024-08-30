@@ -1,6 +1,6 @@
 import React from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { useUpdateTodoTime } from '@/api/hooks/todoHooks';
+import { useGetOneTodo, useUpdateTodoTime } from '@/api/hooks/todoHooks';
 import { useAppSelector } from '@/lib/hooks';
 import { selectTodoData } from '@/lib/todos/todoDataSlice';
 import GlowingBorder from '@/components/todo/GlowingBorder';
@@ -25,6 +25,7 @@ function TodoWrapper({ todoId, title, setTodoId, endTime, isProgress, isListProg
   const queryClient = useQueryClient();
   const { mutate: updateTodoTime } = useUpdateTodoTime();
   const { sessionId, displayingDate, todoListData } = useAppSelector(selectTodoData);
+  const { data: todoData } = useGetOneTodo(todoId);
 
   const handleOpenModal = () => {
     // TodoList를 클릭한 경우
@@ -37,11 +38,15 @@ function TodoWrapper({ todoId, title, setTodoId, endTime, isProgress, isListProg
       return;
     }
 
+    if (!todoData?.categoryId) {
+      return;
+    }
+
     const newStartTime = !isProgress ? toZonedTime(new Date(), TIME_ZONE).toISOString() : null;
     const newEndTime = isProgress ? toZonedTime(new Date(), TIME_ZONE).toISOString() : null;
     const updatedTodo = {
       todoId: id,
-      categoryId: 1,
+      categoryId: todoData.categoryId,
       startTime: newStartTime,
       endTime: newEndTime,
       isProgress: !isProgress,
@@ -59,7 +64,7 @@ function TodoWrapper({ todoId, title, setTodoId, endTime, isProgress, isListProg
         updatedAt: toZonedTime(new Date(), TIME_ZONE).toISOString(),
         endTime: toZonedTime(endOfDay(new Date()), TIME_ZONE).toISOString(),
         userId: sessionId,
-        categoryId: 1,
+        categoryId: todoData.categoryId,
         isProgress: endTime ? 0 : 1,
       },
     ];
